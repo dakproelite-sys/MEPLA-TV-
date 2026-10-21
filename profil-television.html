@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEPLA TV - Profil Administration Télévision</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #fef08a 0%, #fde047 50%, #facc15 100%);
+            color: #111827;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        /* En-tête profil */
+        .profile-header {
+            background: #ffffff;
+            border: 2px solid #eab308;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        .profile-info { display: flex; align-items: center; gap: 15px; }
+        .profile-avatar {
+            width: 65px; height: 65px; border-radius: 50%;
+            border: 3px solid #2563eb; object-fit: cover;
+        }
+        .profile-title h1 { font-size: 20px; color: #1e3a8a; }
+        .profile-title p { font-size: 12px; color: #6b7280; }
+
+        /* 4 CARTES D'INDICATEURS EN HAUT */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: #ffffff;
+            border: 2px solid #fef08a;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .stat-card .icon { font-size: 24px; margin-bottom: 5px; }
+        .stat-card h3 { font-size: 18px; color: #1e3a8a; font-weight: 800; }
+        .stat-card p { font-size: 11px; color: #6b7280; font-weight: 600; margin-top: 4px; }
+
+        /* COMMANDES EN DIRECT (DEMARRER / COUPER) */
+        .control-panel {
+            background: #ffffff;
+            border: 2px solid #eab308;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        }
+        .control-panel h2 { font-size: 16px; color: #1e3a8a; margin-bottom: 15px; }
+        .btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        
+        .btn-control {
+            padding: 12px 25px; border: none; border-radius: 10px;
+            font-size: 14px; font-weight: 800; cursor: pointer;
+            transition: all 0.2s ease; color: #fff;
+        }
+        .btn-start { background: #16a34a; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3); }
+        .btn-start:hover { background: #15803d; }
+        .btn-stop { background: #dc2626; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); }
+        .btn-stop:hover { background: #b91c1c; }
+
+        /* 2 CARTES D'ACCÈS DU BAS (STUDIO & DIRECT) */
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .access-card {
+            background: #ffffff;
+            border: 2px solid #2563eb;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
+        }
+        .access-card h2 { font-size: 18px; color: #1e3a8a; margin-bottom: 8px; }
+        .access-card p { font-size: 12px; color: #4b5563; margin-bottom: 15px; }
+        .access-btn {
+            display: inline-block; padding: 10px 20px; background: #2563eb;
+            color: #fff; text-decoration: none; font-weight: bold; font-size: 13px;
+            border-radius: 8px; transition: background 0.2s;
+        }
+        .access-btn:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- EN-TÊTE PROFIL -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <img id="tv-photo" src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Logo TV" class="profile-avatar">
+                <div class="profile-title">
+                    <h1 id="tv-name">Chargement...</h1>
+                    <p id="tv-desc">Administration de la Chaîne</p>
+                </div>
+            </div>
+            <a href="index.html" class="access-btn" style="background:#4b5563;">Accueil TV</a>
+        </div>
+
+        <!-- 4 MINICARTES EN HAUT -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">📡</div>
+                <h3 id="stat-status">INACTIF</h3>
+                <p>Statut du Signal</p>
+            </div>
+            <div class="stat-card">
+                <div class="icon">👥</div>
+                <h3 id="stat-subscribers">0</h3>
+                <p>Abonnés Total</p>
+            </div>
+            <div class="stat-card">
+                <div class="icon">👁️</div>
+                <h3 id="stat-views">0</h3>
+                <p>Spectateurs en Direct</p>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🎬</div>
+                <h3 id="stat-videos">0</h3>
+                <p>Vidéos au Programme</p>
+            </div>
+        </div>
+
+        <!-- PANNEAU DE CONTRÔLE CENTRAL (DEMARRER / COUPER) -->
+        <div class="control-panel">
+            <h2>Gestion de Diffusion Realtime Database</h2>
+            <div class="btn-group">
+                <button class="btn-control btn-start" onclick="setLiveStatus(true)">▶ DÉMARRER LA CHAÎNE</button>
+                <button class="btn-control btn-stop" onclick="setLiveStatus(false)">⏹ COUPER LA CHAÎNE</button>
+            </div>
+            <p id="status-msg" style="margin-top:12px; font-size:12px; font-weight:bold;"></p>
+        </div>
+
+        <!-- 2 ACCÈS ACCÉLÉRÉS EN BAS -->
+        <div class="access-grid">
+            <div class="access-card">
+                <h2>Studio TV</h2>
+                <p>Programmez vos vidéos YouTube et organisez le flux continu.</p>
+                <a href="studio-television.html" class="access-btn">Ouvrir le Studio →</a>
+            </div>
+            <div class="access-card">
+                <h2>Direct de la Télévision</h2>
+                <p>Visualisez la régie et le rendu final diffusé aux téléspectateurs.</p>
+                <a href="direct-television.html" class="access-btn" style="background:#16a34a;">Accéder au Direct →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT FIREBASE -->
+    <script type="module">
+        import { database } from "./js/firebase-config.js";
+        import { ref, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const tvKey = localStorage.getItem("active_tv_key");
+        if (!tvKey) {
+            window.location.href = "login.html";
+        }
+
+        const tvRef = ref(database, 'television_profils/' + tvKey);
+
+        // 1. Écoute dynamique des informations du profil et du statut
+        onValue(tvRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                document.getElementById('tv-name').innerText = data.nom;
+                document.getElementById('tv-desc').innerText = data.description || "Chaîne MEPLA TV";
+                if(data.photo) document.getElementById('tv-photo').src = data.photo;
+
+                const statusElement = document.getElementById('stat-status');
+                if (data.isLive === true) {
+                    statusElement.innerText = "EN DIRECT";
+                    statusElement.style.color = "#16a34a";
+                } else {
+                    statusElement.innerText = "COUPÉ";
+                    statusElement.style.color = "#dc2626";
+                }
+            }
+        });
+
+        // 2. Fonction pour Démarrer ou Couper la chaîne dans Firebase
+        window.setLiveStatus = async function(status) {
+            const msgBox = document.getElementById('status-msg');
+            try {
+                await update(ref(database, 'television_profils/' + tvKey), {
+                    isLive: status,
+                    lastUpdated: new Date().toISOString()
+                });
+                
+                if (status) {
+                    msgBox.style.color = "#16a34a";
+                    msgBox.innerText = "La chaîne est maintenant EN DIRECT sur la plateforme !";
+                } else {
+                    msgBox.style.color = "#dc2626";
+                    msgBox.innerText = "La chaîne a été COUPÉE avec succès.";
+                }
+            } catch (error) {
+                msgBox.style.color = "#dc2626";
+                msgBox.innerText = "Erreur de mise à jour : " + error.message;
+            }
+        };
+    </script>
+</body>
+</html>

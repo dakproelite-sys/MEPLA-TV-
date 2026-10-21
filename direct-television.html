@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEPLA TV - Régie & Direct Professionnel TV-Cam</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: #070a12; 
+            color: #fff; 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .top-controls {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(234, 179, 8, 0.4);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-regie {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            color: #fff;
+            transition: transform 0.2s;
+        }
+        .btn-start-live { background: #dc2626; box-shadow: 0 0 12px rgba(220, 38, 38, 0.7); }
+        .btn-stop-live { background: #16a34a; }
+        .btn-config { background: #2563eb; }
+        .btn-regie:hover { transform: scale(1.03); }
+
+        /* CHRONOMÈTRE DE RÉGIE */
+        .live-timer {
+            background: #020617;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 13px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+        .live-timer::before {
+            content: '●';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* ÉCRAN DE TÉLÉVISION PRINCIPAL */
+        .tv-screen { 
+            width: 100%; 
+            max-width: 950px; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            border: 3px solid #eab308; 
+            position: relative; 
+            border-radius: 14px; 
+            overflow: hidden; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+        }
+
+        .offline-notice { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; color: #ef4444; 
+            font-weight: bold; font-size: 16px; z-index: 5; text-align: center; padding: 20px;
+        }
+
+        /* FILIGRANE LOGO */
+        .tv-logo-overlay {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 12px rgba(0,0,0,0.7);
+            z-index: 10;
+            display: none;
+        }
+        .pos-top-right { top: 15px; right: 15px; }
+        .pos-top-left { top: 15px; left: 15px; }
+
+        /* BANDEAU DÉFILANT AUTOMATIQUE (VERSETS) */
+        .ticker-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 2px solid #eab308;
+            color: #fde047;
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: 700;
+            overflow: hidden;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .ticker-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker 25s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* CAMÉRA HD TV-CAM & STUDIO VIRTUEL */
+        #webcam-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            display: none; align-items: center; justify-content: center; z-index: 4;
+        }
+        #webcam-video {
+            width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);
+            filter: contrast(1.15) brightness(1.1) saturate(1.2);
+        }
+
+        /* MENU DE PRÉ-CONFIGURATION ET TEST PRIVÉ (ESCAMOTABLE) */
+        #setup-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(7, 10, 18, 0.97);
+            z-index: 25;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        #setup-overlay h2 { font-size: 14px; color: #fde047; border-left: 3px solid #2563eb; padding-left: 8px; }
+        
+        .setup-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+        .setup-thumb {
+            height: 45px; border-radius: 6px; border: 2px solid #475569;
+            cursor: pointer; background-size: cover; background-position: center;
+            transition: transform 0.2s;
+        }
+        .setup-thumb.selected { border-color: #22c55e; box-shadow: 0 0 10px rgba(34,197,94,0.6); }
+
+        .setup-group input, .setup-group select {
+            width: 100%; padding: 8px; background: #020617; border: 1px solid #475569;
+            color: #fff; border-radius: 6px; font-size: 12px; margin-top: 4px;
+        }
+
+        .audio-player-box {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155;
+        }
+        .audio-btn {
+            background: #2563eb; color: white; border: none; padding: 6px 12px; font-weight: bold; border-radius: 6px; font-size: 11px; cursor: pointer;
+        }
+        .audio-btn:hover { background: #1d4ed8; }
+
+        /* PETIT ÉCRAN DE PRÉVISULATION INTERNE */
+        .preview-box {
+            width: 100%; height: 120px; background: #000; border: 2px solid #2563eb; border-radius: 8px;
+            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        .preview-video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+        /* PANNEAUX DE CONTRÔLE EN BAS */
+        .control-panels-wrapper {
+            width: 100%; max-width: 950px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .panel-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            border-radius: 12px;
+            padding: 14px;
+        }
+        .panel-box h3 { font-size: 13px; color: #fde047; margin-bottom: 8px; }
+
+        .verse-form input, .verse-form select {
+            width: 100%; padding: 8px; margin-bottom: 6px;
+            background: #020617; border: 1px solid #475569;
+            color: #fff; border-radius: 6px; font-size: 12px;
+        }
+        .btn-verse {
+            background: #2563eb; color: #fff; border: none; width: 100%;
+            padding: 8px; font-weight: bold; border-radius: 6px; font-size: 12px; cursor: pointer;
+        }
+        .btn-verse:hover { background: #1d4ed8; }
+
+        iframe, video { width: 100%; height: 100%; border: none; display: block; }
+        .back-link { margin-top: 12px; color: #fde047; text-decoration: none; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- BARRE DE CONTRÔLE DE RÉGIE RAPIDE -->
+    <div class="top-controls">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span id="live-status-badge" style="font-weight: bold; font-size: 12px;">🔴 Statut : Chargement...</span>
+            <div id="live-chronometer" class="live-timer">00:00:00</div>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn-regie btn-config" onclick="toggleSetupOverlay()">⚙️ Studio & Réglages</button>
+            <button class="btn-regie btn-start-live" onclick="basculerDirectStudio(true)">🎥 Lancer Direct</button>
+            <button class="btn-regie btn-stop-live" onclick="basculerDirectStudio(false)">📺 Playlist 24h</button>
+        </div>
+    </div>
+
+    <!-- ÉCRAN DE TÉLÉVISION PRINCIPAL -->
+    <div class="tv-screen">
+        <!-- MENU DE PRÉ-CONFIGURATION & MODE TEST PRIVÉ (ESCAMOTABLE) -->
+        <div id="setup-overlay">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>👁️ Mode Test Privé & Studio de Prévisualisation</h2>
+                <button onclick="toggleSetupOverlay()" style="background:#dc2626; color:#fff; border:none; padding:4px 10px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:11px;">✕ Fermer / Voir l'Écran</button>
+            </div>
+            
+            <div class="preview-box" id="preview-container">
+                <video id="preview-video" autoplay playsinline muted class="preview-video"></video>
+            </div>
+
+            <h2>🎨 1. Choisir le Décor du Studio</h2>
+            <div class="setup-grid" id="bg-selector-grid">
+                <div class="setup-thumb selected" style="background-image: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300');" data-url="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200" onclick="selectionnerFond(this)"></div>
+                <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1577495508048-b635879837f1?w=300');" data-url="https://images.unsplash.com/photo-1577495508048-b635879837f1?w=1200" onclick="selectionnerFond(this)"></div>
+                <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=300');" data-url="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200" onclick="selectionnerFond(this)"></div>
+                <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=300');" data-url="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=1200" onclick="selectionnerFond(this)"></div>
+                <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=300');" data-url="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200" onclick="selectionnerFond(this)"></div>
+            </div>
+
+            <h2>🖼️ 2. Configuration du Logo & Position</h2>
+            <div class="setup-group">
+                <input type="text" id="setup-logo-url" placeholder="Lien URL Logo (optionnel)">
+                <select id="setup-logo-pos">
+                    <option value="top-right">Haut Droite</option>
+                    <option value="top-left">Haut Gauche</option>
+                </select>
+            </div>
+
+            <h2>🎵 3. Ambiance Sonore (Depuis la Galerie)</h2>
+            <div class="audio-player-box">
+                <input type="file" id="audio-file-input" accept="audio/*" onchange="chargerSonGalerie(this)" style="font-size:11px; flex:1;">
+                <button class="audio-btn" onclick="jouerSon()">▶ Lecture</button>
+                <button class="audio-btn" onclick="pauseSon()" style="background:#d97706;">⏸ Pause</button>
+                <button class="audio-btn" onclick="toggleLoop()" id="loop-btn" style="background:#475569;">🔁 Répéter : OFF</button>
+            </div>
+            <audio id="bg-audio"></audio>
+
+            <button class="btn-verse" style="background:#16a34a; padding:12px; margin-top:5px; font-size:14px;" onclick="lancerDirectPublic()">🚀 Enregistrer & Lancer le Direct Public</button>
+        </div>
+
+        <div id="offline-screen" class="offline-notice" style="display:none;">
+            📺 CHAÎNE ACTUELLEMENT COUPÉE (HORS LIGNE)
+        </div>
+
+        <!-- LOGO FILIGRANE DYNAMIQUE -->
+        <img id="channel-logo" class="tv-logo-overlay" src="" alt="Logo TV">
+
+        <!-- LECTEUR DE PLAYLIST PROGRAMMÉE -->
+        <div id="playlist-player-wrapper" style="width:100%; height:100%;">
+            <iframe id="playlist-player" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+
+        <!-- MODE DIRECT TV-CAM HD + STUDIO VIRTUEL -->
+        <div id="webcam-container">
+            <video id="webcam-video" autoplay playsinline muted></video>
+        </div>
+
+        <!-- BANDEAU DÉFILANT AUTOMATIQUE (VERSETS & MESSAGES) -->
+        <div class="ticker-container">
+            <div class="ticker-text" id="ticker-content">
+                🙏 Bienvenue sur MEPLA TV • "Car Dieu a tant aimé le monde qu'il a donné son Fils unique..." (Jean 3:16)
+            </div>
+        </div>
+    </div>
+
+    <!-- PANNEAU DE PUBLICATION DE VERSETS EN DIRECT -->
+    <div class="control-panels-wrapper">
+        <div class="panel-box" id="verse-panel">
+            <h3>📖 Publication de Verset / Bandeau en Direct :</h3>
+            <div class="verse-form">
+                <select id="preset-verses" onchange="remplirVersetPreset(this)">
+                    <option value="">-- Choisir un verset biblique --</option>
+                    <option value="Car Dieu a tant aimé le monde qu'il a donné son Fils unique... (Jean 3:16)">Jean 3:16 - L'Amour de Dieu</option>
+                    <option value="L'Éternel est mon berger : je ne manquerai de rien. (Psaume 23:1)">Psaume 23:1 - La Confiance</option>
+                    <option value="Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta sagesse. (Proverbes 3:5)">Proverbes 3:5 - Sagesse</option>
+                    <option value="Je puis tout par Christ qui me fortifie. (Philippiens 4:13)">Philippiens 4:13 - Force</option>
+                </select>
+                <input type="text" id="custom-verse-input" placeholder="Ou tapez votre message / verset personnalisé...">
+                <button class="btn-verse" onclick="publierVerset()">Publier sur le Bandeau TV</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="profil-television.html" class="back-link">← Retourner à l'Administration du Profil</a>
+
+    <!-- SCRIPT DE GESTION EN TEMPS RÉEL -->
+    <script type="module">
+        import { database } from "./js/firebase-config.js";
+        import { ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const tvKey = localStorage.getItem("active_tv_key");
+        if (!tvKey) {
+            window.location.href = "login.html";
+        }
+
+        const tvRef = ref(database, 'television_profils/' + tvKey);
+        let mediaStream = null;
+        let previewStream = null;
+        let selectedFondUrl = "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200";
+        let timerInterval = null;
+        let secondsElapsed = 0;
+
+        // Ouvrir / Fermer le menu de configuration escamotable
+        window.toggleSetupOverlay = function() {
+            const overlay = document.getElementById('setup-overlay');
+            if (overlay.style.display === 'none') {
+                overlay.style.display = 'flex';
+                initPreviewCam();
+            } else {
+                overlay.style.display = 'none';
+                if(previewStream) {
+                    previewStream.getTracks().forEach(track => track.stop());
+                }
+            }
+        };
+
+        // Démarrer la caméra pour le mode test (Moi seul)
+        async function initPreviewCam() {
+            try {
+                if(!previewStream) {
+                    previewStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                }
+                document.getElementById('preview-video').srcObject = previewStream;
+                document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+            } catch (e) {
+                console.log("Caméra de prévisualisation : " + e.message);
+            }
+        }
+        initPreviewCam();
+
+        // Sélection visuelle du fond
+        window.selectionnerFond = function(element) {
+            document.querySelectorAll('.setup-thumb').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedFondUrl = element.getAttribute('data-url');
+            document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+            document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+        };
+
+        // Audio Ambiance Galerie
+        const audioElement = document.getElementById('bg-audio');
+        window.chargerSonGalerie = function(input) {
+            if (input.files && input.files[0]) {
+                audioElement.src = URL.createObjectURL(input.files[0]);
+                audioElement.load();
+                alert("Son chargé avec succès !");
+            }
+        };
+        window.jouerSon = function() { audioElement.play(); };
+        window.pauseSon = function() { audioElement.pause(); };
+        window.toggleLoop = function() {
+            audioElement.loop = !audioElement.loop;
+            const btn = document.getElementById('loop-btn');
+            btn.style.background = audioElement.loop ? "#16a34a" : "#475569";
+            btn.innerText = audioElement.loop ? "🔁 Répéter : ON" : "🔁 Répéter : OFF";
+        };
+
+        // Lancer le direct public
+        window.lancerDirectPublic = async function() {
+            if(previewStream) {
+                previewStream.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('setup-overlay').style.display = 'none';
+            await basculerDirectStudio(true);
+        };
+
+        // Chronomètre
+        function startTimer() {
+            secondsElapsed = 0;
+            const timerEl = document.getElementById('live-chronometer');
+            timerEl.style.display = "flex";
+            if(timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                const hrs = String(Math.floor(secondsElapsed / 3600)).padStart(2, '0');
+                const mins = String(Math.floor((secondsElapsed % 3600) / 60)).padStart(2, '0');
+                const secs = String(secondsElapsed % 60).padStart(2, '0');
+                timerEl.innerText = `${hrs}:${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if(timerInterval) clearInterval(timerInterval);
+            document.getElementById('live-chronometer').style.display = "none";
+        }
+
+        // 1. ÉCOUTER LA BASE DE DONNÉES EN TEMPS RÉEL
+        onValue(tvRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const offlineScreen = document.getElementById('offline-screen');
+                const playlistWrapper = document.getElementById('playlist-player-wrapper');
+                const player = document.getElementById('playlist-player');
+                const statusBadge = document.getElementById('live-status-badge');
+                const logoImg = document.getElementById('channel-logo');
+                const setupOverlay = document.getElementById('setup-overlay');
+
+                // Logo filigrane
+                const logoUrlInput = document.getElementById('setup-logo-url').value.trim();
+                const logoPosSelect = document.getElementById('setup-logo-pos').value;
+                const activeLogoUrl = logoUrlInput || (data.logoOverlay ? data.logoOverlay.url : "");
+
+                if (activeLogoUrl) {
+                    logoImg.src = activeLogoUrl;
+                    logoImg.className = `tv-logo-overlay pos-${logoPosSelect}`;
+                    logoImg.style.display = "block";
+                } else {
+                    logoImg.style.display = "none";
+                }
+
+                // Bandeau défilant
+                if (data.currentTicker) {
+                    document.getElementById('ticker-content').innerText = data.currentTicker;
+                }
+
+                // Chaîne coupée
+                if (data.isLive === false) {
+                    offlineScreen.style.display = "flex";
+                    playlistWrapper.style.display = "none";
+                    statusBadge.innerText = "🔴 Statut : CHAÎNE COUPÉE";
+                    statusBadge.style.color = "#ef4444";
+                    arreterCaméraTV();
+                    stopTimer();
+                    return;
+                } else {
+                    offlineScreen.style.display = "none";
+                }
+
+                // Mode Direct TV-Cam HD actif
+                if (data.isStudioLive === true) {
+                    statusBadge.innerText = "🔴 Statut : EN DIRECT TV-CAM HD";
+                    statusBadge.style.color = "#4ade80";
+                    playlistWrapper.style.display = "none";
+                    document.getElementById('webcam-container').style.display = "flex";
+                    setupOverlay.style.display = 'none';
+                    démarrerCaméraTVHD();
+                    startTimer();
+                    return;
+                } else {
+                    document.getElementById('webcam-container').style.display = "none";
+                    arreterCaméraTV();
+                    stopTimer();
+                }
+
+                // Mode Diffusion Continue 24h/24
+                statusBadge.innerText = "🔴 Statut : DIFFUSION CONTINUE 24H/24";
+                statusBadge.style.color = "#fde047";
+                playlistWrapper.style.display = "block";
+
+                if (data.playlist) {
+                    const keys = Object.keys(data.playlist);
+                    if (keys.length > 0) {
+                        const premiereVideo = data.playlist[keys[0]];
+                        if (premiereVideo.youtubeId) {
+                            player.src = `https://www.youtube.com/embed/${premiereVideo.youtubeId}?autoplay=1&mute=0&loop=1`;
+                        } else if (premiereVideo.url) {
+                            playlistWrapper.innerHTML = `<video src="${premiereVideo.url}" autoplay controls style="width:100%;height:100%;"></video>`;
+                        }
+                    } else {
+                        player.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+                    }
+                }
+            }
+        });
+
+        // 2. BASCULER ENTRE DIRECT ET PLAYLIST
+        window.basculerDirectStudio = async function(activer) {
+            try {
+                await update(tvRef, {
+                    isStudioLive: activer,
+                    isLive: true,
+                    lastUpdated: new Date().toISOString()
+                });
+            } catch (error) {
+                alert("Erreur de régie : " + error.message);
+            }
+        };
+
+        // 3. CAMÉRA HD TV-CAM
+        async function démarrerCaméraTVHD() {
+            if (!mediaStream) {
+                try {
+                    const constraints = {
+                        video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } },
+                        audio: { echoCancellation: true, noiseSuppression: true }
+                    };
+                    mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    document.getElementById('webcam-video').srcObject = mediaStream;
+                } catch (err) {
+                    try {
+                        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                        document.getElementById('webcam-video').srcObject = mediaStream;
+                    } catch (e) {
+                        alert("Impossible d'accéder à la caméra : " + e.message);
+                    }
+                }
+            }
+        }
+
+        function arreterCaméraTV() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+        }
+
+        document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+
+        // 4. VERSETS
+        window.remplirVersetPreset = function(select) {
+            if(select.value) { document.getElementById('custom-verse-input').value = select.value; }
+        };
+
+        window.publierVerset = async function() {
+            const message = document.getElementById('custom-verse-input').value.trim();
+            if(!message) { alert("Veuillez sélectionner ou taper un message/verset."); return; }
+            try {
+                await update(tvRef, { currentTicker: message, tickerUpdatedAt: new Date().toISOString() });
+                alert("Verset publié avec succès sur le bandeau en direct !");
+            } catch(error) {
+                alert("Erreur de publication : " + error.message);
+            }
+        };
+    </script>
+</body>
+</html>
