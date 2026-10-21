@@ -69,9 +69,15 @@
             color: #d1d5db;
             margin-bottom: 5px;
         }
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
         .form-group input {
             width: 100%;
             padding: 10px;
+            padding-right: 40px;
             background: #0b0f19;
             border: 1px solid #374151;
             color: #fff;
@@ -81,6 +87,18 @@
         }
         .form-group input:focus {
             border-color: #38bdf8;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #9ca3af;
+        }
+        .toggle-password:hover {
+            color: #38bdf8;
         }
 
         .auth-btn {
@@ -140,7 +158,10 @@
             </div>
             <div class="form-group">
                 <label>Mot de passe</label>
-                <input type="password" id="login-pass" placeholder="Votre mot de passe">
+                <div class="password-wrapper">
+                    <input type="password" id="login-pass" placeholder="Votre mot de passe">
+                    <button type="button" class="toggle-password" onclick="togglePassword('login-pass', this)">👁️</button>
+                </div>
             </div>
             <button class="auth-btn" onclick="handleLogin()">Se Connecter</button>
             <div id="login-msg" class="message"></div>
@@ -153,16 +174,26 @@
                 <input type="text" id="reg-nom" placeholder="Ex: MEPLA TV Officiel">
             </div>
             <div class="form-group">
+                <label>Adresse Email</label>
+                <input type="email" id="reg-email" placeholder="votre@email.com">
+            </div>
+            <div class="form-group">
                 <label>Description / Type de contenu</label>
                 <input type="text" id="reg-desc" placeholder="Ex: Musique chrétienne, Journal & Émissions">
             </div>
             <div class="form-group">
-                <label>Lien de votre Photo de Profil (URL)</label>
-                <input type="text" id="reg-photo" placeholder="https://exemple.com/photo.jpg">
+                <label>Créer un Mot de passe</label>
+                <div class="password-wrapper">
+                    <input type="password" id="reg-pass" placeholder="6 caractères minimum">
+                    <button type="button" class="toggle-password" onclick="togglePassword('reg-pass', this)">👁️</button>
+                </div>
             </div>
             <div class="form-group">
-                <label>Créer un Mot de passe</label>
-                <input type="password" id="reg-pass" placeholder="6 caractères minimum">
+                <label>Confirmer le Mot de passe</label>
+                <div class="password-wrapper">
+                    <input type="password" id="reg-pass-confirm" placeholder="Confirmez votre mot de passe">
+                    <button type="button" class="toggle-password" onclick="togglePassword('reg-pass-confirm', this)">👁️</button>
+                </div>
             </div>
             <button class="auth-btn" onclick="handleRegister()">S'inscrire et Publier</button>
             <div id="reg-msg" class="message"></div>
@@ -187,19 +218,35 @@
             child 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // VOS IDENTIFIANTS FIREBASE
+        // VOS IDENTIFIANTS FIREBASE OFFICIELS
         const firebaseConfig = {
-            apiKey: "VOTRE_API_KEY",
-            authDomain: "votre-projet.firebaseapp.com",
-            databaseURL: "https://votre-projet-default-rtdb.firebaseio.com",
-            projectId: "votre-projet",
+            apiKey: "AIzaSyDE4IZ6OdS4DnIJk61oopuILZc1Fx7wA6g",
+            authDomain: "mepla-tv.firebaseapp.com",
+            databaseURL: "https://mepla-tv-default-rtdb.firebaseio.com",
+            projectId: "mepla-tv",
+            storageBucket: "mepla-tv.firebasestorage.app",
+            messagingSenderId: "1019186580961",
+            appId: "1:1019186580961:web:84af8dc5d45d90376996a0",
+            measurementId: "G-QPJ7ZF8F93"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // Bascule entre les onglets
+        // Fonction pour afficher/masquer le mot de passe via l'icône œil
+        window.togglePassword = function(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.textContent = "🙈";
+            } else {
+                input.type = "password";
+                btn.textContent = "👁️";
+            }
+        };
+
+        // Bascule entre les onglets (INTacte et non modifiée)
         window.switchTab = function(tab) {
             document.getElementById('section-login').classList.remove('active');
             document.getElementById('section-register').classList.remove('active');
@@ -218,14 +265,21 @@
         // INSCRIPTION DANS FIREBASE AUTH + REALTIME DATABASE
         window.handleRegister = async function() {
             const nom = document.getElementById('reg-nom').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
             const description = document.getElementById('reg-desc').value.trim();
-            const photo = document.getElementById('reg-photo').value.trim();
             const pass = document.getElementById('reg-pass').value.trim();
+            const passConfirm = document.getElementById('reg-pass-confirm').value.trim();
             const msgBox = document.getElementById('reg-msg');
 
-            if(!nom || !pass) {
+            if(!nom || !email || !pass || !passConfirm) {
                 msgBox.style.color = "#ef4444";
-                msgBox.innerText = "Veuillez remplir au moins le nom et le mot de passe.";
+                msgBox.innerText = "Veuillez remplir tous les champs obligatoires (Nom, Email, Mots de passe).";
+                return;
+            }
+
+            if(pass !== passConfirm) {
+                msgBox.style.color = "#ef4444";
+                msgBox.innerText = "Les mots de passe ne correspondent pas.";
                 return;
             }
 
@@ -237,24 +291,22 @@
 
             // Clé unique pour la Realtime Database
             const cleanKey = nom.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            // Email technique généré pour Firebase Authentication sous MEPLA TV
-            const generatedEmail = `${cleanKey}@meplatv.com`;
 
             try {
                 msgBox.style.color = "#38bdf8";
                 msgBox.innerText = "Création du compte en cours...";
 
-                // 1. Création dans Firebase Authentication User
-                const userCredential = await createUserWithEmailAndPassword(auth, generatedEmail, pass);
+                // 1. Création dans Firebase Authentication User avec le vrai email saisi
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
 
-                // 2. Enregistrement des détails dans Realtime Database under 'television_profils'
+                // 2. Enregistrement des détails dans Realtime Database sous 'television_profils'
                 await set(ref(db, 'television_profils/' + cleanKey), {
                     uid: user.uid,
                     nom: nom,
                     description: description || 'Chaîne MEPLA TV',
-                    photo: photo || 'https://via.placeholder.com/70',
-                    email: generatedEmail,
+                    photo: 'https://via.placeholder.com/70',
+                    email: email,
                     createdAt: new Date().toISOString()
                 });
 
@@ -272,7 +324,9 @@
                 console.error("Erreur Inscription Firebase:", error);
                 msgBox.style.color = "#ef4444";
                 if(error.code === 'auth/email-already-in-use') {
-                    msgBox.innerText = "Ce nom de télévision est déjà utilisé.";
+                    msgBox.innerText = "Cet email est déjà utilisé.";
+                } else if(error.code === 'auth/invalid-email') {
+                    msgBox.innerText = "Format d'email invalide.";
                 } else {
                     msgBox.innerText = "Erreur : " + error.message;
                 }
@@ -292,40 +346,42 @@
             }
 
             const cleanKey = nomInput.toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const generatedEmail = `${cleanKey}@meplatv.com`;
 
             try {
                 msgBox.style.color = "#38bdf8";
                 msgBox.innerText = "Connexion en cours...";
 
-                // 1. Connexion via Firebase Authentication User
-                const userCredential = await signInWithEmailAndPassword(auth, generatedEmail, passInput);
-                const user = userCredential.user;
-
-                // 2. Vérification dans Realtime Database
+                // 1. Récupérer d'abord l'email associé à ce nom de chaîne dans la Realtime Database
                 const dbRef = ref(db);
                 const snapshot = await get(child(dbRef, `television_profils/${cleanKey}`));
 
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    msgBox.style.color = "#10b981";
-                    msgBox.innerText = "Connexion réussie ! Bienvenue sur MEPLA TV, " + data.nom;
-                    
-                    localStorage.setItem("active_tv_user", user.uid);
-                    localStorage.setItem("active_tv_nom", data.nom);
-
-                    setTimeout(() => {
-                        window.location.href = "index.html";
-                    }, 1500);
-                } else {
+                if (!snapshot.exists()) {
                     msgBox.style.color = "#ef4444";
-                    msgBox.innerText = "Profil introuvable dans la base de données.";
+                    msgBox.innerText = "Nom de chaîne introuvable dans la base de données.";
+                    return;
                 }
+
+                const data = snapshot.val();
+                const userEmail = data.email;
+
+                // 2. Connexion via Firebase Authentication User avec l'email récupéré
+                const userCredential = await signInWithEmailAndPassword(auth, userEmail, passInput);
+                const user = userCredential.user;
+
+                msgBox.style.color = "#10b981";
+                msgBox.innerText = "Connexion réussie ! Bienvenue sur MEPLA TV, " + data.nom;
+                
+                localStorage.setItem("active_tv_user", user.uid);
+                localStorage.setItem("active_tv_nom", data.nom);
+
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 1500);
 
             } catch (error) {
                 console.error("Erreur Connexion Firebase:", error);
                 msgBox.style.color = "#ef4444";
-                msgBox.innerText = "Nom de télévision ou mot de passe incorrect.";
+                msgBox.innerText = "Nom de chaîne ou mot de passe incorrect.";
             }
         };
     </script>
