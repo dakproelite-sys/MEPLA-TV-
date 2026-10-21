@@ -413,8 +413,79 @@
 
 </div>
 
-<!-- FIREBASE : CONFIGURATION PARTAGÉE -->
+<!-- ============================================ -->
+<!-- SCRIPT UI (fonctionne même si Firebase échoue) -->
+<!-- ============================================ -->
+<script>
+    (function () {
+        const loginSection   = document.getElementById("section-login");
+        const registerSection = document.getElementById("section-register");
+        const loginTab        = document.getElementById("btn-login");
+        const registerTab     = document.getElementById("btn-register");
+        const loginMessage    = document.getElementById("login-msg");
+        const registerMessage = document.getElementById("reg-msg");
 
+        function switchTab(tab) {
+            const showLogin = tab === "login";
+
+            // Onglets
+            loginTab.classList.toggle("active", showLogin);
+            registerTab.classList.toggle("active", !showLogin);
+
+            // Accessibilité
+            loginTab.setAttribute("aria-selected", String(showLogin));
+            registerTab.setAttribute("aria-selected", String(!showLogin));
+
+            // Affichage des formulaires
+            loginSection.classList.toggle("active", showLogin);
+            registerSection.classList.toggle("active", !showLogin);
+
+            // Attribut hidden (accessibilité + CSS)
+            loginSection.hidden = !showLogin;
+            registerSection.hidden = showLogin;
+
+            // Nettoyage des messages
+            if (loginMessage)   loginMessage.textContent = "";
+            if (registerMessage) registerMessage.textContent = "";
+        }
+
+        // Événements des onglets
+        loginTab.addEventListener("click", function () {
+            switchTab("login");
+        });
+
+        registerTab.addEventListener("click", function () {
+            switchTab("register");
+        });
+
+        // Compatible avec d’éventuels appels externes
+        window.switchTab = switchTab;
+
+        // État initial
+        switchTab("login");
+
+        // Afficher / masquer les mots de passe
+        document.querySelectorAll("[data-password-target]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                const fieldId = button.dataset.passwordTarget;
+                const input = document.getElementById(fieldId);
+                if (!input) return;
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    button.textContent = "🙈";
+                } else {
+                    input.type = "password";
+                    button.textContent = "👁️";
+                }
+            });
+        });
+    })();
+</script>
+
+<!-- ============================================ -->
+<!-- FIREBASE : CONFIGURATION PARTAGÉE (inchangé) -->
+<!-- ============================================ -->
 <script type="module">
 
     import {
@@ -439,89 +510,12 @@
     // ÉLÉMENTS HTML
     // --------------------------------------------------
 
-    const loginSection = document.getElementById("section-login");
-    const registerSection = document.getElementById("section-register");
-
-    const loginTab = document.getElementById("btn-login");
-    const registerTab = document.getElementById("btn-register");
-
-    const loginForm = document.getElementById("login-form");
-    const registerForm = document.getElementById("register-form");
-
-    const loginButton = document.getElementById("login-submit");
+    const loginForm      = document.getElementById("login-form");
+    const registerForm   = document.getElementById("register-form");
+    const loginButton    = document.getElementById("login-submit");
     const registerButton = document.getElementById("register-submit");
-
-    const loginMessage = document.getElementById("login-msg");
+    const loginMessage   = document.getElementById("login-msg");
     const registerMessage = document.getElementById("reg-msg");
-
-    // --------------------------------------------------
-    // BASCULEMENT CONNEXION / INSCRIPTION
-    // --------------------------------------------------
-
-    function switchTab(tab) {
-        const showLogin = tab === "login";
-
-        // Mettre à jour les classes des onglets.
-        loginTab.classList.toggle("active", showLogin);
-        registerTab.classList.toggle("active", !showLogin);
-
-        // Mettre à jour l'accessibilité.
-        loginTab.setAttribute("aria-selected", String(showLogin));
-        registerTab.setAttribute("aria-selected", String(!showLogin));
-
-        // Afficher et masquer les formulaires.
-        loginSection.classList.toggle("active", showLogin);
-        registerSection.classList.toggle("active", !showLogin);
-
-        // Synchroniser l'attribut hidden avec le CSS.
-        loginSection.hidden = !showLogin;
-        registerSection.hidden = showLogin;
-
-        // Effacer les anciens messages.
-        loginMessage.textContent = "";
-        registerMessage.textContent = "";
-    }
-
-    // Les événements sont enregistrés directement sur les boutons.
-    loginTab.addEventListener("click", function() {
-        switchTab("login");
-    });
-
-    registerTab.addEventListener("click", function() {
-        switchTab("register");
-    });
-
-    // Conserver aussi la compatibilité avec switchTab('login')
-    // et switchTab('register') si d'autres éléments l'utilisent.
-    window.switchTab = switchTab;
-
-    // Afficher Connexion au chargement de la page.
-    switchTab("login");
-
-    // --------------------------------------------------
-    // AFFICHER / MASQUER LES MOTS DE PASSE
-    // --------------------------------------------------
-
-    document.querySelectorAll("[data-password-target]").forEach(function(button) {
-
-        button.addEventListener("click", function() {
-            const fieldId = button.dataset.passwordTarget;
-            const input = document.getElementById(fieldId);
-
-            if (!input) {
-                return;
-            }
-
-            if (input.type === "password") {
-                input.type = "text";
-                button.textContent = "🙈";
-            } else {
-                input.type = "password";
-                button.textContent = "👁️";
-            }
-        });
-
-    });
 
     // --------------------------------------------------
     // AFFICHAGE DES MESSAGES
