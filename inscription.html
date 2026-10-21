@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mepla TV - Inscription</title>
+    <!-- Font Awesome pour l'icône de l'œil -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            text-align: center;
+            border-top: 5px solid #0056b3;
+        }
+        .logo {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            background: #ffffff;
+            padding: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .title {
+            color: #111;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #d9534f; /* Rouge accentué */
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 40px 12px 14px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #0056b3; /* Bleu */
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 36px;
+            cursor: pointer;
+            color: #666;
+            font-size: 16px;
+        }
+        .toggle-password:hover {
+            color: #0056b3;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #0056b3; /* Bleu */
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background-color: #003d80;
+        }
+        .footer-link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #222;
+        }
+        .footer-link a {
+            color: #d9534f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <!-- Logo de la chaîne -->
+        <img src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Logo Mepla TV" class="logo">
+        
+        <h1 class="title">Bienvenue sur votre plateforme TV</h1>
+        <p class="subtitle">Télévision Internationale des Missionnaires</p>
+
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="channelName">Nom de votre chaîne TV</label>
+                <input type="text" id="channelName" placeholder="Ex: Missionnaires TV" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Adresse Email</label>
+                <input type="email" id="email" placeholder="votre.email@exemple.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+                <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+                <input type="password" id="confirmPassword" placeholder="••••••••" required>
+                <i class="fa-solid fa-eye toggle-password" id="toggleConfirmPassword"></i>
+            </div>
+
+            <button type="submit" class="btn-submit">Créer ma chaîne</button>
+        </form>
+
+        <div class="footer-link">
+            Vous avez déjà un compte ? <a href="connexion.html">Se connecter</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, database } from "./firebase.js";
+        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Gestion de la visibilité des mots de passe
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+        togglePassword.addEventListener("click", () => {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            togglePassword.classList.toggle("fa-eye");
+            togglePassword.classList.toggle("fa-eye-slash");
+        });
+
+        const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
+        toggleConfirmPassword.addEventListener("click", () => {
+            const type = confirmPasswordInput.getAttribute("type") === "password" ? "text" : "password";
+            confirmPasswordInput.setAttribute("type", type);
+            toggleConfirmPassword.classList.toggle("fa-eye");
+            toggleConfirmPassword.classList.toggle("fa-eye-slash");
+        });
+
+        // Soumission du formulaire d'inscription
+        document.getElementById("signupForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const channelName = document.getElementById("channelName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (password !== confirmPassword) {
+                alert("Les mots de passe ne correspondent pas.");
+                return;
+            }
+
+            try {
+                // 1. Création du compte dans Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // 2. Génération d'un numéro de chaîne unique (ex: 7894)
+                const channelNumber = Math.floor(1000 + Math.random() * 9000);
+
+                // 3. Enregistrement des données dans Realtime Database sous `users/{uid}`
+                await set(ref(database, 'users/' + user.uid), {
+                    uid: user.uid,
+                    channelName: channelName,
+                    email: email,
+                    channelNumber: channelNumber,
+                    createdAt: new Date().toISOString()
+                });
+
+                // 4. Redirection vers profil télévision
+                window.location.href = "profil.html";
+
+            } catch (error) {
+                console.error("Erreur d'inscription:", error);
+                alert("Erreur d'inscription : " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

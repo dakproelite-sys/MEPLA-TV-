@@ -29,6 +29,8 @@
             background: #ffffff;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(161, 98, 7, 0.2), 0 4px 12px rgba(0, 0, 0, 0.05);
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .brand { 
@@ -40,21 +42,15 @@
             text-decoration: none;
         }
 
-        /* Logo gravé permanent */
+        /* Logo fixe et propre (sans effet caché) */
         .brand-logo-container {
-            position: relative;
             width: 65px;
             height: 65px;
             border-radius: 50%;
             padding: 3px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+            background: #1e3a8a;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
             flex-shrink: 0;
-            transition: transform 0.2s ease;
-        }
-
-        .brand-logo-container:active {
-            transform: scale(0.92);
         }
 
         .brand-logo {
@@ -79,24 +75,25 @@
             font-weight: 700;
         }
 
-        /* Zone Bouton Compte / Connexion */
+        /* Zone Boutons Compte / Auth en haut à droite */
         .user-nav {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
             background: #1e3a8a;
             color: #ffffff;
             border: none;
-            padding: 9px 16px;
+            padding: 9px 15px;
             border-radius: 10px;
             font-size: 13px;
             font-weight: 800;
             cursor: pointer;
             text-decoration: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
@@ -106,6 +103,24 @@
         .nav-btn:hover {
             background: #2563eb;
             transform: translateY(-2px);
+        }
+
+        .nav-btn-secondary {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+        }
+
+        .nav-btn-secondary:hover {
+            background: #b91c1c;
+        }
+
+        .nav-btn-success {
+            background: #16a34a;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        }
+
+        .nav-btn-success:hover {
+            background: #15803d;
         }
 
         /* Barre de recherche */
@@ -276,14 +291,15 @@
         @media (max-width: 600px) {
             header { flex-direction: column; gap: 12px; text-align: center; }
             .search-container input { max-width: 100%; }
+            .user-nav { justify-content: center; width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- EN-TÊTE DE LUXE AVEC DÉTECTION ET MENU CONNEXION -->
+    <!-- EN-TÊTE ÉPURÉ SANS EFFET CACHÉ -->
     <header>
-        <div class="brand" title="Chaîne Officielle MEPLA TV">
+        <a href="index.html" class="brand" title="Accueil MEPLA TV">
             <div class="brand-logo-container">
                 <img src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Logo MEPLA TV" class="brand-logo">
             </div>
@@ -291,11 +307,11 @@
                 <h1>MEPLA TV</h1>
                 <p>Diffusion 24h/24 & Réseau des Chaînes Missionnaires</p>
             </div>
-        </div>
+        </a>
         
-        <!-- ZONE COMPTE / CONNEXION DYNAMIQUE -->
+        <!-- ZONE COMPTE / AUTHENTIFICATION (Haut de page) -->
         <div class="user-nav" id="user-nav-box">
-            <a href="login.html" class="nav-btn">👤 Connexion Studio</a>
+            <!-- Rempli dynamiquement en JS -->
         </div>
     </header>
 
@@ -328,36 +344,42 @@
 
     <!-- SCRIPTS FIREBASE & GESTION DU COMPTE -->
     <script type="module">
-        import { database } from "./firebase-config.js";
+        import { auth, database } from "./firebase.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // GESTION DYNAMIQUE DE LA NAVIGATION (Si utilisateur connecté ou non)
         const userNavBox = document.getElementById('user-nav-box');
-        const activeNom = localStorage.getItem("active_tv_nom");
-        
-        if (activeNom) {
-            userNavBox.innerHTML = `
-                <a href="profil-television.html" class="nav-btn" style="background: #16a34a;">📺 Mon Profil TV</a>
-                <button onclick="logoutTV()" class="nav-btn" style="background: #dc2626;">Quitter</button>
-            `;
-        } else {
-            userNavBox.innerHTML = `
-                <a href="login.html" class="nav-btn">👤 Connexion Studio</a>
-            `;
-        }
 
-        window.logoutTV = function() {
-            localStorage.removeItem("active_tv_user");
-            localStorage.removeItem("active_tv_nom");
-            localStorage.removeItem("active_tv_key");
-            window.location.reload();
-        };
+        // GESTION DYNAMIQUE DES BOUTONS DE CONNEXION / PROFIL
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Utilisateur connecté
+                userNavBox.innerHTML = `
+                    <a href="profil-television.html" class="nav-btn nav-btn-success">📺 Mon Profil TV</a>
+                    <button id="logoutBtn" class="nav-btn nav-btn-secondary">Déconnexion</button>
+                `;
 
-        // CHARGEMENT SILENCIEUX DES CHAÎNES DEPUIS FIREBASE
+                document.getElementById('logoutBtn').addEventListener('click', async () => {
+                    await signOut(auth);
+                    localStorage.removeItem("active_tv_user");
+                    localStorage.removeItem("active_tv_nom");
+                    localStorage.removeItem("active_tv_key");
+                    window.location.reload();
+                });
+            } else {
+                // Utilisateur non connecté
+                userNavBox.innerHTML = `
+                    <a href="connexion.html" class="nav-btn">🔑 Connexion</a>
+                    <a href="inscription.html" class="nav-btn nav-btn-success">✨ Créer un compte</a>
+                `;
+            }
+        });
+
+        // CHARGEMENT DES CHAÎNES DEPUIS FIREBASE
         async function loadTVProfiles() {
             const gridContainer = document.getElementById('firebase-tv-grid');
             try {
-                const dbRef = ref(database, 'television_profils');
+                const dbRef = ref(database, 'users');
                 const snapshot = await get(dbRef);
                 
                 if (snapshot.exists()) {
@@ -367,30 +389,33 @@
                     
                     Object.keys(data).forEach(key => {
                         const tv = data[key];
-                        const numFormatted = String(index).padStart(2, '0');
+                        const channelName = tv.channelName || tv.nom || 'Chaîne Missionnaire';
+                        const numFormatted = tv.channelNumber ? String(tv.channelNumber) : String(index).padStart(2, '0');
 
                         const card = document.createElement('div');
                         card.className = 'tv-card';
-                        card.setAttribute('data-search', `${numFormatted} ${tv.nom.toLowerCase()}`);
+                        card.setAttribute('data-search', `${numFormatted} ${channelName.toLowerCase()}`);
                         card.innerHTML = `
                             <span class="channel-number">N°${numFormatted}</span>
-                            <img src="${tv.photo || 'https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg'}" alt="${tv.nom}">
-                            <h3>${tv.nom}</h3>
+                            <img src="${tv.photo || 'https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg'}" alt="${channelName}">
+                            <h3>${channelName}</h3>
                             <p>${tv.description || 'Chaîne Télévision Missionnaire'}</p>
                             <span class="status-badge">En Direct</span>
                         `;
 
                         card.addEventListener('click', () => {
-                            document.getElementById('current-tv-display').innerText = `Diffusion en cours : ${tv.nom} (Canal N°${numFormatted})`;
-                            alert(`Vous suivez à présent la chaîne : ${tv.nom} (Canal N°${numFormatted})`);
+                            document.getElementById('current-tv-display').innerText = `Diffusion en cours : ${channelName} (Canal N°${numFormatted})`;
+                            alert(`Vous suivez à présent la chaîne : ${channelName} (Canal N°${numFormatted})`);
                         });
 
                         gridContainer.appendChild(card);
                         index++;
                     });
+                } else {
+                    gridContainer.innerHTML = "<p style='color: #1e3a8a; font-weight: bold;'>Aucune chaîne enregistrée pour le moment.</p>";
                 }
             } catch (error) {
-                console.error("Erreur de chargement silencieuse :", error);
+                console.error("Erreur de chargement des profils :", error);
             }
         }
 

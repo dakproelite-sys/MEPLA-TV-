@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mepla TV - Connexion</title>
+    <!-- Font Awesome pour l'icône de l'œil -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            padding: 30px;
+            text-align: center;
+            border-top: 5px solid #0056b3;
+        }
+        .logo {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            background: #ffffff;
+            padding: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .title {
+            color: #111;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #d9534f;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 40px 12px 14px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #0056b3;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 36px;
+            cursor: pointer;
+            color: #666;
+            font-size: 16px;
+        }
+        .toggle-password:hover {
+            color: #0056b3;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #0056b3;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background-color: #003d80;
+        }
+        .footer-link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #222;
+        }
+        .footer-link a {
+            color: #d9534f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <!-- Logo de la chaîne -->
+        <img src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Logo Mepla TV" class="logo">
+        
+        <h1 class="title">Connexion à votre espace</h1>
+        <p class="subtitle">Télévision Internationale des Missionnaires</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Adresse Email</label>
+                <input type="email" id="email" placeholder="votre.email@exemple.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+                <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+            </div>
+
+            <button type="submit" class="btn-submit">Se connecter</button>
+        </form>
+
+        <div class="footer-link">
+            Pas encore de compte ? <a href="inscription.html">Créer une chaîne</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from "./firebase.js";
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Afficher / Masquer le mot de passe
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+        togglePassword.addEventListener("click", () => {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            togglePassword.classList.toggle("fa-eye");
+            togglePassword.classList.toggle("fa-eye-slash");
+        });
+
+        // Soumission du formulaire de connexion
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const password = passwordInput.value;
+
+            try {
+                // Authentification Firebase
+                await signInWithEmailAndPassword(auth, email, password);
+                
+                // Redirection directe vers la page profil télévision
+                window.location.href = "profil.html";
+
+            } catch (error) {
+                console.error("Erreur de connexion:", error);
+                alert("Identifiants incorrects ou compte inexistant.");
+            }
+        });
+    </script>
+</body>
+</html>
