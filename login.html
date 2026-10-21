@@ -8,8 +8,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             font-family: 'Segoe UI', Arial, sans-serif; 
-            background: linear-gradient(135deg, #fef08a 0%, #fde047 50%, #facc15 100%); 
-            color: #111827; 
+            background-color: #0b0f19; 
+            color: #ffffff; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,62 +19,35 @@
 
         .auth-container {
             width: 100%;
-            max-width: 420px;
-            background: #ffffff;
-            border: 2px solid #eab308;
-            border-radius: 16px;
+            max-width: 400px;
+            background: #161e2e;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 15px 35px rgba(161, 98, 7, 0.2), 0 5px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
 
         .auth-header {
             text-align: center;
             margin-bottom: 20px;
         }
-
-        .brand-logo-container {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 10px auto;
-            border-radius: 50%;
-            padding: 3px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
-        }
-
-        .brand-logo {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ffffff;
-        }
-
-        .auth-header h1 { 
-            font-size: 22px; 
-            color: #1e3a8a; 
-            margin-bottom: 5px; 
-            font-weight: 800; 
-            letter-spacing: 0.5px;
-        }
-        .auth-header p { font-size: 12px; color: #4b5563; font-weight: 600; }
+        .auth-header h1 { font-size: 20px; color: #38bdf8; margin-bottom: 5px; font-weight: bold; }
+        .auth-header p { font-size: 12px; color: #9ca3af; }
 
         /* Onglets bascule */
         .tabs {
             display: flex;
-            background: #f3f4f6;
+            background: #0b0f19;
             border-radius: 8px;
             padding: 4px;
             margin-bottom: 20px;
-            border: 1px solid #e5e7eb;
         }
         .tab-btn {
             flex: 1;
             background: none;
             border: none;
-            color: #4b5563;
-            padding: 9px;
+            color: #9ca3af;
+            padding: 8px;
             font-size: 13px;
             font-weight: bold;
             cursor: pointer;
@@ -82,72 +55,48 @@
             transition: 0.3s;
         }
         .tab-btn.active {
-            background: #2563eb; 
-            color: #ffffff;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+            background: #2563eb;
+            color: #fff;
         }
 
         /* Formulaires */
         .form-group {
-            margin-bottom: 14px;
-            position: relative;
+            margin-bottom: 15px;
         }
         .form-group label {
             display: block;
             font-size: 12px;
-            color: #1f2937;
+            color: #d1d5db;
             margin-bottom: 5px;
-            font-weight: 700;
-        }
-        .input-container {
-            position: relative;
-            display: flex;
-            align-items: center;
         }
         .form-group input {
             width: 100%;
-            padding: 10px 40px 10px 11px;
-            background: #f9fafb;
-            border: 1px solid #d1d5db;
-            color: #111827;
+            padding: 10px;
+            background: #0b0f19;
+            border: 1px solid #374151;
+            color: #fff;
             border-radius: 6px;
             font-size: 13px;
             outline: none;
-            transition: all 0.2s;
         }
         .form-group input:focus {
-            border-color: #2563eb;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        /* Bouton œil pour voir/masquer le mot de passe */
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #6b7280;
+            border-color: #38bdf8;
         }
 
         .auth-btn {
             width: 100%;
-            background: #2563eb; 
+            background: #2563eb;
             color: white;
             border: none;
-            padding: 11px;
+            padding: 10px;
             border-radius: 6px;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: background 0.2s;
             margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
         .auth-btn:hover { background: #1d4ed8; }
-        .auth-btn:active { transform: scale(0.99); }
 
         .form-section { display: none; }
         .form-section.active { display: block; }
@@ -157,19 +106,15 @@
             text-align: center;
             margin-top: 15px;
             font-size: 12px;
-            color: #1e3a8a;
-            font-weight: 600;
+            color: #9ca3af;
             text-decoration: none;
-            transition: color 0.2s;
         }
-        .back-link:hover { color: #2563eb; text-decoration: underline; }
+        .back-link:hover { color: #38bdf8; }
 
         .message {
-            margin-top: 10px;
+            margin-top: 12px;
             font-size: 12px;
             text-align: center;
-            font-weight: 600;
-            min-height: 18px;
         }
     </style>
 </head>
@@ -177,15 +122,11 @@
 
     <div class="auth-container">
         <div class="auth-header">
-            <!-- Logo permanent et fixe -->
-            <div class="brand-logo-container">
-                <img src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Logo MEPLA TV" class="brand-logo">
-            </div>
             <h1>MEPLA TV</h1>
             <p>Espace de Connexion & Inscription des Créateurs</p>
         </div>
 
-        <!-- Boutons pour basculer entre Connexion et Inscription (Architecture d'origine conservée) -->
+        <!-- Boutons pour basculer entre Connexion et Inscription -->
         <div class="tabs">
             <button class="tab-btn active" id="btn-login" onclick="switchTab('login')">Connexion</button>
             <button class="tab-btn" id="btn-register" onclick="switchTab('register')">Inscription</button>
@@ -199,10 +140,7 @@
             </div>
             <div class="form-group">
                 <label>Mot de passe</label>
-                <div class="input-container">
-                    <input type="password" id="login-pass" placeholder="Votre mot de passe">
-                    <button type="button" class="toggle-password" onclick="togglePassword('login-pass', this)">👁️</button>
-                </div>
+                <input type="password" id="login-pass" placeholder="Votre mot de passe">
             </div>
             <button class="auth-btn" onclick="handleLogin()">Se Connecter</button>
             <div id="login-msg" class="message"></div>
@@ -223,18 +161,8 @@
                 <input type="text" id="reg-photo" placeholder="https://exemple.com/photo.jpg">
             </div>
             <div class="form-group">
-                <label>Créer un Mot de passe (6 car. min)</label>
-                <div class="input-container">
-                    <input type="password" id="reg-pass" placeholder="Votre mot de passe">
-                    <button type="button" class="toggle-password" onclick="togglePassword('reg-pass', this)">👁️</button>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Confirmer le Mot de passe</label>
-                <div class="input-container">
-                    <input type="password" id="reg-pass-confirm" placeholder="Confirmez le mot de passe">
-                    <button type="button" class="toggle-password" onclick="togglePassword('reg-pass-confirm', this)">👁️</button>
-                </div>
+                <label>Créer un Mot de passe</label>
+                <input type="password" id="reg-pass" placeholder="6 caractères minimum">
             </div>
             <button class="auth-btn" onclick="handleRegister()">S'inscrire et Publier</button>
             <div id="reg-msg" class="message"></div>
@@ -245,21 +173,33 @@
 
     <!-- MODULES FIREBASE (AUTH & REALTIME DATABASE) -->
     <script type="module">
-        import { auth, database } from "./js/firebase-config.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
+            getAuth, 
             createUserWithEmailAndPassword, 
             signInWithEmailAndPassword 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
+            getDatabase, 
             ref, 
             set, 
             get, 
             child 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const DEFAULT_LOGO = "https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg";
+        // VOS IDENTIFIANTS FIREBASE
+        const firebaseConfig = {
+            apiKey: "VOTRE_API_KEY",
+            authDomain: "votre-projet.firebaseapp.com",
+            databaseURL: "https://votre-projet-default-rtdb.firebaseio.com",
+            projectId: "votre-projet",
+        };
 
-        // Bascule entre les onglets (Rétabli exactement comme dans votre code d'origine avec window.switchTab)
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // Bascule entre les onglets
         window.switchTab = function(tab) {
             document.getElementById('section-login').classList.remove('active');
             document.getElementById('section-register').classList.remove('active');
@@ -275,42 +215,23 @@
             }
         };
 
-        // Fonction pour afficher/masquer le mot de passe (icône œil)
-        window.togglePassword = function(fieldId, btn) {
-            const input = document.getElementById(fieldId);
-            if (input.type === "password") {
-                input.type = "text";
-                btn.textContent = "🙈";
-            } else {
-                input.type = "password";
-                btn.textContent = "👁️";
-            }
-        };
-
         // INSCRIPTION DANS FIREBASE AUTH + REALTIME DATABASE
         window.handleRegister = async function() {
             const nom = document.getElementById('reg-nom').value.trim();
             const description = document.getElementById('reg-desc').value.trim();
-            const photoInput = document.getElementById('reg-photo').value.trim();
+            const photo = document.getElementById('reg-photo').value.trim();
             const pass = document.getElementById('reg-pass').value.trim();
-            const passConfirm = document.getElementById('reg-pass-confirm').value.trim();
             const msgBox = document.getElementById('reg-msg');
 
-            if(!nom || !pass || !passConfirm) {
-                msgBox.style.color = "#dc2626";
-                msgBox.innerText = "Veuillez remplir tous les champs obligatoires.";
+            if(!nom || !pass) {
+                msgBox.style.color = "#ef4444";
+                msgBox.innerText = "Veuillez remplir au moins le nom et le mot de passe.";
                 return;
             }
 
             if(pass.length < 6) {
-                msgBox.style.color = "#dc2626";
+                msgBox.style.color = "#ef4444";
                 msgBox.innerText = "Le mot de passe doit contenir au moins 6 caractères.";
-                return;
-            }
-
-            if(pass !== passConfirm) {
-                msgBox.style.color = "#dc2626";
-                msgBox.innerText = "Les mots de passe ne correspondent pas.";
                 return;
             }
 
@@ -318,10 +239,9 @@
             const cleanKey = nom.toLowerCase().replace(/[^a-z0-9]/g, '_');
             // Email technique généré pour Firebase Authentication sous MEPLA TV
             const generatedEmail = `${cleanKey}@meplatv.com`;
-            const finalPhoto = photoInput !== "" ? photoInput : DEFAULT_LOGO;
 
             try {
-                msgBox.style.color = "#2563eb";
+                msgBox.style.color = "#38bdf8";
                 msgBox.innerText = "Création du compte en cours...";
 
                 // 1. Création dans Firebase Authentication User
@@ -329,29 +249,28 @@
                 const user = userCredential.user;
 
                 // 2. Enregistrement des détails dans Realtime Database under 'television_profils'
-                await set(ref(database, 'television_profils/' + cleanKey), {
+                await set(ref(db, 'television_profils/' + cleanKey), {
                     uid: user.uid,
                     nom: nom,
                     description: description || 'Chaîne MEPLA TV',
-                    photo: finalPhoto,
+                    photo: photo || 'https://via.placeholder.com/70',
                     email: generatedEmail,
                     createdAt: new Date().toISOString()
                 });
 
-                msgBox.style.color = "#16a34a";
+                msgBox.style.color = "#10b981";
                 msgBox.innerText = "Inscription réussie ! Profil MEPLA TV créé. Redirection...";
                 
                 localStorage.setItem("active_tv_user", user.uid);
                 localStorage.setItem("active_tv_nom", nom);
-                localStorage.setItem("active_tv_key", cleanKey);
 
                 setTimeout(() => {
-                    window.location.href = "profil-television.html";
+                    window.location.href = "index.html";
                 }, 1500);
 
             } catch (error) {
                 console.error("Erreur Inscription Firebase:", error);
-                msgBox.style.color = "#dc2626";
+                msgBox.style.color = "#ef4444";
                 if(error.code === 'auth/email-already-in-use') {
                     msgBox.innerText = "Ce nom de télévision est déjà utilisé.";
                 } else {
@@ -367,7 +286,7 @@
             const msgBox = document.getElementById('login-msg');
 
             if(!nomInput || !passInput) {
-                msgBox.style.color = "#dc2626";
+                msgBox.style.color = "#ef4444";
                 msgBox.innerText = "Veuillez remplir tous les champs.";
                 return;
             }
@@ -376,7 +295,7 @@
             const generatedEmail = `${cleanKey}@meplatv.com`;
 
             try {
-                msgBox.style.color = "#2563eb";
+                msgBox.style.color = "#38bdf8";
                 msgBox.innerText = "Connexion en cours...";
 
                 // 1. Connexion via Firebase Authentication User
@@ -384,29 +303,28 @@
                 const user = userCredential.user;
 
                 // 2. Vérification dans Realtime Database
-                const dbRef = ref(database);
+                const dbRef = ref(db);
                 const snapshot = await get(child(dbRef, `television_profils/${cleanKey}`));
 
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    msgBox.style.color = "#16a34a";
+                    msgBox.style.color = "#10b981";
                     msgBox.innerText = "Connexion réussie ! Bienvenue sur MEPLA TV, " + data.nom;
                     
                     localStorage.setItem("active_tv_user", user.uid);
                     localStorage.setItem("active_tv_nom", data.nom);
-                    localStorage.setItem("active_tv_key", cleanKey);
 
                     setTimeout(() => {
-                        window.location.href = "profil-television.html";
+                        window.location.href = "index.html";
                     }, 1500);
                 } else {
-                    msgBox.style.color = "#dc2626";
+                    msgBox.style.color = "#ef4444";
                     msgBox.innerText = "Profil introuvable dans la base de données.";
                 }
 
             } catch (error) {
                 console.error("Erreur Connexion Firebase:", error);
-                msgBox.style.color = "#dc2626";
+                msgBox.style.color = "#ef4444";
                 msgBox.innerText = "Nom de télévision ou mot de passe incorrect.";
             }
         };
