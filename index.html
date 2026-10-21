@@ -24,7 +24,7 @@
             align-items: center; 
             justify-content: space-between; 
             border: 2px solid #eab308; 
-            padding: 15px 22px; 
+            padding: 12px 20px; 
             margin-bottom: 22px; 
             background: #ffffff;
             border-radius: 16px;
@@ -37,13 +37,14 @@
             gap: 15px; 
             cursor: pointer; 
             user-select: none; 
+            text-decoration: none;
         }
 
-        /* Logo gravé permanent dans un médaillon d'or et bleu */
+        /* Logo gravé permanent */
         .brand-logo-container {
             position: relative;
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
             padding: 3px;
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
@@ -65,7 +66,7 @@
         }
 
         .title-box h1 { 
-            font-size: 26px; 
+            font-size: 24px; 
             font-weight: 900;
             color: #1e3a8a; 
             letter-spacing: 1px;
@@ -73,11 +74,12 @@
         }
 
         .title-box p { 
-            font-size: 12px; 
+            font-size: 11px; 
             color: #d97706; 
             font-weight: 700;
         }
 
+        /* Zone Bouton Compte / Connexion */
         .user-nav {
             display: flex;
             gap: 10px;
@@ -85,20 +87,28 @@
         }
 
         .nav-btn {
-            background: #16a34a;
-            color: white;
+            background: #1e3a8a;
+            color: #ffffff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
             cursor: pointer;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
         }
 
-        /* Barre de recherche discrète et puissante */
+        .nav-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* Barre de recherche */
         .search-container { 
             margin-bottom: 22px; 
             display: flex;
@@ -212,7 +222,6 @@
             box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
         }
 
-        /* Badge du numéro de la chaîne (ex: N°01, N°02...) */
         .channel-number {
             position: absolute;
             top: 8px;
@@ -272,9 +281,9 @@
 </head>
 <body>
 
-    <!-- EN-TÊTE DE LUXE (10 clics sur le logo gravé pour ouvrir la page de connexion) -->
+    <!-- EN-TÊTE DE LUXE AVEC DÉTECTION ET MENU CONNEXION -->
     <header>
-        <div class="brand" id="secret-login-trigger" title="Chaîne Officielle MEPLA TV">
+        <div class="brand" title="Chaîne Officielle MEPLA TV">
             <div class="brand-logo-container">
                 <img src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Logo MEPLA TV" class="brand-logo">
             </div>
@@ -284,11 +293,13 @@
             </div>
         </div>
         
-        <!-- S'affiche en cachette si un profil est connecté -->
-        <div class="user-nav" id="user-nav-box"></div>
+        <!-- ZONE COMPTE / CONNEXION DYNAMIQUE -->
+        <div class="user-nav" id="user-nav-box">
+            <a href="login.html" class="nav-btn">👤 Connexion Studio</a>
+        </div>
     </header>
 
-    <!-- BARRE DE RECHERCHE DE CHAÎNE (Par Nom ou par Numéro ex: 01, 02...) -->
+    <!-- BARRE DE RECHERCHE DE CHAÎNE -->
     <div class="search-container">
         <input type="text" id="search-input" placeholder="🔍 Rechercher par nom ou numéro (ex: 01, 02)..." onkeyup="filterTV()">
     </div>
@@ -311,23 +322,27 @@
     <div class="profiles-section">
         <h2>Chaînes Missionnaires Disponibles</h2>
         <div class="grid-tv" id="firebase-tv-grid">
-            <!-- Chargement invisible et propre en arrière-plan -->
+            <!-- Chargement automatique depuis Firebase -->
         </div>
     </div>
 
-    <!-- SCRIPTS FIREBASE & LOGIQUE SECRÈTE -->
+    <!-- SCRIPTS FIREBASE & GESTION DU COMPTE -->
     <script type="module">
-        import { database } from "./js/firebase-config.js";
+        import { database } from "./firebase-config.js";
         import { ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // 1. DÉTECTION DU PROFIL CONNECTÉ (POUR LE BOUTON MON PROFIL)
+        // GESTION DYNAMIQUE DE LA NAVIGATION (Si utilisateur connecté ou non)
         const userNavBox = document.getElementById('user-nav-box');
         const activeNom = localStorage.getItem("active_tv_nom");
         
         if (activeNom) {
             userNavBox.innerHTML = `
-                <a href="profil-television.html" class="nav-btn">Mon Profil TV</a>
+                <a href="profil-television.html" class="nav-btn" style="background: #16a34a;">📺 Mon Profil TV</a>
                 <button onclick="logoutTV()" class="nav-btn" style="background: #dc2626;">Quitter</button>
+            `;
+        } else {
+            userNavBox.innerHTML = `
+                <a href="login.html" class="nav-btn">👤 Connexion Studio</a>
             `;
         }
 
@@ -338,26 +353,7 @@
             window.location.reload();
         };
 
-        // 2. SYSTÈME DES 10 CLICS DISCRETS SUR LE LOGO POUR ACCÉDER À LOGIN.HTML
-        let clickCount = 0;
-        let clickTimer;
-        const trigger = document.getElementById('secret-login-trigger');
-
-        trigger.addEventListener('click', () => {
-            clickCount++;
-            clearTimeout(clickTimer);
-
-            if (clickCount >= 10) {
-                clickCount = 0;
-                window.location.href = "login.html";
-            } else {
-                clickTimer = setTimeout(() => {
-                    clickCount = 0;
-                }, 3000);
-            }
-        });
-
-        // 3. CHARGEMENT AUTOMATIQUE ET PROPRE DES CHAÎNES DEPUIS FIREBASE
+        // CHARGEMENT SILENCIEUX DES CHAÎNES DEPUIS FIREBASE
         async function loadTVProfiles() {
             const gridContainer = document.getElementById('firebase-tv-grid');
             try {
@@ -371,7 +367,6 @@
                     
                     Object.keys(data).forEach(key => {
                         const tv = data[key];
-                        // Formater le numéro sur 2 chiffres (ex: 01, 02, 03...)
                         const numFormatted = String(index).padStart(2, '0');
 
                         const card = document.createElement('div');
@@ -402,7 +397,7 @@
         loadTVProfiles();
     </script>
 
-    <!-- SCRIPT DE RECHERCHE INTELLIGENTE PAR NOM OU NUMÉRO -->
+    <!-- SCRIPT DE RECHERCHE DYNAMIQUE -->
     <script>
         function filterTV() {
             let input = document.getElementById('search-input').value.toLowerCase().trim();
