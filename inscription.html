@@ -6,10 +6,7 @@
     <meta name="theme-color" content="#0056b3">
     <title>Mepla TV - Inscription</title>
 
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         * {
@@ -203,358 +200,259 @@
 </head>
 
 <body>
-    <main class="auth-card">
 
-        <img
-            src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg"
-            alt="Logo Mepla TV"
-            class="logo"
-        >
+<main class="auth-card">
 
-        <h1 class="title">Bienvenue sur votre plateforme TV</h1>
+    <img
+        src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg"
+        alt="Logo Mepla TV"
+        class="logo"
+    >
 
-        <p class="subtitle">
-            Télévision Internationale des Missionnaires
-        </p>
+    <h1 class="title">Bienvenue sur votre plateforme TV</h1>
 
-        <form id="signupForm">
+    <p class="subtitle">
+        Télévision Internationale des Missionnaires
+    </p>
 
-            <div class="form-group">
-                <label for="channelName">Nom de votre chaîne TV</label>
-                <input
-                    type="text"
-                    id="channelName"
-                    placeholder="Ex : Missionnaires TV"
-                    maxlength="80"
-                    autocomplete="organization"
-                    required
-                >
-            </div>
+    <!-- Formulaire sans contraintes bloquantes pour l'autocomplétion -->
+    <form id="signupForm" novalidate>
 
-            <div class="form-group">
-                <label for="email">Adresse e-mail</label>
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="votre.email@exemple.com"
-                    autocomplete="email"
-                    required
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Au moins 6 caractères"
-                    minlength="6"
-                    autocomplete="new-password"
-                    required
-                >
-
-                <i
-                    class="fa-solid fa-eye toggle-password"
-                    id="togglePassword"
-                    role="button"
-                    tabindex="0"
-                    aria-label="Afficher ou masquer le mot de passe"
-                ></i>
-            </div>
-
-            <div class="form-group">
-                <label for="confirmPassword">Confirmer le mot de passe</label>
-                <input
-                    type="password"
-                    id="confirmPassword"
-                    placeholder="Confirmez votre mot de passe"
-                    minlength="6"
-                    autocomplete="new-password"
-                    required
-                >
-
-                <i
-                    class="fa-solid fa-eye toggle-password"
-                    id="toggleConfirmPassword"
-                    role="button"
-                    tabindex="0"
-                    aria-label="Afficher ou masquer la confirmation du mot de passe"
-                ></i>
-            </div>
-
-            <button type="submit" class="btn-submit" id="submitButton">
-                Créer ma chaîne
-            </button>
-
-            <div
-                id="message"
-                class="message"
-                role="status"
-                aria-live="polite"
-            ></div>
-
-        </form>
-
-        <div class="footer-link">
-            Vous avez déjà un compte ?
-            <a href="connexion.html">Se connecter</a>
+        <div class="form-group">
+            <label for="channelName">Nom de votre chaîne TV</label>
+            <input
+                type="text"
+                id="channelName"
+                placeholder="Ex : Missionnaires TV"
+                maxlength="80"
+                autocomplete="nickname"
+                required
+            >
         </div>
 
-    </main>
+        <div class="form-group">
+            <label for="email">Adresse e-mail</label>
+            <input
+                type="email"
+                id="email"
+                placeholder="votre.email@exemple.com"
+                autocomplete="email"
+                required
+            >
+        </div>
 
-    <script type="module">
-        import { auth, database } from "./js/firebase-config.js";
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input
+                type="password"
+                id="password"
+                placeholder="Au moins 6 caractères"
+                minlength="6"
+                autocomplete="new-password"
+                required
+            >
+            <i
+                class="fa-solid fa-eye toggle-password"
+                id="togglePassword"
+                role="button"
+                tabindex="0"
+                aria-label="Afficher ou masquer le mot de passe"
+            ></i>
+        </div>
 
-        import {
-            createUserWithEmailAndPassword,
-            updateProfile
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        <div class="form-group">
+            <label for="confirmPassword">Confirmer le mot de passe</label>
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirmez votre mot de passe"
+                minlength="6"
+                autocomplete="new-password"
+                required
+            >
+            <i
+                class="fa-solid fa-eye toggle-password"
+                id="toggleConfirmPassword"
+                role="button"
+                tabindex="0"
+                aria-label="Afficher ou masquer la confirmation du mot de passe"
+            ></i>
+        </div>
 
-        import {
-            ref,
-            set
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        <button type="submit" class="btn-submit" id="submitButton">
+            Créer ma chaîne
+        </button>
 
-        const form = document.getElementById("signupForm");
-        const channelNameInput = document.getElementById("channelName");
-        const emailInput = document.getElementById("email");
-        const passwordInput = document.getElementById("password");
-        const confirmPasswordInput = document.getElementById("confirmPassword");
-        const submitButton = document.getElementById("submitButton");
-        const messageBox = document.getElementById("message");
+        <div id="message" class="message" role="status" aria-live="polite"></div>
 
-        let inscriptionEnCours = false;
+    </form>
 
-        function showMessage(message, type = "error") {
-            messageBox.textContent = message;
-            messageBox.className = `message ${type}`;
-        }
+    <div class="footer-link">
+        Vous avez déjà un compte ?
+        <a href="connexion.html">Se connecter</a>
+    </div>
 
-        // Afficher ou masquer les mots de passe.
-        function togglePasswordVisibility(buttonId, input) {
-            const button = document.getElementById(buttonId);
+</main>
 
-            function toggle() {
-                const isPassword = input.type === "password";
+<script type="module">
+    import { auth, database } from "./js/firebase-config.js";
 
-                input.type = isPassword ? "text" : "password";
+    import {
+        createUserWithEmailAndPassword,
+        updateProfile
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-                button.classList.toggle("fa-eye", !isPassword);
-                button.classList.toggle("fa-eye-slash", isPassword);
-            }
+    import {
+        ref,
+        set,
+        get
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-            button.addEventListener("click", toggle);
+    const form = document.getElementById("signupForm");
+    const channelNameInput = document.getElementById("channelName");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const submitButton = document.getElementById("submitButton");
+    const messageBox = document.getElementById("message");
 
-            button.addEventListener("keydown", (event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    toggle();
-                }
-            });
-        }
+    let inscriptionEnCours = false;
 
-        togglePasswordVisibility("togglePassword", passwordInput);
+    function afficherMessage(texte, type = "error", htmlExtra = "") {
+        messageBox.innerHTML = texte + " " + htmlExtra;
+        messageBox.className = `message ${type}`;
+    }
 
-        togglePasswordVisibility(
-            "toggleConfirmPassword",
-            confirmPasswordInput
-        );
+    function obtenirErreur(error) {
+        console.error("Erreur Firebase :", error);
+        const code = error?.code || "";
+        const detail = error?.message || "";
 
-        // Transformer les erreurs Firebase en messages compréhensibles.
-        function getErrorMessage(error) {
-            const code = error?.code || "";
-            const detail = error?.message || "";
-
-            switch (code) {
-                case "auth/email-already-in-use":
-                    return "Cette adresse e-mail possède déjà un compte. Connecte-toi plutôt.";
-
-                case "auth/invalid-email":
-                    return "L'adresse e-mail saisie n'est pas valide.";
-
-                case "auth/weak-password":
-                    return "Le mot de passe est trop faible. Utilise au moins 6 caractères.";
-
-                case "auth/network-request-failed":
-                    return "Connexion impossible. Vérifie ta connexion Internet.";
-
-                case "auth/operation-not-allowed":
-                    return "L'inscription par e-mail n'est pas activée dans Firebase Authentication.";
-
-                case "auth/too-many-requests":
-                    return "Trop de tentatives. Attends un moment avant de réessayer.";
-
-                case "auth/invalid-api-key":
-                    return "La clé Firebase est invalide. Vérifie le fichier js/firebase-config.js.";
-
-                case "auth/configuration-not-found":
-                    return "La configuration de Firebase Authentication est incomplète.";
-
-                default:
-                    if (
-                        code.includes("permission-denied") ||
-                        detail.includes("PERMISSION_DENIED") ||
-                        detail.includes("Permission denied")
-                    ) {
-                        return "Firebase refuse l'enregistrement du profil. Vérifie les règles de Realtime Database.";
-                    }
-
-                    return `Erreur Firebase (${code || "inconnue"}) : ${
-                        detail || "Impossible de terminer l'inscription."
-                    }`;
-            }
-        }
-
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-
-            if (inscriptionEnCours) {
-                return;
-            }
-
-            const channelName = channelNameInput.value.trim();
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
-
-            // Vérifications avant de contacter Firebase.
-            if (!channelName) {
-                showMessage("Veuillez saisir le nom de votre chaîne TV.");
-                channelNameInput.focus();
-                return;
-            }
-
-            if (!email) {
-                showMessage("Veuillez saisir votre adresse e-mail.");
-                emailInput.focus();
-                return;
-            }
-
-            if (password.length < 6) {
-                showMessage(
-                    "Le mot de passe doit contenir au moins 6 caractères."
-                );
-                passwordInput.focus();
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showMessage("Les deux mots de passe ne correspondent pas.");
-                confirmPasswordInput.focus();
-                return;
-            }
-
-            inscriptionEnCours = true;
-            submitButton.disabled = true;
-            submitButton.textContent = "Création du compte...";
-
-            messageBox.className = "message";
-            messageBox.textContent = "";
-
-            let user = null;
-            let compteCree = false;
-
-            try {
-                // ÉTAPE 1 : créer le compte Firebase Authentication.
-                const credential = await createUserWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-                user = credential.user;
-                compteCree = true;
-
-                // ÉTAPE 2 : essayer d'enregistrer le nom de la chaîne.
-                try {
-                    await updateProfile(user, {
-                        displayName: channelName
-                    });
-                } catch (profileError) {
-                    // Une erreur sur le nom ne doit pas masquer
-                    // le fait que le compte Auth existe déjà.
-                    console.warn(
-                        "Impossible de mettre à jour le nom Firebase Auth :",
-                        profileError
-                    );
-                }
-
-                // ÉTAPE 3 : préparer le profil de la chaîne.
-                const channelNumber = Math.floor(
-                    1000 + Math.random() * 9000
-                );
-
-                const userProfile = {
-                    uid: user.uid,
-                    channelName: channelName,
-                    email: user.email || email,
-                    channelNumber: channelNumber,
-                    description: "",
-                    photo: "",
-                    isLive: false,
-                    createdAt: new Date().toISOString()
+        switch (code) {
+            case "auth/email-already-in-use":
+                return {
+                    texte: "Cette adresse e-mail possède déjà un compte.",
+                    lien: '<br><a href="connexion.html" style="color: #0f5132; text-decoration: underline; font-weight: bold;">Cliquez ici pour vous connecter directement.</a>'
                 };
+            case "auth/invalid-email":
+                return { texte: "L'adresse e-mail saisie est invalide.", lien: "" };
+            case "auth/weak-password":
+                return { texte: "Le mot de passe est trop faible (6 caractères minimum).", lien: "" };
+            case "auth/network-request-failed":
+                return { texte: "Problème de connexion Internet. Vérifiez votre réseau.", lien: "" };
+            default:
+                return { texte: `Erreur d'inscription : ${detail || code}`, lien: "" };
+        }
+    }
 
-                // ÉTAPE 4 : enregistrer le profil dans users/{uid}.
-                try {
-                    await set(
-                        ref(database, `users/${user.uid}`),
-                        userProfile
-                    );
-                } catch (databaseError) {
-                    console.error(
-                        "Le compte existe, mais l'enregistrement du profil a échoué :",
-                        databaseError
-                    );
-
-                    showMessage(
-                        "Ton compte a bien été créé dans Firebase Authentication, " +
-                        "mais l'enregistrement du profil a échoué. " +
-                        "Ne crée pas un deuxième compte avec la même adresse. " +
-                        "Vérifie les règles de Realtime Database. " +
-                        "Détail : " + getErrorMessage(databaseError)
-                    );
-
-                    return;
-                }
-
-                // ÉTAPE 5 : conserver l'identifiant du compte.
-                try {
-                    localStorage.setItem("active_tv_key", user.uid);
-                } catch (storageError) {
-                    console.warn(
-                        "Impossible d'enregistrer la session locale :",
-                        storageError
-                    );
-                }
-
-                // ÉTAPE 6 : redirection directe vers le profil.
-                showMessage(
-                    "Inscription réussie ! Ouverture de ton profil...",
-                    "success"
-                );
-
-                window.location.replace("profil-television.html");
-
-            } catch (error) {
-                console.error("Erreur d'inscription :", error);
-
-                if (compteCree && user) {
-                    showMessage(
-                        "Le compte Firebase existe déjà, mais une étape complémentaire " +
-                        "a échoué. Ne recrée pas le compte. " +
-                        getErrorMessage(error)
-                    );
-                } else {
-                    showMessage(getErrorMessage(error));
-                }
-
-            } finally {
-                inscriptionEnCours = false;
-                submitButton.disabled = false;
-                submitButton.textContent = "Créer ma chaîne";
+    function configurerMotDePasse(buttonId, input) {
+        const button = document.getElementById(buttonId);
+        function basculer() {
+            const masquer = input.type === "password";
+            input.type = masquer ? "text" : "password";
+            button.classList.toggle("fa-eye", !masquer);
+            button.classList.toggle("fa-eye-slash", masquer);
+        }
+        button.addEventListener("click", basculer);
+        button.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                basculer();
             }
         });
-    </script>
+    }
+
+    configurerMotDePasse("togglePassword", passwordInput);
+    configurerMotDePasse("toggleConfirmPassword", confirmPasswordInput);
+
+    function genererNumeroChaine() {
+        return Math.floor(1000 + Math.random() * 9000);
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (inscriptionEnCours) return;
+
+        const channelName = channelNameInput.value.trim();
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (!channelName) {
+            afficherMessage("Veuillez saisir le nom de votre chaîne TV.");
+            return;
+        }
+        if (!email) {
+            afficherMessage("Veuillez saisir votre adresse e-mail.");
+            return;
+        }
+        if (password.length < 6) {
+            afficherMessage("Le mot de passe doit contenir au moins 6 caractères.");
+            return;
+        }
+        if (password !== confirmPassword) {
+            afficherMessage("Les deux mots de passe ne correspondent pas.");
+            return;
+        }
+
+        inscriptionEnCours = true;
+        submitButton.disabled = true;
+        submitButton.textContent = "Inscription en cours...";
+        messageBox.className = "message";
+        messageBox.textContent = "";
+
+        try {
+            // 1. Inscription dans Firebase Authentication
+            const credential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = credential.user;
+
+            await updateProfile(user, { displayName: channelName });
+
+            // 2. Structuration et enregistrement des données dans Realtime Database (`users/{uid}`)
+            const profil = {
+                uid: user.uid,
+                channelName: channelName,
+                email: user.email || email,
+                channelNumber: genererNumeroChaine(),
+                description: "",
+                photo: "",
+                isLive: false,
+                createdAt: new Date().toISOString(),
+                accountType: "creator"
+            };
+
+            const profilRef = ref(database, `users/${user.uid}`);
+            await set(profilRef, profil);
+
+            // 3. Validation de l'écriture
+            const resultat = await get(profilRef);
+            if (!resultat.exists()) {
+                throw new Error("L'enregistrement dans la base de données a échoué.");
+            }
+
+            // 4. Sauvegarde locale de la session
+            try {
+                localStorage.setItem("active_tv_key", user.uid);
+            } catch (err) {
+                console.warn("Stockage local restreint :", err);
+            }
+
+            // 5. Message de succès et redirection dynamique
+            afficherMessage("Inscription réussie ! Ouverture de votre profil...", "success");
+            
+            setTimeout(() => {
+                window.location.replace("profil-television.html");
+            }, 1000);
+
+        } catch (error) {
+            const errInfo = obtenirErreur(error);
+            afficherMessage(errInfo.texte, "error", errInfo.lien);
+            inscriptionEnCours = false;
+            submitButton.disabled = false;
+            submitButton.textContent = "Créer ma chaîne";
+        }
+    });
+</script>
+
 </body>
 </html>

@@ -47,6 +47,7 @@
             padding: 5px;
             background: #fff;
             margin-bottom: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         h1 {
@@ -56,10 +57,12 @@
         }
 
         .subtitle {
-            color: #555;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 25px;
+            color: #d9534f;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 23px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .spinner {
@@ -87,12 +90,19 @@
             color: #084298;
             background: #cfe2ff;
             border: 1px solid #b6d4fe;
+            text-align: left;
         }
 
         .message.error {
             color: #842029;
             background: #f8d7da;
             border-color: #f5c2c7;
+        }
+
+        .message.success {
+            color: #0f5132;
+            background: #d1e7dd;
+            border-color: #badbcc;
         }
 
         .actions {
@@ -116,6 +126,7 @@
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
+            transition: opacity 0.2s;
         }
 
         .btn-primary {
@@ -136,7 +147,6 @@
             .card {
                 padding: 26px 18px;
             }
-
             h1 {
                 font-size: 21px;
             }
@@ -172,7 +182,6 @@
         </div>
 
         <div class="actions" id="actions">
-
             <a
                 href="connexion.html"
                 class="btn btn-primary"
@@ -188,26 +197,14 @@
             >
                 Réessayer
             </button>
-
         </div>
 
     </main>
 
     <script type="module">
-        import {
-            auth,
-            database
-        } from "./js/firebase-config.js";
-
-        import {
-            onAuthStateChanged,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        import {
-            ref,
-            get
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { auth, database } from "./js/firebase-config.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const messageBox = document.getElementById("message");
         const spinner = document.getElementById("spinner");
@@ -215,15 +212,10 @@
         const retryButton = document.getElementById("retryButton");
 
         let verificationEnCours = false;
-        let verificationTerminee = false;
-        let delaiDepasse = false;
-        let delaiTimer;
 
-        function afficherMessage(texte, erreur = false) {
+        function afficherMessage(texte, type = "info") {
             messageBox.textContent = texte;
-            messageBox.className = erreur
-                ? "message error"
-                : "message";
+            messageBox.className = `message ${type}`;
         }
 
         function afficherActions() {
@@ -236,196 +228,73 @@
             spinner.style.display = "block";
         }
 
-        function nettoyerDelai() {
-            if (delaiTimer) {
-                clearTimeout(delaiTimer);
-                delaiTimer = null;
-            }
-        }
-
-        function demarrerDelai() {
-            nettoyerDelai();
-            delaiDepasse = false;
-
-            delaiTimer = setTimeout(() => {
-                if (!verificationTerminee) {
-                    delaiDepasse = true;
-                    verificationEnCours = false;
-
-                    afficherMessage(
-                        "La vérification prend trop de temps. Vérifiez votre connexion Internet, puis réessayez.",
-                        true
-                    );
-
-                    afficherActions();
-                }
-            }, 15000);
-        }
-
         async function verifierUtilisateur(user) {
-            if (verificationEnCours || verificationTerminee) {
-                return;
-            }
-
+            if (verificationEnCours) return;
             verificationEnCours = true;
             masquerActions();
-            demarrerDelai();
 
             try {
-                // Vérifier que Firebase possède bien un utilisateur connecté.
                 if (!user) {
-                    nettoyerDelai();
-                    verificationEnCours = false;
-                    verificationTerminee = true;
-
-                    try {
-                        localStorage.removeItem("active_tv_key");
-                    } catch (_) {}
-
-                    afficherMessage(
-                        "Vous n'êtes pas connecté. Veuillez vous connecter pour accéder à votre chaîne.",
-                        true
-                    );
-
-                    document.getElementById("loginLink").style.display = "block";
+                    try { localStorage.removeItem("active_tv_key"); } catch (_) {}
+                    afficherMessage("Aucune session active. Veuillez vous connecter pour accéder à votre chaîne.", "error");
                     afficherActions();
-                    return;
-                }
-
-                // Vérifier le profil enregistré dans Realtime Database.
-                const snapshot = await get(
-                    ref(database, `users/${user.uid}`)
-                );
-
-                // Ne pas continuer si le délai a déjà expiré.
-                if (delaiDepasse) {
                     verificationEnCours = false;
                     return;
                 }
+
+                afficherMessage("Vérification du profil de la chaîne...");
+
+                // Récupération du profil Realtime Database sous users/{uid}
+                const profilRef = ref(database, `users/${user.uid}`);
+                const snapshot = await get(profilRef);
 
                 if (!snapshot.exists()) {
-                    nettoyerDelai();
-                    verificationEnCours = false;
-                    verificationTerminee = true;
-
-                    afficherMessage(
-                        "Votre compte Firebase existe, mais votre profil de chaîne est introuvable. Vérifiez la base de données ou contactez l'administrateur.",
-                        true
-                    );
-
-                    // Le compte reste connecté pour permettre une correction.
+                    afficherMessage("Votre compte existe mais le profil de la chaîne est introuvable dans la base de données.", "error");
                     afficherActions();
+                    verificationEnCours = false;
                     return;
                 }
 
                 const profil = snapshot.val();
-
-                if (
-                    !profil ||
-                    typeof profil !== "object" ||
-                    profil.uid !== user.uid
-                ) {
-                    nettoyerDelai();
-                    verificationEnCours = false;
-                    verificationTerminee = true;
-
-                    afficherMessage(
-                        "Les informations de votre profil sont incomplètes ou incohérentes. Contactez l'administrateur.",
-                        true
-                    );
-
+                if (!profil || profil.uid !== user.uid) {
+                    afficherMessage("Les données de votre profil sont incomplètes.", "error");
                     afficherActions();
+                    verificationEnCours = false;
                     return;
                 }
 
-                // Conserver l'identifiant attendu par les anciennes pages.
+                // Enregistrement de la clé active
                 try {
                     localStorage.setItem("active_tv_key", user.uid);
-                } catch (storageError) {
-                    console.warn(
-                        "Stockage local indisponible :",
-                        storageError
-                    );
+                } catch (err) {
+                    console.warn("Stockage local indisponible :", err);
                 }
 
-                nettoyerDelai();
-                verificationTerminee = true;
+                afficherMessage("Profil vérifié avec succès ! Ouverture de votre espace...", "success");
 
-                afficherMessage(
-                    "Profil vérifié avec succès. Ouverture de votre espace Mepla TV..."
-                );
-
-                // Redirection finale vers le profil.
-                window.location.replace("profil-television.html");
+                // Redirection vers le profil télévision
+                setTimeout(() => {
+                    window.location.replace("profil-television.html");
+                }, 800);
 
             } catch (error) {
-                console.error(
-                    "Erreur de vérification du profil :",
-                    error
-                );
-
-                nettoyerDelai();
-                verificationEnCours = false;
-                verificationTerminee = true;
-
-                afficherMessage(
-                    "Impossible de vérifier votre profil. Vérifiez votre connexion Internet et les règles de Firebase Realtime Database, puis réessayez.",
-                    true
-                );
-
+                console.error("Erreur lors de la vérification :", error);
+                afficherMessage("Erreur de connexion avec la base de données. Vérifiez votre réseau.", "error");
                 afficherActions();
+                verificationEnCours = false;
             }
         }
 
-        // Firebase restaure la session et signale l'état réel de connexion.
+        // Écouteur d'état d'authentification Firebase
         onAuthStateChanged(auth, (user) => {
-            if (!verificationTerminee && !verificationEnCours) {
-                verifierUtilisateur(user);
-            }
+            verifierUtilisateur(user);
         });
 
-        // Permet de relancer la vérification après une erreur ou un délai.
-        retryButton.addEventListener("click", async () => {
-            verificationTerminee = false;
+        // Bouton Réessayer
+        retryButton.addEventListener("click", () => {
             verificationEnCours = false;
-            delaiDepasse = false;
-
-            masquerActions();
-
-            afficherMessage(
-                "Nouvelle vérification de votre session et de votre profil..."
-            );
-
-            try {
-                const user = auth.currentUser;
-
-                if (!user) {
-                    verificationTerminee = true;
-
-                    afficherMessage(
-                        "Aucune session active. Connectez-vous pour continuer.",
-                        true
-                    );
-
-                    afficherActions();
-                    return;
-                }
-
-                await verifierUtilisateur(user);
-
-            } catch (error) {
-                console.error("Nouvel essai impossible :", error);
-
-                verificationEnCours = false;
-                verificationTerminee = true;
-
-                afficherMessage(
-                    "La nouvelle vérification a échoué. Réessayez plus tard.",
-                    true
-                );
-
-                afficherActions();
-            }
+            const user = auth.currentUser;
+            verifierUtilisateur(user);
         });
     </script>
 
