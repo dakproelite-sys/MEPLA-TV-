@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEPLA TV - Régie & Direct Professionnel TV-Cam</title>
+    <title>MEPLA TV - Régie & Direct Automatisé TV-Cam</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
@@ -102,7 +102,7 @@
         .pos-top-right { top: 15px; right: 15px; }
         .pos-top-left { top: 15px; left: 15px; }
 
-        /* BANDEAU DÉFILANT AUTOMATIQUE (VERSETS) */
+        /* BANDEAU DÉFILANT AUTOMATIQUE */
         .ticker-container {
             position: absolute;
             bottom: 0;
@@ -128,7 +128,7 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        /* CAMÉRA HD TV-CAM & STUDIO VIRTUEL OPTIMISÉ */
+        /* CAMÉRA HD TV-CAM & STUDIO VIRTUEL */
         #webcam-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover; background-position: center;
@@ -148,7 +148,7 @@
             z-index: 2;
         }
 
-        /* MENU DE PRÉ-CONFIGURATION ET TEST PRIVÉ (ESCAMOTABLE) */
+        /* MENU DE PRÉ-CONFIGURATION (ESCAMOTABLE) */
         #setup-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(7, 10, 18, 0.98);
@@ -195,7 +195,7 @@
         }
         .preview-video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); position: relative; z-index: 2; }
 
-        /* PANNEAUX DE CONTRÔLE EN BAS */
+        /* PANNEAUX DE CONTRÔLE */
         .control-panels-wrapper {
             width: 100%; max-width: 950px;
             display: grid;
@@ -244,7 +244,7 @@
 
     <!-- ÉCRAN DE TÉLÉVISION PRINCIPAL -->
     <div class="tv-screen">
-        <!-- MENU DE PRÉ-CONFIGURATION & MODE TEST PRIVÉ (ESCAMOTABLE) -->
+        <!-- MENU DE PRÉ-CONFIGURATION (ESCAMOTABLE) -->
         <div id="setup-overlay">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>👁️ Studio de Prévisualisation & Réglages</h2>
@@ -300,12 +300,12 @@
             <iframe id="playlist-player" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
 
-        <!-- MODE DIRECT TV-CAM HD + STUDIO VIRTUEL -->
+        <!-- MODE DIRECT TV-CAM HD -->
         <div id="webcam-container">
             <video id="webcam-video" autoplay playsinline muted></video>
         </div>
 
-        <!-- BANDEAU DÉFILANT AUTOMATIQUE (VERSETS & MESSAGES) -->
+        <!-- BANDEAU DÉFILANT -->
         <div class="ticker-container">
             <div class="ticker-text" id="ticker-content">
                 🙏 Bienvenue sur MEPLA TV • "Car Dieu a tant aimé le monde qu'il a donné son Fils unique..." (Jean 3:16)
@@ -313,7 +313,7 @@
         </div>
     </div>
 
-    <!-- PANNEAU DE PUBLICATION DE VERSETS EN DIRECT -->
+    <!-- PANNEAU DE PUBLICATION DE VERSETS -->
     <div class="control-panels-wrapper">
         <div class="panel-box" id="verse-panel">
             <h3>📖 Publication de Verset / Bandeau en Direct :</h3>
@@ -333,7 +333,7 @@
 
     <a href="profil-television.html" class="back-link">← Retourner à l'Administration du Profil</a>
 
-    <!-- SCRIPT DE GESTION EN TEMPS RÉEL -->
+    <!-- SCRIPT DE GESTION EN TEMPS RÉEL (REALTIME DATABASE) -->
     <script type="module">
         import { database } from "./js/firebase-config.js";
         import { ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -349,67 +349,79 @@
         let selectedFondUrl = "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200";
         let timerInterval = null;
         let secondsElapsed = 0;
+        let previousLiveState = null;
 
-        // Charger configuration initiale depuis Firebase
+        // Charger configuration initiale depuis Realtime Database
         get(tvRef).then((snapshot) => {
             if(snapshot.exists()) {
                 const data = snapshot.val();
                 if(data.studioBackground) {
                     selectedFondUrl = data.studioBackground;
-                    document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
-                    document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
-                    document.getElementById('custom-bg-url-input').value = selectedFondUrl;
+                    const previewContainer = document.getElementById('preview-container');
+                    const webcamContainer = document.getElementById('webcam-container');
+                    if(previewContainer) previewContainer.style.backgroundImage = `url('${selectedFondUrl}')`;
+                    if(webcamContainer) webcamContainer.style.backgroundImage = `url('${selectedFondUrl}')`;
+                    const customBgInput = document.getElementById('custom-bg-url-input');
+                    if(customBgInput) customBgInput.value = selectedFondUrl;
                 }
             }
         });
 
-        // Ouvrir / Fermer le menu de configuration escamotable
         window.toggleSetupOverlay = function() {
             const overlay = document.getElementById('setup-overlay');
+            if (!overlay) return;
             if (overlay.style.display === 'none') {
                 overlay.style.display = 'flex';
                 initPreviewCam();
             } else {
                 overlay.style.display = 'none';
-                if(previewStream) {
-                    previewStream.getTracks().forEach(track => track.stop());
-                }
+                stopPreviewCam();
             }
         };
 
-        // Démarrer la caméra pour le mode test
         async function initPreviewCam() {
             try {
                 if(!previewStream) {
                     previewStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 }
-                document.getElementById('preview-video').srcObject = previewStream;
-                document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+                const previewVideo = document.getElementById('preview-video');
+                if (previewVideo) previewVideo.srcObject = previewStream;
+                const previewContainer = document.getElementById('preview-container');
+                if(previewContainer) previewContainer.style.backgroundImage = `url('${selectedFondUrl}')`;
             } catch (e) {
                 console.log("Caméra de prévisualisation : " + e.message);
             }
         }
-        initPreviewCam();
 
-        // Sélection visuelle du fond
+        function stopPreviewCam() {
+            if(previewStream) {
+                previewStream.getTracks().forEach(track => track.stop());
+                previewStream = null;
+            }
+        }
+
         window.selectionnerFond = function(element) {
             document.querySelectorAll('.setup-thumb').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
             selectedFondUrl = element.getAttribute('data-url');
-            document.getElementById('custom-bg-url-input').value = selectedFondUrl;
-            document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
-            document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+            const customBgInput = document.getElementById('custom-bg-url-input');
+            if(customBgInput) customBgInput.value = selectedFondUrl;
+            const previewContainer = document.getElementById('preview-container');
+            const webcamContainer = document.getElementById('webcam-container');
+            if(previewContainer) previewContainer.style.backgroundImage = `url('${selectedFondUrl}')`;
+            if(webcamContainer) webcamContainer.style.backgroundImage = `url('${selectedFondUrl}')`;
         };
 
         window.appliquerFondPersonnalise = function(url) {
             if(url.trim() !== '') {
                 selectedFondUrl = url.trim();
-                document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
-                document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+                const previewContainer = document.getElementById('preview-container');
+                const webcamContainer = document.getElementById('webcam-container');
+                if(previewContainer) previewContainer.style.backgroundImage = `url('${selectedFondUrl}')`;
+                if(webcamContainer) webcamContainer.style.backgroundImage = `url('${selectedFondUrl}')`;
             }
         };
 
-        // Audio Ambiance Galerie
         const audioElement = document.getElementById('bg-audio');
         window.chargerSonGalerie = function(input) {
             if (input.files && input.files[0]) {
@@ -418,20 +430,21 @@
                 alert("Son chargé avec succès !");
             }
         };
-        window.jouerSon = function() { audioElement.play(); };
-        window.pauseSon = function() { audioElement.pause(); };
+        window.jouerSon = function() { if(audioElement) audioElement.play(); };
+        window.pauseSon = function() { if(audioElement) audioElement.pause(); };
         window.toggleLoop = function() {
+            if(!audioElement) return;
             audioElement.loop = !audioElement.loop;
             const btn = document.getElementById('loop-btn');
-            btn.style.background = audioElement.loop ? "#16a34a" : "#475569";
-            btn.innerText = audioElement.loop ? "🔁 Répéter : ON" : "🔁 Répéter : OFF";
+            if(btn) {
+                btn.style.background = audioElement.loop ? "#16a34a" : "#475569";
+                btn.innerText = audioElement.loop ? "🔁 Répéter : ON" : "🔁 Répéter : OFF";
+            }
         };
 
-        // Lancer le direct public avec sauvegarde du fond dans Firebase
+        // --- ENREGISTREMENT DE L'ÉTAT DIRECT DANS REALTIME DATABASE ---
         window.lancerDirectPublic = async function() {
-            if(previewStream) {
-                previewStream.getTracks().forEach(track => track.stop());
-            }
+            stopPreviewCam();
             try {
                 await update(tvRef, {
                     studioBackground: selectedFondUrl,
@@ -439,10 +452,11 @@
                     isLive: true,
                     lastUpdated: new Date().toISOString()
                 });
+                const overlay = document.getElementById('setup-overlay');
+                if(overlay) overlay.style.display = 'none';
             } catch(e) {
                 alert("Erreur de régie : " + e.message);
             }
-            document.getElementById('setup-overlay').style.display = 'none';
         };
 
         window.basculerModePlaylist = async function() {
@@ -471,12 +485,12 @@
             }
         };
 
-        // Chronomètre
         function startTimer() {
-            secondsElapsed = 0;
             const timerEl = document.getElementById('live-chronometer');
+            if(!timerEl) return;
             timerEl.style.display = "flex";
-            if(timerInterval) clearInterval(timerInterval);
+            if(timerInterval) return;
+            secondsElapsed = 0;
             timerInterval = setInterval(() => {
                 secondsElapsed++;
                 const hrs = String(Math.floor(secondsElapsed / 3600)).padStart(2, '0');
@@ -487,11 +501,15 @@
         }
 
         function stopTimer() {
-            if(timerInterval) clearInterval(timerInterval);
-            document.getElementById('live-chronometer').style.display = "none";
+            if(timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            const timerEl = document.getElementById('live-chronometer');
+            if(timerEl) timerEl.style.display = "none";
         }
 
-        // ÉCOUTER LA BASE DE DONNÉES EN TEMPS RÉEL
+        // --- SYNCHRONISATION EN TEMPS RÉEL (REALTIME DATABASE) ---
         onValue(tvRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -500,97 +518,119 @@
                 const player = document.getElementById('playlist-player');
                 const statusBadge = document.getElementById('live-status-badge');
                 const logoImg = document.getElementById('channel-logo');
+                const webcamContainer = document.getElementById('webcam-container');
 
-                if(data.studioBackground) {
+                if(data.studioBackground && webcamContainer) {
                     selectedFondUrl = data.studioBackground;
-                    document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+                    webcamContainer.style.backgroundImage = `url('${selectedFondUrl}')`;
                 }
 
-                // Logo filigrane
-                const logoUrlInput = document.getElementById('setup-logo-url').value.trim();
-                const logoPosSelect = document.getElementById('setup-logo-pos').value;
-                const activeLogoUrl = logoUrlInput || (data.logoOverlay ? data.logoOverlay.url : "");
+                const logoUrlInput = document.getElementById('setup-logo-url');
+                const logoPosSelect = document.getElementById('setup-logo-pos');
+                const activeLogoUrl = (logoUrlInput && logoUrlInput.value.trim()) || (data.logoOverlay ? data.logoOverlay.url : "");
+                const logoPos = logoPosSelect ? logoPosSelect.value : "top-right";
 
-                if (activeLogoUrl) {
+                if (logoImg && activeLogoUrl) {
                     logoImg.src = activeLogoUrl;
-                    logoImg.className = `tv-logo-overlay pos-${logoPosSelect}`;
+                    logoImg.className = `tv-logo-overlay pos-${logoPos}`;
                     logoImg.style.display = "block";
-                } else {
+                } else if (logoImg) {
                     logoImg.style.display = "none";
                 }
 
-                // Bandeau défilant
-                if (data.currentTicker) {
-                    document.getElementById('ticker-content').innerText = data.currentTicker;
+                const tickerContent = document.getElementById('ticker-content');
+                if (tickerContent && data.currentTicker) {
+                    tickerContent.innerText = data.currentTicker;
                 }
 
-                // Chaîne coupée (Hors Ligne)
+                const currentState = `${data.isLive}_${data.isStudioLive}`;
+
+                // 1. Chaîne coupée (Hors Ligne)
                 if (data.isLive === false) {
-                    offlineScreen.style.display = "flex";
-                    playlistWrapper.style.display = "none";
-                    document.getElementById('webcam-container').style.display = "none";
-                    statusBadge.innerText = "🔴 Statut : CHAÎNE COUPÉE";
-                    statusBadge.style.color = "#ef4444";
+                    if(offlineScreen) offlineScreen.style.display = "flex";
+                    if(playlistWrapper) playlistWrapper.style.display = "none";
+                    if(webcamContainer) webcamContainer.style.display = "none";
+                    if(statusBadge) {
+                        statusBadge.innerText = "🔴 Statut : CHAÎNE COUPÉE";
+                        statusBadge.style.color = "#ef4444";
+                    }
                     arreterCaméraTV();
                     stopTimer();
+                    previousLiveState = currentState;
                     return;
                 } else {
-                    offlineScreen.style.display = "none";
+                    if(offlineScreen) offlineScreen.style.display = "none";
                 }
 
-                // Mode Direct TV-Cam HD actif
+                // 2. Mode Direct TV-Cam HD
                 if (data.isStudioLive === true) {
-                    statusBadge.innerText = "🔴 Statut : EN DIRECT TV-CAM HD";
-                    statusBadge.style.color = "#4ade80";
-                    playlistWrapper.style.display = "none";
-                    document.getElementById('webcam-container').style.display = "flex";
-                    démarrerCaméraTVHD();
-                    startTimer();
+                    if(statusBadge) {
+                        statusBadge.innerText = "🔴 Statut : EN DIRECT TV-CAM HD";
+                        statusBadge.style.color = "#4ade80";
+                    }
+                    if(playlistWrapper) playlistWrapper.style.display = "none";
+                    if(webcamContainer) webcamContainer.style.display = "flex";
+                    
+                    if (previousLiveState !== currentState) {
+                        démarrerCaméraTVHD();
+                        startTimer();
+                    }
+                    previousLiveState = currentState;
                     return;
                 } else {
-                    document.getElementById('webcam-container').style.display = "none";
+                    if(webcamContainer) webcamContainer.style.display = "none";
                     arreterCaméraTV();
                     stopTimer();
                 }
 
-                // Mode Diffusion Continue 24h/24 (Playlist)
-                statusBadge.innerText = "🔴 Statut : DIFFUSION 24H/24";
-                statusBadge.style.color = "#fde047";
-                playlistWrapper.style.display = "block";
+                // 3. Mode Diffusion 24h/24 (Playlist)
+                if(statusBadge) {
+                    statusBadge.innerText = "🔴 Statut : DIFFUSION 24H/24";
+                    statusBadge.style.color = "#fde047";
+                }
+                if(playlistWrapper) playlistWrapper.style.display = "block";
 
-                if (data.playlist) {
+                if (data.playlist && player) {
                     const keys = Object.keys(data.playlist);
                     if (keys.length > 0) {
                         const premiereVideo = data.playlist[keys[0]];
-                        if (premiereVideo.youtubeId) {
-                            player.src = `https://www.youtube.com/embed/${premiereVideo.youtubeId}?autoplay=1&mute=0&loop=1`;
-                        } else if (premiereVideo.url) {
-                            playlistWrapper.innerHTML = `<video src="${premiereVideo.url}" autoplay controls style="width:100%;height:100%;"></video>`;
+                        if (previousLiveState !== currentState) {
+                            if (premiereVideo.youtubeId) {
+                                player.src = `https://www.youtube.com/embed/${premiereVideo.youtubeId}?autoplay=1&mute=0&loop=1`;
+                            } else if (premiereVideo.url) {
+                                playlistWrapper.innerHTML = `<video src="${premiereVideo.url}" autoplay controls style="width:100%;height:100%;"></video>`;
+                            }
                         }
                     } else {
-                        player.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+                        if (previousLiveState !== currentState) {
+                            player.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+                        }
                     }
                 }
+                previousLiveState = currentState;
             }
         });
 
-        // CAMÉRA HD TV-CAM
         async function démarrerCaméraTVHD() {
-            if (!mediaStream) {
-                try {
+            try {
+                if (!mediaStream || !mediaStream.active) {
                     const constraints = {
                         video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
                         audio: { echoCancellation: true, noiseSuppression: true }
                     };
                     mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-                    document.getElementById('webcam-video').srcObject = mediaStream;
-                } catch (err) {
-                    try {
-                        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                        document.getElementById('webcam-video').srcObject = mediaStream;
-                    } catch (e) {
-                        alert("Impossible d'accéder à la caméra : " + e.message);
-                    }
+                }
+                const webcamVideo = document.getElementById('webcam-video');
+                if(webcamVideo && webcamVideo.srcObject !== mediaStream) {
+                    webcamVideo.srcObject = mediaStream;
+                }
+            } catch (err) {
+                try {
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    const webcamVideo = document.getElementById('webcam-video');
+                    if(webcamVideo) webcamVideo.srcObject = mediaStream;
+                } catch (e) {
+                    console.log("Erreur critique caméra : " + e.message);
                 }
             }
         }
@@ -600,15 +640,21 @@
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
             }
+            const webcamVideo = document.getElementById('webcam-video');
+            if (webcamVideo) {
+                webcamVideo.srcObject = null;
+            }
         }
 
-        // VERSETS
         window.remplirVersetPreset = function(select) {
-            if(select.value) { document.getElementById('custom-verse-input').value = select.value; }
+            const customInput = document.getElementById('custom-verse-input');
+            if(select.value && customInput) { customInput.value = select.value; }
         };
 
         window.publierVerset = async function() {
-            const message = document.getElementById('custom-verse-input').value.trim();
+            const customInput = document.getElementById('custom-verse-input');
+            if(!customInput) return;
+            const message = customInput.value.trim();
             if(!message) { alert("Veuillez sélectionner ou taper un message/verset."); return; }
             try {
                 await update(tvRef, { currentTicker: message, tickerUpdatedAt: new Date().toISOString() });
