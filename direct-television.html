@@ -178,7 +178,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px 0}
     <div class="notice">
       Cet aperçu affiche les vidéos intégrées et les états de la régie.
       La caméra locale n'est pas transmise automatiquement aux visiteurs.
-      Pour un véritable direct public, connecte un service de streaming.
+      Pour un véritable direct public, connecte un service de streaming (OBS, YouTube Live, etc.).
     </div>
 
     <h3>🎥 Prévisualisation caméra locale</h3>
@@ -346,11 +346,6 @@ import {
   ref, get, set, update, push, remove, onValue
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-/*
- * Les données de chaque chaîne sont stockées sous users/UID.
- * Ne pas utiliser localStorage comme preuve d'authentification.
- */
-
 const $ = id => document.getElementById(id);
 
 let uid = null;
@@ -365,16 +360,17 @@ let unsubscribe = null;
 let lastPlayerUrl = "";
 let priorityTimer = null;
 
+/* ========== STATUS & ERREURS ========== */
 const setStatus = (message, error = false) => {
   $("status").textContent = message;
   $("status").style.color = error ? "#f87171" : "#86efac";
 };
 
+/* ========== UTILITAIRES ========== */
 function safeHttpUrl(value) {
   try {
     const url = new URL(value);
-    return url.protocol === "https:" || url.protocol === "http:"
-      ? url.href : "";
+    return (url.protocol === "https:" || url.protocol === "http:") ? url.href : "";
   } catch {
     return "";
   }
@@ -382,7 +378,7 @@ function safeHttpUrl(value) {
 
 function getYouTubeId(value) {
   try {
-    const url = new URL(value);
+    const url = new URL(value.trim());
     let id = "";
 
     if (url.hostname.includes("youtu.be")) {
@@ -400,7 +396,6 @@ function getYouTubeId(value) {
         }
       }
     }
-
     return /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : "";
   } catch {
     return "";
@@ -423,7 +418,13 @@ function makeButton(label, className, callback) {
   const button = document.createElement("button");
   button.textContent = label;
   button.className = className || "gray";
-  button.addEventListener("click", callback);
+  button.addEventListener("click", () => {
+    try {
+      callback();
+    } catch (e) {
+      setStatus("Erreur : " + e.message, true);
+    }
+  });
   return button;
 }
 
@@ -444,15 +445,16 @@ function makeItem(title, detail, actions) {
 
   const actionBox = document.createElement("div");
   actionBox.className = "item-actions";
-  actions.forEach(button => actionBox.appendChild(button));
+  actions.forEach(btn => actionBox.appendChild(btn));
 
   item.append(info, actionBox);
   return item;
 }
 
+/* ========== LOGO ========== */
 function showLogo(settings) {
   const logo = $("tvLogo");
-  const url = safeHttpUrl(settings.logoUrl || "");
+  const url = safeHttpUrl(settings?.logoUrl || "");
 
   logo.className = "";
   logo.id = "tvLogo";
@@ -476,12 +478,39 @@ function showLogo(settings) {
   logo.onerror = () => { logo.style.display = "none"; };
 }
 
+/* ========== PLAYLIST ========== */
+function getPlaylistEntries() {
+  return Object.entries(playlist)
+    .filter(([, p]) => p && typeof p === "object")
+    .sort((a, b) => Number(a[1].order || 9999) - Number(b[1].order || 9999));
+}
+
+async function moveProgram(key, direction) {
+  const entries = getPlaylistEntries();
+  const index = entries.findIndex(([k]) => k === key);
+  const targetIndex = index + direction;
+
+  if (index < 0 || targetIndex < 0 || targetIndex >= entries.length) return;
+
+  const [currKey, currProg] = entries[index];
+  const [targKey, targProg] = entries[targetIndex];
+
+  const currOrder = Number(currProg.order || index + 1);
+  const targOrder = Number(targProg.order || targetIndex + 1);
+
+  const updates = {};
+  updates[`users/\( {uid}/playlist/ \){currKey}/order`] = targOrder;
+  updates[`users/\( {uid}/playlist/ \){targKey}/order`] = currOrder;
+
+  await update(ref(database), updates);
+  setStatus("Ordre de la playlist mis à jour.");
+}
+
 function renderPlaylist() {
   const list = $("playlistList");
   list.replaceChildren();
 
-  const entries = Object.entries(playlist)
-    .sort((a, b) => Number(a[1].order || 0) - Number(b[1].order || 0));
+  const entries = getPlaylistEntries();
 
   if (!entries.length) {
     list.textContent = "Aucun programme enregistré.";
@@ -490,33 +519,32 @@ function renderPlaylist() {
 
   entries.forEach(([key, program], index) => {
     const moveUp = makeButton("↑", "gray", async () => {
-      if (index === 0) return;
-      const previous = entries[index - 1];
-      await update(rootRef.child ? rootRef.child("playlist") : ref(database, `users/${uid}/playlist`), {});
-      await update(ref(database, `users/${uid}/playlist/${key}`), {
-        order: Number(previous[1].order || index + 1)
-      });
-      await update(ref(database, `users/${uid}/playlist/${previous[0]}`), {
-        order: Number(program.order || index + 2)
-      });
+      await moveProgram(key, -1);
     });
 
-    const play = makeButton("▶ Maintenant", "green", () => playProgramNow(key, program));
+    const moveDown = makeButton("↓", "gray", async () => {
+      await moveProgram(key, 1);
+    });
+
+    const play = makeButton("▶ Maintenant", "green", async () => {
+      await playProgramNow(key, program);
+    });
 
     const del = makeButton("Supprimer", "red", async () => {
-      if (confirm(`Supprimer « ${program.title} » ?`)) {
-        await remove(ref(database, `users/${uid}/playlist/${key}`));
-      }
+      if (!confirm(`Supprimer « ${program.title || "ce programme"} » ?`)) return;
+      await remove(ref(database, `users/\( {uid}/playlist/ \){key}`));
+      setStatus("Programme supprimé.");
     });
 
     list.appendChild(makeItem(
       `${Number(program.order || index + 1)}. ${program.title || "Programme"}`,
       `YouTube • ${program.youtubeId || "ID absent"} • ${program.durationMinutes || 30} min`,
-      [moveUp, play, del]
+      [moveUp, moveDown, play, del]
     ));
   });
 }
 
+/* ========== MESSAGES ========== */
 function renderMessages() {
   const list = $("messagesList");
   list.replaceChildren();
@@ -536,7 +564,8 @@ function renderMessages() {
     if (msg.endAt && now >= msg.endAt) state = "Terminé";
 
     const del = makeButton("Supprimer", "red", async () => {
-      await remove(ref(database, `users/${uid}/messages/${key}`));
+      await remove(ref(database, `users/\( {uid}/messages/ \){key}`));
+      setStatus("Message supprimé.");
     });
 
     list.appendChild(makeItem(
@@ -549,7 +578,6 @@ function renderMessages() {
 
 function getCurrentMessage() {
   const now = Date.now();
-
   const active = Object.values(messages)
     .filter(msg =>
       msg.enabled !== false &&
@@ -558,10 +586,10 @@ function getCurrentMessage() {
     )
     .sort((a, b) => Number(b.startAt || 0) - Number(a.startAt || 0));
 
-  return active[0]?.text || channelData.currentTicker ||
-    "Bienvenue sur MEPLA TV";
+  return active[0]?.text || channelData.currentTicker || "Bienvenue sur MEPLA TV";
 }
 
+/* ========== PROGRAMME COURANT ========== */
 function getCurrentProgram() {
   const override = channelData.liveOverride;
 
@@ -569,17 +597,11 @@ function getCurrentProgram() {
     return override;
   }
 
-  const entries = Object.entries(playlist)
-    .filter(([, program]) => program.enabled !== false)
-    .sort((a, b) => Number(a[1].order || 0) - Number(b[1].order || 0));
+  const entries = getPlaylistEntries()
+    .filter(([, p]) => p.enabled !== false);
 
   if (!entries.length) return null;
 
-  /*
-   * Calcul d'une programmation cyclique à partir d'une heure de référence.
-   * Cela permet de retrouver le programme courant même si la page a été
-   * rechargée. Les durées doivent être renseignées correctement.
-   */
   const anchor = Number(channelData.playlistAnchorAt || 0);
   if (!anchor) return entries[0][1];
 
@@ -601,6 +623,7 @@ function getCurrentProgram() {
   return entries[0][1];
 }
 
+/* ========== LECTEUR ========== */
 function renderPlayer(data) {
   const offline = $("offline");
   const player = $("tvPlayer");
@@ -624,30 +647,31 @@ function renderPlayer(data) {
   }
 
   offline.style.display = "none";
-  player.style.display = "block";
-  video.style.display = "none";
 
-  let target = "";
   const mode = data.broadcast?.mode || "playlist";
-
-  if (mode === "override") {
-    const override = data.liveOverride;
-    if (override && Number(override.endsAt) > Date.now()) {
-      target = override.youtubeId ? youtubeEmbed(override.youtubeId) : "";
-    }
-  }
-
-  if (!target && mode !== "camera") {
-    const program = getCurrentProgram();
-    if (program?.youtubeId) target = youtubeEmbed(program.youtubeId);
-  }
 
   if (mode === "camera") {
     player.style.display = "none";
     video.style.display = "block";
-    $("status").textContent =
-      "Mode caméra sélectionné. La caméra locale reste sur cet appareil : configure un service de streaming pour la diffusion publique.";
+    setStatus("Mode caméra sélectionné. La caméra locale reste sur cet appareil. Configure un service de streaming pour la diffusion publique.");
     return;
+  }
+
+  player.style.display = "block";
+  video.style.display = "none";
+
+  let target = "";
+
+  if (mode === "override") {
+    const override = data.liveOverride;
+    if (override && Number(override.endsAt) > Date.now() && override.youtubeId) {
+      target = youtubeEmbed(override.youtubeId);
+    }
+  }
+
+  if (!target) {
+    const program = getCurrentProgram();
+    if (program?.youtubeId) target = youtubeEmbed(program.youtubeId);
   }
 
   if (target && target !== lastPlayerUrl) {
@@ -659,21 +683,21 @@ function renderPlayer(data) {
   }
 }
 
+/* ========== TIMER ========== */
 function startLiveTimer() {
   if (priorityTimer) clearInterval(priorityTimer);
   priorityTimer = setInterval(() => {
     if (!uid) return;
     $("tickerText").textContent = getCurrentMessage();
-    const current = getCurrentProgram();
-    if (current && channelData.broadcast?.mode === "playlist") {
+    if (channelData.broadcast?.mode === "playlist") {
       renderPlayer(channelData);
     }
   }, 15000);
 }
 
+/* ========== RÉGLAGES ========== */
 async function saveSettings() {
-  const background = safeHttpUrl($("backgroundUrl").value.trim()) ||
-    selectedBackground;
+  const background = safeHttpUrl($("backgroundUrl").value.trim()) || selectedBackground;
 
   const settings = {
     channelName: $("channelName").value.trim() || "MEPLA TV",
@@ -693,13 +717,13 @@ async function saveSettings() {
   setStatus("Réglages enregistrés.");
 }
 
+/* ========== BROADCAST ========== */
 async function setBroadcast(mode, isLive = true) {
   await update(ref(database, `users/${uid}/broadcast`), {
     mode,
     isLive,
     updatedAt: Date.now()
   });
-
   setStatus(isLive ? `Commande enregistrée : ${mode}` : "Chaîne coupée.");
 }
 
@@ -725,6 +749,7 @@ async function playProgramNow(key, program) {
   setStatus("Programme prioritaire commandé.");
 }
 
+/* ========== CAMÉRA ========== */
 async function startCameraPreview() {
   try {
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -753,7 +778,10 @@ function stopCameraPreview() {
   $("preview").srcObject = null;
 }
 
+/* ========== ABONNEMENT FIREBASE ========== */
 function subscribeToData() {
+  if (unsubscribe) unsubscribe();
+
   unsubscribe = onValue(rootRef, snapshot => {
     if (!snapshot.exists()) {
       setStatus("Profil de chaîne introuvable.", true);
@@ -772,7 +800,7 @@ function subscribeToData() {
     $("logoPosition").value = settings.logoPosition || "tr";
 
     document.querySelectorAll(".decor").forEach(button => {
-      button.classList.toggle("selected", button.dataset.url === selectedBackground);
+      button.classList.toggle("selected", button.dataset.url === (settings.studioBackground || selectedBackground));
     });
 
     renderPlaylist();
@@ -788,6 +816,7 @@ function subscribeToData() {
   });
 }
 
+/* ========== ÉVÉNEMENTS ========== */
 $("preset").addEventListener("change", () => {
   if ($("preset").value) $("messageText").value = $("preset").value;
 });
@@ -802,8 +831,11 @@ document.querySelectorAll(".decor").forEach(button => {
 });
 
 $("saveSettingsBtn").addEventListener("click", async () => {
-  try { await saveSettings(); }
-  catch (e) { setStatus("Enregistrement impossible : " + e.message, true); }
+  try {
+    await saveSettings();
+  } catch (e) {
+    setStatus("Enregistrement impossible : " + e.message, true);
+  }
 });
 
 $("cameraBtn").addEventListener("click", startCameraPreview);
@@ -814,18 +846,24 @@ $("liveBtn").addEventListener("click", async () => {
     await setBroadcast("camera", true);
     await startCameraPreview();
   } catch (e) {
-    setStatus("Erreur : " + e.message, true);
+    setStatus("Erreur mode direct : " + e.message, true);
   }
 });
 
 $("playlistModeBtn").addEventListener("click", async () => {
-  try { await setBroadcast("playlist", true); }
-  catch (e) { setStatus(e.message, true); }
+  try {
+    await setBroadcast("playlist", true);
+  } catch (e) {
+    setStatus(e.message, true);
+  }
 });
 
 $("playlistBtn").addEventListener("click", async () => {
-  try { await setBroadcast("playlist", true); }
-  catch (e) { setStatus(e.message, true); }
+  try {
+    await setBroadcast("playlist", true);
+  } catch (e) {
+    setStatus(e.message, true);
+  }
 });
 
 $("stopBtn").addEventListener("click", async () => {
@@ -838,6 +876,7 @@ $("stopBtn").addEventListener("click", async () => {
       updatedAt: Date.now()
     });
     stopCameraPreview();
+    setStatus("Chaîne coupée.");
   } catch (e) {
     setStatus("Erreur de coupure : " + e.message, true);
   }
@@ -863,7 +902,7 @@ $("refreshBtn").addEventListener("click", async () => {
 $("publishMessageBtn").addEventListener("click", async () => {
   const text = $("messageText").value.trim();
   if (!text) {
-    alert("Saisis un message ou choisis un verset.");
+    setStatus("Saisis un message ou choisis un verset.", true);
     return;
   }
 
@@ -871,7 +910,7 @@ $("publishMessageBtn").addEventListener("click", async () => {
   const endAt = dateToMs($("messageEnd").value);
 
   if (startAt !== null && endAt !== null && endAt <= startAt) {
-    alert("La fin doit être postérieure au début.");
+    setStatus("La fin doit être postérieure au début.", true);
     return;
   }
 
@@ -905,17 +944,15 @@ $("addProgramBtn").addEventListener("click", async () => {
   const order = Math.max(1, Number($("programOrder").value) || 1);
 
   if (!title) {
-    alert("Saisis le titre du programme.");
+    setStatus("Saisis le titre du programme.", true);
     return;
   }
-
   if (!youtubeId) {
-    alert("URL YouTube invalide. Colle le lien d'une vidéo YouTube.");
+    setStatus("URL YouTube invalide.", true);
     return;
   }
-
   if (!Number.isFinite(durationMinutes) || durationMinutes < 1 || durationMinutes > 1440) {
-    alert("La durée doit être comprise entre 1 et 1440 minutes.");
+    setStatus("La durée doit être entre 1 et 1440 minutes.", true);
     return;
   }
 
@@ -944,12 +981,11 @@ $("playNowBtn").addEventListener("click", async () => {
   const durationMinutes = Number($("programDuration").value);
 
   if (!youtubeId) {
-    alert("Colle une URL YouTube valide.");
+    setStatus("Colle une URL YouTube valide.", true);
     return;
   }
-
   if (!Number.isFinite(durationMinutes) || durationMinutes < 1) {
-    alert("Indique une durée valide.");
+    setStatus("Indique une durée valide.", true);
     return;
   }
 
@@ -974,6 +1010,7 @@ $("playNowBtn").addEventListener("click", async () => {
   }
 });
 
+/* ========== AUTH ========== */
 onAuthStateChanged(auth, async user => {
   if (!user) {
     window.location.replace("connexion.html");
@@ -987,19 +1024,24 @@ onAuthStateChanged(auth, async user => {
     const snapshot = await get(rootRef);
 
     if (!snapshot.exists()) {
-      await update(rootRef, {
+      await set(rootRef, {
         channelName: user.displayName || "MEPLA TV",
         channelDescription: "",
+        currentTicker: "Bienvenue sur MEPLA TV",
         broadcast: {
           mode: "playlist",
-          isLive: false,
+          isLive: true,
           updatedAt: Date.now()
         },
         settings: {
+          channelName: user.displayName || "MEPLA TV",
+          channelDescription: "",
           studioBackground: selectedBackground,
           logoUrl: user.photoURL || "",
           logoPosition: "tr"
         },
+        playlist: {},
+        messages: {},
         playlistAnchorAt: Date.now()
       });
     }
