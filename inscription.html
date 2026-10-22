@@ -20,7 +20,9 @@
         }
 
         body {
-            background: url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg')
+            background:
+                linear-gradient(rgba(0, 25, 65, 0.35), rgba(0, 25, 65, 0.35)),
+                url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg')
                 no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
@@ -31,9 +33,9 @@
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
             width: 100%;
             max-width: 450px;
             padding: 30px;
@@ -42,64 +44,67 @@
         }
 
         .logo {
-            width: 110px;
-            height: 110px;
+            width: 100px;
+            height: 100px;
             object-fit: contain;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border-radius: 50%;
             background: #fff;
             padding: 5px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .title {
             color: #111;
             font-size: 22px;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 7px;
         }
 
         .subtitle {
             color: #d9534f;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 23px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
+            line-height: 1.5;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             text-align: left;
             position: relative;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             color: #333;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 42px 12px 14px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
+            padding: 13px 43px 13px 14px;
+            border: 2px solid #d4d8de;
+            border-radius: 9px;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.3s;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .form-group input:focus {
             border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
         }
 
         .toggle-password {
             position: absolute;
-            right: 12px;
-            top: 36px;
+            right: 13px;
+            top: 37px;
             cursor: pointer;
             color: #666;
             font-size: 16px;
@@ -112,34 +117,37 @@
         .btn-submit {
             width: 100%;
             padding: 14px;
-            background-color: #0056b3;
+            background: linear-gradient(135deg, #0066cc, #003d80);
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 9px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 10px;
+            transition: opacity 0.2s, transform 0.2s;
+            margin-top: 7px;
         }
 
         .btn-submit:hover {
-            background-color: #003d80;
+            opacity: 0.92;
+            transform: translateY(-1px);
         }
 
         .btn-submit:disabled {
             opacity: 0.65;
             cursor: not-allowed;
+            transform: none;
         }
 
         .message {
             display: none;
             margin-top: 15px;
-            padding: 11px;
+            padding: 12px;
             border-radius: 8px;
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.6;
             overflow-wrap: anywhere;
+            text-align: left;
         }
 
         .message.error {
@@ -157,9 +165,10 @@
         }
 
         .footer-link {
-            margin-top: 20px;
+            margin-top: 21px;
             font-size: 14px;
             color: #222;
+            line-height: 1.6;
         }
 
         .footer-link a {
@@ -173,12 +182,21 @@
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 13px;
+            }
+
             .auth-card {
-                padding: 23px 18px;
+                padding: 24px 18px;
             }
 
             .title {
                 font-size: 20px;
+            }
+
+            .logo {
+                width: 90px;
+                height: 90px;
             }
         }
     </style>
@@ -186,6 +204,7 @@
 
 <body>
     <main class="auth-card">
+
         <img
             src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg"
             alt="Logo Mepla TV"
@@ -193,9 +212,13 @@
         >
 
         <h1 class="title">Bienvenue sur votre plateforme TV</h1>
-        <p class="subtitle">Télévision Internationale des Missionnaires</p>
+
+        <p class="subtitle">
+            Télévision Internationale des Missionnaires
+        </p>
 
         <form id="signupForm">
+
             <div class="form-group">
                 <label for="channelName">Nom de votre chaîne TV</label>
                 <input
@@ -229,6 +252,7 @@
                     autocomplete="new-password"
                     required
                 >
+
                 <i
                     class="fa-solid fa-eye toggle-password"
                     id="togglePassword"
@@ -248,6 +272,7 @@
                     autocomplete="new-password"
                     required
                 >
+
                 <i
                     class="fa-solid fa-eye toggle-password"
                     id="toggleConfirmPassword"
@@ -267,12 +292,14 @@
                 role="status"
                 aria-live="polite"
             ></div>
+
         </form>
 
         <div class="footer-link">
             Vous avez déjà un compte ?
             <a href="connexion.html">Se connecter</a>
         </div>
+
     </main>
 
     <script type="module">
@@ -296,11 +323,14 @@
         const submitButton = document.getElementById("submitButton");
         const messageBox = document.getElementById("message");
 
+        let inscriptionEnCours = false;
+
         function showMessage(message, type = "error") {
             messageBox.textContent = message;
             messageBox.className = `message ${type}`;
         }
 
+        // Afficher ou masquer les mots de passe.
         function togglePasswordVisibility(buttonId, input) {
             const button = document.getElementById(buttonId);
 
@@ -324,50 +354,86 @@
         }
 
         togglePasswordVisibility("togglePassword", passwordInput);
-        togglePasswordVisibility("toggleConfirmPassword", confirmPasswordInput);
 
+        togglePasswordVisibility(
+            "toggleConfirmPassword",
+            confirmPasswordInput
+        );
+
+        // Transformer les erreurs Firebase en messages compréhensibles.
         function getErrorMessage(error) {
-            switch (error.code) {
+            const code = error?.code || "";
+            const detail = error?.message || "";
+
+            switch (code) {
                 case "auth/email-already-in-use":
-                    return "Cette adresse e-mail possède déjà un compte. Connectez-vous plutôt.";
+                    return "Cette adresse e-mail possède déjà un compte. Connecte-toi plutôt.";
 
                 case "auth/invalid-email":
                     return "L'adresse e-mail saisie n'est pas valide.";
 
                 case "auth/weak-password":
-                    return "Le mot de passe est trop faible. Utilisez au moins 6 caractères.";
+                    return "Le mot de passe est trop faible. Utilise au moins 6 caractères.";
 
                 case "auth/network-request-failed":
-                    return "Connexion impossible. Vérifiez votre connexion Internet.";
+                    return "Connexion impossible. Vérifie ta connexion Internet.";
 
                 case "auth/operation-not-allowed":
                     return "L'inscription par e-mail n'est pas activée dans Firebase Authentication.";
 
-                case "PERMISSION_DENIED":
-                case "database/permission-denied":
-                    return "Firebase refuse l'enregistrement. Vérifiez les règles de sécurité de Realtime Database.";
+                case "auth/too-many-requests":
+                    return "Trop de tentatives. Attends un moment avant de réessayer.";
+
+                case "auth/invalid-api-key":
+                    return "La clé Firebase est invalide. Vérifie le fichier js/firebase-config.js.";
+
+                case "auth/configuration-not-found":
+                    return "La configuration de Firebase Authentication est incomplète.";
 
                 default:
-                    return error.message || "Une erreur inattendue est survenue.";
+                    if (
+                        code.includes("permission-denied") ||
+                        detail.includes("PERMISSION_DENIED") ||
+                        detail.includes("Permission denied")
+                    ) {
+                        return "Firebase refuse l'enregistrement du profil. Vérifie les règles de Realtime Database.";
+                    }
+
+                    return `Erreur Firebase (${code || "inconnue"}) : ${
+                        detail || "Impossible de terminer l'inscription."
+                    }`;
             }
         }
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
+            if (inscriptionEnCours) {
+                return;
+            }
+
             const channelName = channelNameInput.value.trim();
             const email = emailInput.value.trim();
             const password = passwordInput.value;
             const confirmPassword = confirmPasswordInput.value;
 
+            // Vérifications avant de contacter Firebase.
             if (!channelName) {
                 showMessage("Veuillez saisir le nom de votre chaîne TV.");
                 channelNameInput.focus();
                 return;
             }
 
+            if (!email) {
+                showMessage("Veuillez saisir votre adresse e-mail.");
+                emailInput.focus();
+                return;
+            }
+
             if (password.length < 6) {
-                showMessage("Le mot de passe doit contenir au moins 6 caractères.");
+                showMessage(
+                    "Le mot de passe doit contenir au moins 6 caractères."
+                );
                 passwordInput.focus();
                 return;
             }
@@ -378,33 +444,47 @@
                 return;
             }
 
+            inscriptionEnCours = true;
             submitButton.disabled = true;
             submitButton.textContent = "Création du compte...";
+
             messageBox.className = "message";
             messageBox.textContent = "";
 
+            let user = null;
+            let compteCree = false;
+
             try {
-                // 1. Créer le compte Firebase Authentication.
+                // ÉTAPE 1 : créer le compte Firebase Authentication.
                 const credential = await createUserWithEmailAndPassword(
                     auth,
                     email,
                     password
                 );
 
-                const user = credential.user;
+                user = credential.user;
+                compteCree = true;
 
-                // 2. Afficher le nom de la chaîne dans le profil Firebase.
-                await updateProfile(user, {
-                    displayName: channelName
-                });
+                // ÉTAPE 2 : essayer d'enregistrer le nom de la chaîne.
+                try {
+                    await updateProfile(user, {
+                        displayName: channelName
+                    });
+                } catch (profileError) {
+                    // Une erreur sur le nom ne doit pas masquer
+                    // le fait que le compte Auth existe déjà.
+                    console.warn(
+                        "Impossible de mettre à jour le nom Firebase Auth :",
+                        profileError
+                    );
+                }
 
-                // 3. Générer un numéro de chaîne.
+                // ÉTAPE 3 : préparer le profil de la chaîne.
                 const channelNumber = Math.floor(
                     1000 + Math.random() * 9000
                 );
 
-                // 4. Enregistrer le profil dans users/{uid}.
-                await set(ref(database, `users/${user.uid}`), {
+                const userProfile = {
                     uid: user.uid,
                     channelName: channelName,
                     email: user.email || email,
@@ -413,19 +493,64 @@
                     photo: "",
                     isLive: false,
                     createdAt: new Date().toISOString()
-                });
+                };
 
+                // ÉTAPE 4 : enregistrer le profil dans users/{uid}.
+                try {
+                    await set(
+                        ref(database, `users/${user.uid}`),
+                        userProfile
+                    );
+                } catch (databaseError) {
+                    console.error(
+                        "Le compte existe, mais l'enregistrement du profil a échoué :",
+                        databaseError
+                    );
+
+                    showMessage(
+                        "Ton compte a bien été créé dans Firebase Authentication, " +
+                        "mais l'enregistrement du profil a échoué. " +
+                        "Ne crée pas un deuxième compte avec la même adresse. " +
+                        "Vérifie les règles de Realtime Database. " +
+                        "Détail : " + getErrorMessage(databaseError)
+                    );
+
+                    return;
+                }
+
+                // ÉTAPE 5 : conserver l'identifiant du compte.
+                try {
+                    localStorage.setItem("active_tv_key", user.uid);
+                } catch (storageError) {
+                    console.warn(
+                        "Impossible d'enregistrer la session locale :",
+                        storageError
+                    );
+                }
+
+                // ÉTAPE 6 : redirection directe vers le profil.
                 showMessage(
-                    "Votre chaîne a été créée. Ouverture de votre profil...",
+                    "Inscription réussie ! Ouverture de ton profil...",
                     "success"
                 );
 
-                // 5. Ouvrir le fichier de profil utilisé par Mepla TV.
                 window.location.replace("profil-television.html");
 
             } catch (error) {
                 console.error("Erreur d'inscription :", error);
-                showMessage(getErrorMessage(error));
+
+                if (compteCree && user) {
+                    showMessage(
+                        "Le compte Firebase existe déjà, mais une étape complémentaire " +
+                        "a échoué. Ne recrée pas le compte. " +
+                        getErrorMessage(error)
+                    );
+                } else {
+                    showMessage(getErrorMessage(error));
+                }
+
+            } finally {
+                inscriptionEnCours = false;
                 submitButton.disabled = false;
                 submitButton.textContent = "Créer ma chaîne";
             }

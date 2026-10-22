@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0056b3">
+
+    <title>Mepla TV - Vérification du profil</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background:
+                linear-gradient(rgba(0, 25, 65, 0.75), rgba(0, 25, 65, 0.75)),
+                url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg')
+                no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 430px;
+            padding: 32px 25px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 18px;
+            border-top: 5px solid #0056b3;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            border-radius: 50%;
+            padding: 5px;
+            background: #fff;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            color: #111;
+            font-size: 23px;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 20px;
+            border: 5px solid #dce7f5;
+            border-top-color: #0056b3;
+            border-radius: 50%;
+            animation: tourner 0.8s linear infinite;
+        }
+
+        @keyframes tourner {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message {
+            padding: 13px;
+            border-radius: 9px;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+            color: #084298;
+            background: #cfe2ff;
+            border: 1px solid #b6d4fe;
+        }
+
+        .message.error {
+            color: #842029;
+            background: #f8d7da;
+            border-color: #f5c2c7;
+        }
+
+        .actions {
+            display: none;
+            margin-top: 18px;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        .actions.visible {
+            display: flex;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #0056b3;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #222;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 26px 18px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="card">
+
+        <img
+            src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg"
+            alt="Logo Mepla TV"
+            class="logo"
+        >
+
+        <h1>Préparation de votre espace</h1>
+
+        <p class="subtitle">
+            Télévision Internationale des Missionnaires
+        </p>
+
+        <div class="spinner" id="spinner"></div>
+
+        <div
+            class="message"
+            id="message"
+            role="status"
+            aria-live="polite"
+        >
+            Vérification de votre session et de votre profil...
+        </div>
+
+        <div class="actions" id="actions">
+
+            <a
+                href="connexion.html"
+                class="btn btn-primary"
+                id="loginLink"
+            >
+                Se connecter
+            </a>
+
+            <button
+                type="button"
+                class="btn btn-secondary"
+                id="retryButton"
+            >
+                Réessayer
+            </button>
+
+        </div>
+
+    </main>
+
+    <script type="module">
+        import {
+            auth,
+            database
+        } from "./js/firebase-config.js";
+
+        import {
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        import {
+            ref,
+            get
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const messageBox = document.getElementById("message");
+        const spinner = document.getElementById("spinner");
+        const actions = document.getElementById("actions");
+        const retryButton = document.getElementById("retryButton");
+
+        let verificationEnCours = false;
+        let verificationTerminee = false;
+        let delaiDepasse = false;
+        let delaiTimer;
+
+        function afficherMessage(texte, erreur = false) {
+            messageBox.textContent = texte;
+            messageBox.className = erreur
+                ? "message error"
+                : "message";
+        }
+
+        function afficherActions() {
+            spinner.style.display = "none";
+            actions.classList.add("visible");
+        }
+
+        function masquerActions() {
+            actions.classList.remove("visible");
+            spinner.style.display = "block";
+        }
+
+        function nettoyerDelai() {
+            if (delaiTimer) {
+                clearTimeout(delaiTimer);
+                delaiTimer = null;
+            }
+        }
+
+        function demarrerDelai() {
+            nettoyerDelai();
+            delaiDepasse = false;
+
+            delaiTimer = setTimeout(() => {
+                if (!verificationTerminee) {
+                    delaiDepasse = true;
+                    verificationEnCours = false;
+
+                    afficherMessage(
+                        "La vérification prend trop de temps. Vérifiez votre connexion Internet, puis réessayez.",
+                        true
+                    );
+
+                    afficherActions();
+                }
+            }, 15000);
+        }
+
+        async function verifierUtilisateur(user) {
+            if (verificationEnCours || verificationTerminee) {
+                return;
+            }
+
+            verificationEnCours = true;
+            masquerActions();
+            demarrerDelai();
+
+            try {
+                // Vérifier que Firebase possède bien un utilisateur connecté.
+                if (!user) {
+                    nettoyerDelai();
+                    verificationEnCours = false;
+                    verificationTerminee = true;
+
+                    try {
+                        localStorage.removeItem("active_tv_key");
+                    } catch (_) {}
+
+                    afficherMessage(
+                        "Vous n'êtes pas connecté. Veuillez vous connecter pour accéder à votre chaîne.",
+                        true
+                    );
+
+                    document.getElementById("loginLink").style.display = "block";
+                    afficherActions();
+                    return;
+                }
+
+                // Vérifier le profil enregistré dans Realtime Database.
+                const snapshot = await get(
+                    ref(database, `users/${user.uid}`)
+                );
+
+                // Ne pas continuer si le délai a déjà expiré.
+                if (delaiDepasse) {
+                    verificationEnCours = false;
+                    return;
+                }
+
+                if (!snapshot.exists()) {
+                    nettoyerDelai();
+                    verificationEnCours = false;
+                    verificationTerminee = true;
+
+                    afficherMessage(
+                        "Votre compte Firebase existe, mais votre profil de chaîne est introuvable. Vérifiez la base de données ou contactez l'administrateur.",
+                        true
+                    );
+
+                    // Le compte reste connecté pour permettre une correction.
+                    afficherActions();
+                    return;
+                }
+
+                const profil = snapshot.val();
+
+                if (
+                    !profil ||
+                    typeof profil !== "object" ||
+                    profil.uid !== user.uid
+                ) {
+                    nettoyerDelai();
+                    verificationEnCours = false;
+                    verificationTerminee = true;
+
+                    afficherMessage(
+                        "Les informations de votre profil sont incomplètes ou incohérentes. Contactez l'administrateur.",
+                        true
+                    );
+
+                    afficherActions();
+                    return;
+                }
+
+                // Conserver l'identifiant attendu par les anciennes pages.
+                try {
+                    localStorage.setItem("active_tv_key", user.uid);
+                } catch (storageError) {
+                    console.warn(
+                        "Stockage local indisponible :",
+                        storageError
+                    );
+                }
+
+                nettoyerDelai();
+                verificationTerminee = true;
+
+                afficherMessage(
+                    "Profil vérifié avec succès. Ouverture de votre espace Mepla TV..."
+                );
+
+                // Redirection finale vers le profil.
+                window.location.replace("profil-television.html");
+
+            } catch (error) {
+                console.error(
+                    "Erreur de vérification du profil :",
+                    error
+                );
+
+                nettoyerDelai();
+                verificationEnCours = false;
+                verificationTerminee = true;
+
+                afficherMessage(
+                    "Impossible de vérifier votre profil. Vérifiez votre connexion Internet et les règles de Firebase Realtime Database, puis réessayez.",
+                    true
+                );
+
+                afficherActions();
+            }
+        }
+
+        // Firebase restaure la session et signale l'état réel de connexion.
+        onAuthStateChanged(auth, (user) => {
+            if (!verificationTerminee && !verificationEnCours) {
+                verifierUtilisateur(user);
+            }
+        });
+
+        // Permet de relancer la vérification après une erreur ou un délai.
+        retryButton.addEventListener("click", async () => {
+            verificationTerminee = false;
+            verificationEnCours = false;
+            delaiDepasse = false;
+
+            masquerActions();
+
+            afficherMessage(
+                "Nouvelle vérification de votre session et de votre profil..."
+            );
+
+            try {
+                const user = auth.currentUser;
+
+                if (!user) {
+                    verificationTerminee = true;
+
+                    afficherMessage(
+                        "Aucune session active. Connectez-vous pour continuer.",
+                        true
+                    );
+
+                    afficherActions();
+                    return;
+                }
+
+                await verifierUtilisateur(user);
+
+            } catch (error) {
+                console.error("Nouvel essai impossible :", error);
+
+                verificationEnCours = false;
+                verificationTerminee = true;
+
+                afficherMessage(
+                    "La nouvelle vérification a échoué. Réessayez plus tard.",
+                    true
+                );
+
+                afficherActions();
+            }
+        });
+    </script>
+
+</body>
+</html>

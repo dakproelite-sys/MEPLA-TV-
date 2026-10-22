@@ -21,7 +21,9 @@
         }
 
         body {
-            background: url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg')
+            background:
+                linear-gradient(rgba(0, 25, 65, 0.25), rgba(0, 25, 65, 0.25)),
+                url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg')
                 no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
@@ -67,6 +69,7 @@
             margin-bottom: 25px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            line-height: 1.5;
         }
 
         .form-group {
@@ -90,11 +93,13 @@
             border-radius: 8px;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: #fff;
         }
 
         .form-group input:focus {
             border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
         }
 
         .toggle-password {
@@ -113,19 +118,19 @@
         .btn-submit {
             width: 100%;
             padding: 14px;
-            background-color: #0056b3;
+            background: linear-gradient(135deg, #0066cc, #003d80);
             color: #fff;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: opacity 0.3s ease;
             margin-top: 10px;
         }
 
         .btn-submit:hover {
-            background-color: #003d80;
+            opacity: 0.92;
         }
 
         .btn-submit:disabled {
@@ -162,6 +167,7 @@
             margin-top: 20px;
             font-size: 14px;
             color: #222;
+            line-height: 1.6;
         }
 
         .footer-link a {
@@ -175,12 +181,21 @@
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 13px;
+            }
+
             .auth-card {
                 padding: 24px 18px;
             }
 
             .title {
                 font-size: 20px;
+            }
+
+            .logo {
+                width: 95px;
+                height: 95px;
             }
         }
     </style>
@@ -264,7 +279,8 @@
         import { auth, database } from "./js/firebase-config.js";
 
         import {
-            signInWithEmailAndPassword
+            signInWithEmailAndPassword,
+            onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         import {
@@ -279,10 +295,20 @@
         const submitButton = document.getElementById("submitButton");
         const messageBox = document.getElementById("message");
 
-        // Afficher un message à l'utilisateur.
+        let redirectionEnCours = false;
+
+        // Afficher un message.
         function showMessage(message, type = "error") {
             messageBox.textContent = message;
             messageBox.className = `message ${type}`;
+        }
+
+        // Verrouiller le formulaire pendant une vérification.
+        function setLoading(loading, text = "Se connecter") {
+            submitButton.disabled = loading;
+            submitButton.textContent = loading
+                ? "Vérification en cours..."
+                : text;
         }
 
         // Afficher ou masquer le mot de passe.
@@ -293,6 +319,13 @@
 
             togglePassword.classList.toggle("fa-eye", !isHidden);
             togglePassword.classList.toggle("fa-eye-slash", isHidden);
+
+            togglePassword.setAttribute(
+                "aria-label",
+                isHidden
+                    ? "Masquer le mot de passe"
+                    : "Afficher le mot de passe"
+            );
         }
 
         togglePassword.addEventListener("click", toggleVisibility);
@@ -304,9 +337,9 @@
             }
         });
 
-        // Traduire les principales erreurs Firebase.
+        // Traduire les erreurs Firebase.
         function getLoginError(error) {
-            switch (error.code) {
+            switch (error?.code) {
                 case "auth/invalid-email":
                     return "L'adresse e-mail n'est pas valide.";
 
@@ -328,69 +361,96 @@
                     return "La connexion par e-mail n'est pas activée dans Firebase.";
 
                 default:
-                    return "Impossible de vous connecter pour le moment. Vérifiez votre connexion et réessayez.";
+                    return "Impossible de vous connecter. Vérifiez votre connexion et réessayez.";
             }
         }
 
-        // Connexion de l'utilisateur.
+        // Vérifier le profil et rediriger.
+        async function verifierProfilEtRediriger(user) {
+            if (!user || redirectionEnCours) return;
+
+            redirectionEnCours = true;
+            setLoading(true);
+            showMessage("Vérification de votre profil...", "success");
+
+            try {
+                const profileSnapshot = await get(
+                    ref(database, `users/${user.uid}`)
+                );
+
+                if (!profileSnapshot.exists()) {
+                    redirectionEnCours = false;
+                    showMessage(
+                        "Votre compte est connecté, mais votre profil de chaîne est introuvable dans la base de données. Contactez l'administrateur."
+                    );
+                    setLoading(false);
+                    return;
+                }
+
+                localStorage.setItem("active_tv_key", user.uid);
+
+                showMessage(
+                    "Connexion réussie. Ouverture de votre profil...",
+                    "success"
+                );
+
+                window.location.replace("profil-television.html");
+
+            } catch (error) {
+                console.error("Erreur lors de la vérification du profil :", error);
+
+                redirectionEnCours = false;
+
+                showMessage(
+                    "Impossible de vérifier votre profil. Vérifiez votre connexion Internet et les règles Firebase Realtime Database."
+                );
+
+                setLoading(false);
+            }
+        }
+
+        // Si l'utilisateur est déjà connecté, vérifier son profil automatiquement.
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await verifierProfilEtRediriger(user);
+            }
+        });
+
+        // Connexion avec l'adresse e-mail et le mot de passe.
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
+
+            if (redirectionEnCours) return;
 
             const email = emailInput.value.trim();
             const password = passwordInput.value;
 
             if (!email || !password) {
-                showMessage("Veuillez saisir votre adresse e-mail et votre mot de passe.");
+                showMessage(
+                    "Veuillez saisir votre adresse e-mail et votre mot de passe."
+                );
                 return;
             }
 
-            submitButton.disabled = true;
-            submitButton.textContent = "Connexion en cours...";
-
+            setLoading(true, "Se connecter");
             messageBox.className = "message";
             messageBox.textContent = "";
 
             try {
-                // 1. Authentifier l'utilisateur avec Firebase.
                 const credential = await signInWithEmailAndPassword(
                     auth,
                     email,
                     password
                 );
 
-                const user = credential.user;
-
-                // 2. Vérifier que son profil existe dans la base.
-                const profileSnapshot = await get(
-                    ref(database, `users/${user.uid}`)
-                );
-
-                if (!profileSnapshot.exists()) {
-                    showMessage(
-                        "Votre compte est connecté, mais son profil de chaîne est introuvable dans la base de données. Contactez l'administrateur."
-                    );
-
-                    submitButton.disabled = false;
-                    submitButton.textContent = "Se connecter";
-                    return;
-                }
-
-                // 3. Préparer la clé utilisée par les anciennes pages,
-                // sans remplacer l'authentification Firebase.
-                localStorage.setItem("active_tv_key", user.uid);
-
-                // 4. Rediriger vers le nom exact du fichier de profil.
-                showMessage("Connexion réussie. Ouverture de votre profil...", "success");
-
-                window.location.replace("profil-television.html");
+                await verifierProfilEtRediriger(credential.user);
 
             } catch (error) {
                 console.error("Erreur de connexion :", error);
 
+                redirectionEnCours = false;
                 showMessage(getLoginError(error));
-
-                submitButton.disabled = false;
-                submitButton.textContent = "Se connecter";
+                setLoading(false, "Se connecter");
             }
         });
     </script>
