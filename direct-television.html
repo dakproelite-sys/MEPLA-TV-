@@ -33,17 +33,18 @@
         }
 
         .btn-regie {
-            padding: 8px 14px;
+            padding: 8px 12px;
             border: none;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             color: #fff;
             transition: transform 0.2s;
         }
-        .btn-start-live { background: #dc2626; box-shadow: 0 0 12px rgba(220, 38, 38, 0.7); }
-        .btn-stop-live { background: #16a34a; }
+        .btn-start-live { background: #dc2626; box-shadow: 0 0 10px rgba(220, 38, 38, 0.7); }
+        .btn-playlist { background: #16a34a; }
+        .btn-stop-chain { background: #b91c1c; border: 1px solid #f87171; }
         .btn-config { background: #2563eb; }
         .btn-regie:hover { transform: scale(1.03); }
 
@@ -83,7 +84,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: #000; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; color: #ef4444; 
-            font-weight: bold; font-size: 16px; z-index: 5; text-align: center; padding: 20px;
+            font-weight: bold; font-size: 16px; z-index: 15; text-align: center; padding: 20px;
         }
 
         /* FILIGRANE LOGO */
@@ -127,21 +128,30 @@
             100% { transform: translate(-100%, 0); }
         }
 
-        /* CAMÉRA HD TV-CAM & STUDIO VIRTUEL */
+        /* CAMÉRA HD TV-CAM & STUDIO VIRTUEL OPTIMISÉ */
         #webcam-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover; background-position: center;
             display: none; align-items: center; justify-content: center; z-index: 4;
         }
+        #webcam-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 1;
+        }
         #webcam-video {
             width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);
-            filter: contrast(1.15) brightness(1.1) saturate(1.2);
+            filter: contrast(1.1) brightness(1.05) saturate(1.1);
+            position: relative;
+            z-index: 2;
         }
 
         /* MENU DE PRÉ-CONFIGURATION ET TEST PRIVÉ (ESCAMOTABLE) */
         #setup-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(7, 10, 18, 0.97);
+            background: rgba(7, 10, 18, 0.98);
             z-index: 25;
             padding: 20px;
             overflow-y: auto;
@@ -149,7 +159,7 @@
             flex-direction: column;
             gap: 14px;
         }
-        #setup-overlay h2 { font-size: 14px; color: #fde047; border-left: 3px solid #2563eb; padding-left: 8px; }
+        #setup-overlay h2 { font-size: 13px; color: #fde047; border-left: 3px solid #2563eb; padding-left: 8px; margin-top: 5px; }
         
         .setup-grid {
             display: grid;
@@ -164,7 +174,7 @@
         .setup-thumb.selected { border-color: #22c55e; box-shadow: 0 0 10px rgba(34,197,94,0.6); }
 
         .setup-group input, .setup-group select {
-            width: 100%; padding: 8px; background: #020617; border: 1px solid #475569;
+            width: 100%; padding: 9px; background: #020617; border: 1px solid #475569;
             color: #fff; border-radius: 6px; font-size: 12px; margin-top: 4px;
         }
 
@@ -176,12 +186,14 @@
         }
         .audio-btn:hover { background: #1d4ed8; }
 
-        /* PETIT ÉCRAN DE PRÉVISULATION INTERNE */
         .preview-box {
-            width: 100%; height: 120px; background: #000; border: 2px solid #2563eb; border-radius: 8px;
+            width: 100%; height: 130px; background: #000; border: 2px solid #2563eb; border-radius: 8px;
             position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
-        .preview-video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        .preview-box::after {
+            content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 1;
+        }
+        .preview-video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); position: relative; z-index: 2; }
 
         /* PANNEAUX DE CONTRÔLE EN BAS */
         .control-panels-wrapper {
@@ -218,14 +230,15 @@
 
     <!-- BARRE DE CONTRÔLE DE RÉGIE RAPIDE -->
     <div class="top-controls">
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span id="live-status-badge" style="font-weight: bold; font-size: 12px;">🔴 Statut : Chargement...</span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span id="live-status-badge" style="font-weight: bold; font-size: 11px;">🔴 Statut : Chargement...</span>
             <div id="live-chronometer" class="live-timer">00:00:00</div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
             <button class="btn-regie btn-config" onclick="toggleSetupOverlay()">⚙️ Studio & Réglages</button>
-            <button class="btn-regie btn-start-live" onclick="basculerDirectStudio(true)">🎥 Lancer Direct</button>
-            <button class="btn-regie btn-stop-live" onclick="basculerDirectStudio(false)">📺 Playlist 24h</button>
+            <button class="btn-regie btn-start-live" onclick="lancerDirectPublic()">🎥 Lancer Direct</button>
+            <button class="btn-regie btn-playlist" onclick="basculerModePlaylist()">📺 Playlist 24h</button>
+            <button class="btn-regie btn-stop-chain" onclick="couperChaineLive()">⏹ Couper Chaîne</button>
         </div>
     </div>
 
@@ -234,8 +247,8 @@
         <!-- MENU DE PRÉ-CONFIGURATION & MODE TEST PRIVÉ (ESCAMOTABLE) -->
         <div id="setup-overlay">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>👁️ Mode Test Privé & Studio de Prévisualisation</h2>
-                <button onclick="toggleSetupOverlay()" style="background:#dc2626; color:#fff; border:none; padding:4px 10px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:11px;">✕ Fermer / Voir l'Écran</button>
+                <h2>👁️ Studio de Prévisualisation & Réglages</h2>
+                <button onclick="toggleSetupOverlay()" style="background:#dc2626; color:#fff; border:none; padding:5px 12px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:11px;">✕ Fermer / Voir l'Écran</button>
             </div>
             
             <div class="preview-box" id="preview-container">
@@ -243,17 +256,20 @@
             </div>
 
             <h2>🎨 1. Choisir le Décor du Studio</h2>
-            <div class="setup-grid" id="bg-selector-grid">
-                <div class="setup-thumb selected" style="background-image: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300');" data-url="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200" onclick="selectionnerFond(this)"></div>
-                <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1577495508048-b635879837f1?w=300');" data-url="https://images.unsplash.com/photo-1577495508048-b635879837f1?w=1200" onclick="selectionnerFond(this)"></div>
-                <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=300');" data-url="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200" onclick="selectionnerFond(this)"></div>
-                <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=300');" data-url="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=1200" onclick="selectionnerFond(this)"></div>
-                <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=300');" data-url="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200" onclick="selectionnerFond(this)"></div>
+            <div class="setup-group">
+                <div class="setup-grid" id="bg-selector-grid">
+                    <div class="setup-thumb selected" style="background-image: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300');" data-url="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200" onclick="selectionnerFond(this)"></div>
+                    <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1577495508048-b635879837f1?w=300');" data-url="https://images.unsplash.com/photo-1577495508048-b635879837f1?w=1200" onclick="selectionnerFond(this)"></div>
+                    <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=300');" data-url="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200" onclick="selectionnerFond(this)"></div>
+                    <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=300');" data-url="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=1200" onclick="selectionnerFond(this)"></div>
+                    <div class="setup-thumb" style="background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=300');" data-url="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200" onclick="selectionnerFond(this)"></div>
+                </div>
+                <input type="text" id="custom-bg-url-input" placeholder="Ou coller un lien URL d'image personnalisé ici..." oninput="appliquerFondPersonnalise(this.value)">
             </div>
 
             <h2>🖼️ 2. Configuration du Logo & Position</h2>
             <div class="setup-group">
-                <input type="text" id="setup-logo-url" placeholder="Lien URL Logo (optionnel)">
+                <input type="text" id="setup-logo-url" placeholder="Lien URL Logo (laisser vide pour utiliser celui du profil)">
                 <select id="setup-logo-pos">
                     <option value="top-right">Haut Droite</option>
                     <option value="top-left">Haut Gauche</option>
@@ -320,19 +336,32 @@
     <!-- SCRIPT DE GESTION EN TEMPS RÉEL -->
     <script type="module">
         import { database } from "./js/firebase-config.js";
-        import { ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const tvKey = localStorage.getItem("active_tv_key");
         if (!tvKey) {
-            window.location.href = "login.html";
+            window.location.href = "connexion.html";
         }
 
-        const tvRef = ref(database, 'television_profils/' + tvKey);
+        const tvRef = ref(database, 'users/' + tvKey);
         let mediaStream = null;
         let previewStream = null;
         let selectedFondUrl = "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200";
         let timerInterval = null;
         let secondsElapsed = 0;
+
+        // Charger configuration initiale depuis Firebase
+        get(tvRef).then((snapshot) => {
+            if(snapshot.exists()) {
+                const data = snapshot.val();
+                if(data.studioBackground) {
+                    selectedFondUrl = data.studioBackground;
+                    document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+                    document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+                    document.getElementById('custom-bg-url-input').value = selectedFondUrl;
+                }
+            }
+        });
 
         // Ouvrir / Fermer le menu de configuration escamotable
         window.toggleSetupOverlay = function() {
@@ -348,7 +377,7 @@
             }
         };
 
-        // Démarrer la caméra pour le mode test (Moi seul)
+        // Démarrer la caméra pour le mode test
         async function initPreviewCam() {
             try {
                 if(!previewStream) {
@@ -367,8 +396,17 @@
             document.querySelectorAll('.setup-thumb').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
             selectedFondUrl = element.getAttribute('data-url');
+            document.getElementById('custom-bg-url-input').value = selectedFondUrl;
             document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
             document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+        };
+
+        window.appliquerFondPersonnalise = function(url) {
+            if(url.trim() !== '') {
+                selectedFondUrl = url.trim();
+                document.getElementById('preview-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+                document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+            }
         };
 
         // Audio Ambiance Galerie
@@ -389,13 +427,48 @@
             btn.innerText = audioElement.loop ? "🔁 Répéter : ON" : "🔁 Répéter : OFF";
         };
 
-        // Lancer le direct public
+        // Lancer le direct public avec sauvegarde du fond dans Firebase
         window.lancerDirectPublic = async function() {
             if(previewStream) {
                 previewStream.getTracks().forEach(track => track.stop());
             }
+            try {
+                await update(tvRef, {
+                    studioBackground: selectedFondUrl,
+                    isStudioLive: true,
+                    isLive: true,
+                    lastUpdated: new Date().toISOString()
+                });
+            } catch(e) {
+                alert("Erreur de régie : " + e.message);
+            }
             document.getElementById('setup-overlay').style.display = 'none';
-            await basculerDirectStudio(true);
+        };
+
+        window.basculerModePlaylist = async function() {
+            try {
+                await update(tvRef, {
+                    isStudioLive: false,
+                    isLive: true,
+                    lastUpdated: new Date().toISOString()
+                });
+            } catch(e) {
+                alert("Erreur de régie : " + e.message);
+            }
+        };
+
+        window.couperChaineLive = async function() {
+            if(confirm("Voulez-vous vraiment couper la chaîne (mettre hors ligne) ?")) {
+                try {
+                    await update(tvRef, {
+                        isStudioLive: false,
+                        isLive: false,
+                        lastUpdated: new Date().toISOString()
+                    });
+                } catch(e) {
+                    alert("Erreur de coupure : " + e.message);
+                }
+            }
         };
 
         // Chronomètre
@@ -418,7 +491,7 @@
             document.getElementById('live-chronometer').style.display = "none";
         }
 
-        // 1. ÉCOUTER LA BASE DE DONNÉES EN TEMPS RÉEL
+        // ÉCOUTER LA BASE DE DONNÉES EN TEMPS RÉEL
         onValue(tvRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -427,7 +500,11 @@
                 const player = document.getElementById('playlist-player');
                 const statusBadge = document.getElementById('live-status-badge');
                 const logoImg = document.getElementById('channel-logo');
-                const setupOverlay = document.getElementById('setup-overlay');
+
+                if(data.studioBackground) {
+                    selectedFondUrl = data.studioBackground;
+                    document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
+                }
 
                 // Logo filigrane
                 const logoUrlInput = document.getElementById('setup-logo-url').value.trim();
@@ -447,10 +524,11 @@
                     document.getElementById('ticker-content').innerText = data.currentTicker;
                 }
 
-                // Chaîne coupée
+                // Chaîne coupée (Hors Ligne)
                 if (data.isLive === false) {
                     offlineScreen.style.display = "flex";
                     playlistWrapper.style.display = "none";
+                    document.getElementById('webcam-container').style.display = "none";
                     statusBadge.innerText = "🔴 Statut : CHAÎNE COUPÉE";
                     statusBadge.style.color = "#ef4444";
                     arreterCaméraTV();
@@ -466,7 +544,6 @@
                     statusBadge.style.color = "#4ade80";
                     playlistWrapper.style.display = "none";
                     document.getElementById('webcam-container').style.display = "flex";
-                    setupOverlay.style.display = 'none';
                     démarrerCaméraTVHD();
                     startTimer();
                     return;
@@ -476,8 +553,8 @@
                     stopTimer();
                 }
 
-                // Mode Diffusion Continue 24h/24
-                statusBadge.innerText = "🔴 Statut : DIFFUSION CONTINUE 24H/24";
+                // Mode Diffusion Continue 24h/24 (Playlist)
+                statusBadge.innerText = "🔴 Statut : DIFFUSION 24H/24";
                 statusBadge.style.color = "#fde047";
                 playlistWrapper.style.display = "block";
 
@@ -497,25 +574,12 @@
             }
         });
 
-        // 2. BASCULER ENTRE DIRECT ET PLAYLIST
-        window.basculerDirectStudio = async function(activer) {
-            try {
-                await update(tvRef, {
-                    isStudioLive: activer,
-                    isLive: true,
-                    lastUpdated: new Date().toISOString()
-                });
-            } catch (error) {
-                alert("Erreur de régie : " + error.message);
-            }
-        };
-
-        // 3. CAMÉRA HD TV-CAM
+        // CAMÉRA HD TV-CAM
         async function démarrerCaméraTVHD() {
             if (!mediaStream) {
                 try {
                     const constraints = {
-                        video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } },
+                        video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
                         audio: { echoCancellation: true, noiseSuppression: true }
                     };
                     mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -538,9 +602,7 @@
             }
         }
 
-        document.getElementById('webcam-container').style.backgroundImage = `url('${selectedFondUrl}')`;
-
-        // 4. VERSETS
+        // VERSETS
         window.remplirVersetPreset = function(select) {
             if(select.value) { document.getElementById('custom-verse-input').value = select.value; }
         };

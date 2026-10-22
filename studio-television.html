@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEPLA TV - Studio Professionnel Multi-Écrans 24h/24</title>
+    <title>MEPLA TV - Studio Professionnel & Régie 24h/24</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -36,7 +36,7 @@
         h1 { color: #1e3a8a; font-size: 22px; font-weight: 800; }
         .back-btn { color: #1e3a8a; text-decoration: none; font-size: 13px; font-weight: bold; }
         
-        /* Compteur 24h Cumulatif */
+        /* BANDEAU DE SUIVI DU TEMPS 24H */
         .timer-banner {
             background: #0f172a; 
             color: #fde047; 
@@ -45,7 +45,7 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-weight: bold; 
             font-size: 14px; 
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
@@ -53,7 +53,54 @@
             gap: 10px;
         }
 
-        /* Organisation Responsive 2 Colonnes pour PC / 1 Colonne sur Mobile */
+        /* APERÇU DE LA TÉLÉVISION EN DIRECT */
+        .tv-preview-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border: 3px solid #eab308;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .tv-logo-overlay {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            z-index: 10;
+            display: none;
+        }
+        .pos-top-right { top: 12px; right: 12px; }
+        .pos-top-left { top: 12px; left: 12px; }
+
+        .ticker-bar {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 2px solid #eab308;
+            color: #fde047;
+            padding: 6px 0;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            z-index: 10;
+        }
+        .ticker-inner {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker 25s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
         .studio-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -61,9 +108,7 @@
         }
 
         @media (max-width: 820px) {
-            .studio-grid {
-                grid-template-columns: 1fr;
-            }
+            .studio-grid { grid-template-columns: 1fr; }
         }
 
         .card-box {
@@ -71,6 +116,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 12px;
             padding: 18px;
+            margin-bottom: 20px;
         }
 
         .card-box h3 {
@@ -114,16 +160,15 @@
             background: #dc2626;
             color: #ffffff;
             text-decoration: none;
-            padding: 10px;
+            padding: 11px;
             border-radius: 8px;
             font-size: 12px;
             font-weight: bold;
-            margin-bottom: 14px;
+            margin-bottom: 15px;
             transition: background 0.2s;
         }
         .btn-yt-search:hover { background: #b91c1c; }
 
-        /* Liste de la grille des programmes */
         .playlist-section { margin-top: 25px; border-top: 2px solid #f3f4f6; padding-top: 20px; }
         .playlist-section h2 { font-size: 16px; color: #1e3a8a; margin-bottom: 15px; }
         
@@ -144,16 +189,10 @@
         .program-info p { font-size: 11px; color: #6b7280; }
         
         .action-btns { display: flex; gap: 6px; }
-
         .btn-edit { background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .btn-edit:hover { background: #b45309; }
-
         .btn-delete { background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .btn-delete:hover { background: #b91c1c; }
-
         .msg { margin-top: 10px; font-size: 12px; font-weight: bold; text-align: center; }
 
-        /* MODALE DE MODIFICATION */
         .modal {
             display: none;
             position: fixed;
@@ -180,14 +219,27 @@
             <a href="profil-television.html" class="back-btn">← Retour au Profil Admin</a>
         </div>
 
-        <!-- COMPTEUR GLOBAL DU PROGRAMME JOURNALIER -->
+        <!-- COMPTEUR CUMULATIF 24H -->
         <div class="timer-banner">
             <span>⏱️ Temps Total Programmé (Somme Cumulée) :</span>
             <span id="total-duration-display">00h 00m / 24h 00m</span>
         </div>
 
+        <!-- APERÇU DE LA CHAÎNE EN DIRECT -->
+        <div class="tv-preview-container">
+            <img id="preview-logo" class="tv-logo-overlay" src="" alt="Logo TV">
+            <div id="preview-player-wrapper" style="width:100%; height:100%;">
+                <iframe id="preview-iframe" src="" allow="autoplay; encrypted-media" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+            <div class="ticker-bar">
+                <div class="ticker-inner" id="preview-ticker">
+                    🙏 Bienvenue sur MEPLA TV • Programmé en continu 24h/24
+                </div>
+            </div>
+        </div>
+
         <div class="studio-grid">
-            <!-- COLONNE 1 : LOGO TV SUR L'ÉCRAN -->
+            <!-- COLONNE 1 : LOGO -->
             <div class="card-box">
                 <h3>1. Configuration du Logo en Filigrane</h3>
                 <div class="form-group">
@@ -205,13 +257,12 @@
                 <div id="logo-msg" class="msg"></div>
             </div>
 
-            <!-- COLONNE 2 : AJOUT DE VIDÉOS (YOUTUBE OU GALERIE LOCAL) -->
+            <!-- COLONNE 2 : AJOUT DE VIDÉOS -->
             <div class="card-box">
                 <h3>2. Ajouter des Émissions / Cultes</h3>
                 
-                <!-- Bouton pour ouvrir YouTube dans un nouvel onglet -->
                 <a href="https://www.youtube.com" target="_blank" class="btn-yt-search">
-                    🔍 Rechercher une vidéo directement sur YouTube ↗
+                    🔍 Rechercher et copier un lien sur YouTube ↗
                 </a>
 
                 <div class="form-group">
@@ -222,21 +273,19 @@
                 <div class="form-group">
                     <label>Source de la Vidéo</label>
                     <select id="source-type" onchange="basculerSource()">
-                        <option value="youtube">Lien URL YouTube</option>
-                        <option value="galerie">Sélectionner depuis la Galerie Appareil</option>
+                        <option value="youtube">Lien URL YouTube (Coller le lien)</option>
+                        <option value="galerie">Fichiers Vidéo de l'Appareil (Galerie / Local)</option>
                     </select>
                 </div>
 
-                <!-- Champ Lien YouTube -->
                 <div class="form-group" id="group-yt">
-                    <label>Lien URL YouTube</label>
+                    <label>Coller le lien URL YouTube</label>
                     <input type="text" id="prog-url" placeholder="Ex: https://youtu.be/XXXXXX ou https://www.youtube.com/watch?v=...">
                 </div>
 
-                <!-- Champ Fichier Galerie Local -->
                 <div class="form-group" id="group-galerie" style="display: none;">
-                    <label>Choisir un fichier vidéo local</label>
-                    <input type="file" id="prog-file" accept="video/*" onchange="chargerFichierLocal(this)">
+                    <label>Sélectionner une vidéo depuis la galerie du téléphone</label>
+                    <input type="file" id="prog-file" accept="video/*" onchange="chargerFichierLocal(this)" style="padding: 9px; background: #fff;">
                 </div>
 
                 <div class="form-group">
@@ -249,7 +298,7 @@
             </div>
         </div>
 
-        <!-- LISTE DE LA PROGRAMMATION ACTUELLE -->
+        <!-- GRILLE DE DIFFUSION -->
         <div class="playlist-section">
             <h2>Grille de Diffusion de la Chaîne (Somme & Programmation)</h2>
             <div class="program-list" id="program-grid">
@@ -258,11 +307,11 @@
         </div>
     </div>
 
-    <!-- FENÊTRE MODALE POUR MODIFIER UNE VIDÉO DE LA GRILLE -->
+    <!-- MODALE DE MODIFICATION / REMPLACEMENT -->
     <div class="modal" id="edit-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>✏️ Modifier le Programme</h3>
+                <h3>✏️ Modifier / Remplacer le Programme</h3>
                 <span class="close-modal" onclick="fermerModale()">&times;</span>
             </div>
             <input type="hidden" id="edit-key">
@@ -271,7 +320,7 @@
                 <input type="text" id="edit-title">
             </div>
             <div class="form-group">
-                <label>Nouveau Lien URL YouTube ou Source</label>
+                <label>Nouveau Lien URL YouTube ou Fichier</label>
                 <input type="text" id="edit-url">
             </div>
             <div class="form-group">
@@ -282,22 +331,20 @@
         </div>
     </div>
 
-    <!-- SCRIPT REALTIME DATABASE ET GESTION DU STUDIO -->
     <script type="module">
         import { database } from "./js/firebase-config.js";
         import { ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const tvKey = localStorage.getItem("active_tv_key");
         if (!tvKey) {
-            window.location.href = "login.html";
+            window.location.href = "connexion.html";
         }
 
-        const tvRef = ref(database, `television_profils/${tvKey}`);
-        const playlistRef = ref(database, `television_profils/${tvKey}/playlist`);
+        const tvRef = ref(database, `users/${tvKey}`);
+        const playlistRef = ref(database, `users/${tvKey}/playlist`);
 
         let urlFichierLocal = "";
 
-        // Charger la configuration du logo
         get(tvRef).then((snapshot) => {
             if(snapshot.exists()) {
                 const data = snapshot.val();
@@ -308,7 +355,6 @@
             }
         });
 
-        // 1. ENREGISTRER LE LOGO
         window.enregistrerLogo = async function() {
             const logoUrl = document.getElementById('logo-url').value.trim();
             const position = document.getElementById('logo-position').value;
@@ -330,7 +376,6 @@
             }
         };
 
-        // 2. BASCULER ENTRE YOUTUBE ET GALERIE
         window.basculerSource = function() {
             const type = document.getElementById('source-type').value;
             if (type === 'youtube') {
@@ -342,7 +387,6 @@
             }
         };
 
-        // Charger fichier local
         window.chargerFichierLocal = function(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -353,7 +397,6 @@
             }
         };
 
-        // Extraction de l'ID YouTube
         function extraireIdYoutube(url) {
             if (!url) return null;
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -361,7 +404,6 @@
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        // 3. AJOUTER UNE VIDÉO
         window.ajouterProgramme = async function() {
             const title = document.getElementById('prog-title').value.trim();
             const sourceType = document.getElementById('source-type').value;
@@ -389,7 +431,7 @@
             } else {
                 if (!urlFichierLocal) {
                     msgBox.style.color = "#dc2626";
-                    msgBox.innerText = "Veuillez sélectionner un fichier vidéo dans votre galerie.";
+                    msgBox.innerText = "Veuillez sélectionner un fichier vidéo depuis votre galerie.";
                     return;
                 }
                 finalUrl = urlFichierLocal;
@@ -418,54 +460,72 @@
             }
         };
 
-        // 4. ÉCOUTER LA PROGRAMMATION ET CALCULER LA SOMME CUMULÉE DES HEURES
-        onValue(playlistRef, (snapshot) => {
+        // Synchronisation temps réel et affichage de l'aperçu TV
+        onValue(tvRef, (snapshot) => {
             const container = document.getElementById('program-grid');
             const timerDisplay = document.getElementById('total-duration-display');
+            const previewLogo = document.getElementById('preview-logo');
+            const previewIframe = document.getElementById('preview-iframe');
             
             if (snapshot.exists()) {
-                container.innerHTML = "";
                 const data = snapshot.val();
-                let totalMinutes = 0;
 
-                Object.keys(data).forEach(key => {
-                    const item = data[key];
-                    const itemDuration = parseInt(item.dureeMinutes) || 15;
-                    totalMinutes += itemDuration;
-
-                    const div = document.createElement('div');
-                    div.className = 'program-item';
-                    div.innerHTML = `
-                        <div class="program-info">
-                            <h4>📺 ${item.titre} (${item.type === 'youtube' ? 'YouTube' : 'Fichier Appareil'})</h4>
-                            <p>Durée : <strong>${itemDuration} minutes</strong></p>
-                        </div>
-                        <div class="action-btns">
-                            <button class="btn-edit" onclick="ouvrirModale('${key}', '${item.titre.replace(/'/g, "\\'")}', '${item.url}', ${itemDuration})">Modifier</button>
-                            <button class="btn-delete" onclick="supprimerProgramme('${key}')">Supprimer</button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                });
-
-                // Calcul cumulatif (15 min + 40 min = 55 min -> 1h15m, etc.)
-                const heures = Math.floor(totalMinutes / 60);
-                const minutes = totalMinutes % 60;
-                timerDisplay.innerText = `${String(heures).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m / 24h 00m`;
-
-                if (totalMinutes >= 1440) {
-                    timerDisplay.style.color = "#4ade80"; // Vert si la grille atteint/dépasse 24h
+                // Logo filigrane dans l'aperçu
+                if (data.logoOverlay && data.logoOverlay.url) {
+                    previewLogo.src = data.logoOverlay.url;
+                    previewLogo.className = `tv-logo-overlay pos-${data.logoOverlay.position || 'top-right'}`;
+                    previewLogo.style.display = "block";
                 } else {
-                    timerDisplay.style.color = "#fde047";
+                    previewLogo.style.display = "none";
                 }
 
-            } else {
-                container.innerHTML = `<p style="font-size: 12px; color: #6b7280; text-align: center;">Aucun programme planifié pour le moment.</p>`;
-                timerDisplay.innerText = `00h 00m / 24h 00m`;
+                // Playlist et calcul cumulatif
+                if (data.playlist) {
+                    container.innerHTML = "";
+                    let totalMinutes = 0;
+                    const keys = Object.keys(data.playlist);
+
+                    keys.forEach((key, index) => {
+                        const item = data.playlist[key];
+                        const itemDuration = parseInt(item.dureeMinutes) || 15;
+                        totalMinutes += itemDuration;
+
+                        // Afficher la première vidéo de la playlist dans le lecteur de prévisualisation
+                        if (index === 0) {
+                            if (item.youtubeId) {
+                                previewIframe.src = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&mute=1`;
+                            } else if (item.url) {
+                                document.getElementById('preview-player-wrapper').innerHTML = `<video src="${item.url}" autoplay muted controls style="width:100%;height:100%;object-fit:cover;"></video>`;
+                            }
+                        }
+
+                        const div = document.createElement('div');
+                        div.className = 'program-item';
+                        div.innerHTML = `
+                            <div class="program-info">
+                                <h4>📺 ${item.titre} (${item.type === 'youtube' ? 'YouTube' : 'Galerie Appareil'})</h4>
+                                <p>Durée : <strong>${itemDuration} minutes</strong></p>
+                            </div>
+                            <div class="action-btns">
+                                <button class="btn-edit" onclick="ouvrirModale('${key}', '${item.titre.replace(/'/g, "\\'")}', '${item.url}', ${itemDuration})">Modifier / Remplacer</button>
+                                <button class="btn-delete" onclick="supprimerProgramme('${key}')">Supprimer</button>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+
+                    const heures = Math.floor(totalMinutes / 60);
+                    const minutes = totalMinutes % 60;
+                    timerDisplay.innerText = `${String(heures).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m / 24h 00m`;
+                    timerDisplay.style.color = totalMinutes >= 1440 ? "#4ade80" : "#fde047";
+                } else {
+                    container.innerHTML = `<p style="font-size: 12px; color: #6b7280; text-align: center;">Aucun programme planifié pour le moment.</p>`;
+                    timerDisplay.innerText = `00h 00m / 24h 00m`;
+                    previewIframe.src = "";
+                }
             }
         });
 
-        // 5. GESTION DE LA MODIFICATION
         window.ouvrirModale = function(key, title, url, duration) {
             document.getElementById('edit-key').value = key;
             document.getElementById('edit-title').value = title;
@@ -492,7 +552,7 @@
             const newYtId = extraireIdYoutube(newUrl);
 
             try {
-                await update(ref(database, `television_profils/${tvKey}/playlist/${key}`), {
+                await update(ref(database, `users/${tvKey}/playlist/${key}`), {
                     titre: newTitle,
                     url: newUrl,
                     youtubeId: newYtId || "",
@@ -504,11 +564,10 @@
             }
         };
 
-        // 6. SUPPRIMER UN PROGRAMME
         window.supprimerProgramme = async function(itemKey) {
             if (confirm("Voulez-vous vraiment retirer cette vidéo du programme ?")) {
                 try {
-                    await remove(ref(database, `television_profils/${tvKey}/playlist/${itemKey}`));
+                    await remove(ref(database, `users/${tvKey}/playlist/${itemKey}`));
                 } catch (error) {
                     alert("Erreur de suppression : " + error.message);
                 }

@@ -148,31 +148,22 @@
             align-items: center;
             text-align: center;
             text-decoration: none;
-            padding: 11px 14px;
-            border-radius: 9px;
-            font-size: 12px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 13px;
             font-weight: 800;
             transition: 0.2s ease;
             border: 2px solid transparent;
         }
 
-        .login-btn {
-            background: var(--white);
-            color: var(--blue);
-        }
-
-        .login-btn:hover {
-            background: #dbeafe;
-            transform: translateY(-2px);
-        }
-
-        .register-btn {
+        .owner-btn {
             background: var(--yellow);
             color: var(--blue);
             border-color: #eab308;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .register-btn:hover {
+        .owner-btn:hover {
             background: var(--yellow-light);
             transform: translateY(-2px);
         }
@@ -486,8 +477,7 @@
             }
 
             .channel-action-btn {
-                flex: 1;
-                min-width: 120px;
+                width: 100%;
             }
 
             .title-box h1 {
@@ -505,28 +495,6 @@
 
             .search-panel {
                 padding: 14px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .grid-tv {
-                grid-template-columns: 1fr;
-            }
-
-            .channel-actions {
-                flex-direction: column;
-            }
-
-            .channel-action-btn {
-                width: 100%;
-            }
-
-            .title-box h1 {
-                font-size: 15px;
-            }
-
-            .title-box p {
-                font-size: 9px;
             }
         }
     </style>
@@ -552,7 +520,7 @@
         </a>
     </header>
 
-    <!-- ESPACE CHAÎNE : ACCÈS À LA CONNEXION ET À L'INSCRIPTION -->
+    <!-- ESPACE CHAÎNE : BOUTON UNIQUE DE PROPRIÉTAIRE -->
     <section class="channel-space-banner">
         <div class="channel-space-info">
             <h3>📺 Espace Chaîne & Télévision</h3>
@@ -560,24 +528,15 @@
             <p>
                 Découvrez les chaînes missionnaires du réseau MEPLA TV.
                 Vous pouvez rechercher et regarder les chaînes sans compte.
-                Vous souhaitez créer ou gérer votre propre chaîne ?
-                Connectez-vous ou créez votre espace.
             </p>
         </div>
 
         <nav class="channel-actions" aria-label="Espace des créateurs de chaînes">
             <a
                 href="connexion.html"
-                class="channel-action-btn login-btn"
+                class="channel-action-btn owner-btn"
             >
-                🔐 Se connecter
-            </a>
-
-            <a
-                href="inscription.html"
-                class="channel-action-btn register-btn"
-            >
-                ➕ Créer ma chaîne
+                📺 Devenir propriétaire de ta chaîne
             </a>
         </nav>
     </section>
@@ -818,10 +777,7 @@
                    tv.live === "true";
         }
 
-        /*
-         * FUSION DES DONNÉES
-         * Les chemins Firebase existants sont conservés.
-         */
+        /* FUSION DES DONNÉES */
         function collectChannels() {
             const channels = new Map();
 
@@ -857,10 +813,6 @@
                 _savedNumber: getSavedChannelNumber(tv)
             }));
 
-            /*
-             * Tri par date de création lorsque cette date existe.
-             * Sinon, l'identifiant sert de solution de repli.
-             */
             result.sort((a, b) => {
                 if (
                     a._creationTime &&
@@ -876,11 +828,6 @@
                 return String(a._key).localeCompare(String(b._key));
             });
 
-            /*
-             * Les numéros enregistrés sont conservés.
-             * Les anciens profils sans numéro reçoivent un numéro provisoire
-             * pour l'affichage, calculé à partir de l'ordre des résultats.
-             */
             result.forEach((tv, index) => {
                 tv._channelNumber =
                     tv._savedNumber || String(index + 1).padStart(2, "0");
@@ -919,9 +866,6 @@
             });
         }
 
-        /*
-         * AUTORISER UNIQUEMENT DES ADRESSES HTTP/HTTPS POUR LES IMAGES.
-         */
         function getSafeImageUrl(value) {
             try {
                 const url = new URL(String(value || DEFAULT_PHOTO));
@@ -930,7 +874,7 @@
                     return url.href;
                 }
             } catch {
-                // Utilisation de la photo par défaut ci-dessous.
+                // Utilisation de la photo par défaut
             }
 
             return DEFAULT_PHOTO;
@@ -985,7 +929,6 @@
             return card;
         }
 
-        /* EXTRACTION DE L'ADRESSE VIDÉO */
         function getStreamUrl(tv) {
             return tv.streamUrl ||
                    tv.videoUrl ||
@@ -998,9 +941,6 @@
                    "";
         }
 
-        /*
-         * SÉLECTION D'UNE CHAÎNE
-         */
         function selectChannel(tv) {
             currentlySelectedKey = tv._key;
 
@@ -1026,10 +966,6 @@
             }
         }
 
-        /*
-         * LECTEUR VIDÉO
-         * Prend en charge les vidéos directes et les liens YouTube.
-         */
         function playChannelStream(url) {
             let parsedUrl;
 
@@ -1058,7 +994,6 @@
                 hostname === "youtube-nocookie.com" ||
                 hostname.endsWith(".youtube-nocookie.com");
 
-            /* YOUTUBE */
             if (isYouTube) {
                 let videoId = "";
 
@@ -1097,7 +1032,6 @@
                 return true;
             }
 
-            /* VIDÉO DIRECTE, COMME MP4 */
             const video = document.createElement("video");
 
             video.controls = true;
@@ -1113,15 +1047,12 @@
             videoContainer.replaceChildren(video);
 
             video.play().catch(() => {
-                // Le visiteur peut lancer la lecture manuellement.
+                // Lecture manuelle possible
             });
 
             return true;
         }
 
-        /*
-         * AFFICHER AUTOMATIQUEMENT LA PREMIÈRE TÉLÉVISION
-         */
         function displayFirstTelevision() {
             const channels = collectChannels();
 
@@ -1141,10 +1072,6 @@
 
             firstTelevisionKey = firstTV._key;
 
-            /*
-             * Ne pas réinitialiser le lecteur si la première chaîne
-             * est déjà sélectionnée.
-             */
             if (currentlySelectedKey === firstTV._key) {
                 return;
             }
@@ -1164,19 +1091,12 @@
                         `Première télévision créée : ${firstTV._channelName}.`;
                 }
             } else {
-                /*
-                 * Sans adresse de diffusion, on conserve le lecteur actuel.
-                 */
                 playerNote.textContent =
                     `Première télévision créée : ${firstTV._channelName}. ` +
                     `Aucune adresse de diffusion n'est encore enregistrée.`;
             }
         }
 
-        /*
-         * RECHERCHE
-         * Aucune carte n'apparaît tant que le visiteur n'a rien saisi.
-         */
         function renderSearchResults() {
             const query = normalizeText(searchInput.value);
 
@@ -1240,12 +1160,6 @@
             searchInput.focus();
         });
 
-        /*
-         * ÉTAT FIREBASE
-         * On attend que les deux chemins aient répondu ou signalé une erreur.
-         * Si l'un fonctionne et l'autre échoue, les données disponibles
-         * restent consultables.
-         */
         function updateFirebaseState() {
             const usersSettled = usersReady || usersFailed;
             const profilesSettled = profilesReady || profilesFailed;
@@ -1265,10 +1179,6 @@
             renderSearchResults();
         }
 
-        /*
-         * CHARGEMENT DES UTILISATEURS
-         * Chemin conservé : users
-         */
         onValue(
             ref(database, "users"),
             (snapshot) => {
@@ -1281,17 +1191,11 @@
             },
             (error) => {
                 console.error("Erreur Firebase users/:", error);
-
                 usersFailed = true;
-
                 updateFirebaseState();
             }
         );
 
-        /*
-         * CHARGEMENT DES PROFILS TÉLÉVISION
-         * Chemin conservé : television_profils
-         */
         onValue(
             ref(database, "television_profils"),
             (snapshot) => {
@@ -1305,13 +1209,8 @@
                 updateFirebaseState();
             },
             (error) => {
-                console.error(
-                    "Erreur Firebase television_profils/:",
-                    error
-                );
-
+                console.error("Erreur Firebase television_profils/:", error);
                 profilesFailed = true;
-
                 updateFirebaseState();
             }
         );
