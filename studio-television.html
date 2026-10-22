@@ -1,636 +1,682 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEPLA TV - Studio de Régie Professionnel 24h/24</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc; 
-            padding: 15px; 
-            min-height: 100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<title>MEPLA TV — Studio de Régie</title>
 
-        .container { 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            background: #ffffff; 
-            color: #111827;
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 2px solid #eab308; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
-        }
-        
-        .header-flex { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 20px; 
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
 
-        h1 { color: #1e3a8a; font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .on-air-badge { background: #dc2626; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+:root{
+  --bg:#07111f;
+  --panel:#0f1b2d;
+  --border:#263852;
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --blue:#2563eb;
+  --green:#16a34a;
+  --red:#dc2626;
+  --orange:#f97316;
+  --yellow:#eab308;
+}
 
-        .back-btn { color: #1e3a8a; text-decoration: none; font-size: 13px; font-weight: bold; }
-        
-        /* GRAND BANDEAU DE SUIVI DU TEMPS 24H */
-        .timer-banner {
-            background: #0f172a; 
-            color: #fde047; 
-            padding: 18px 22px; 
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-            border: 2px solid #eab308;
-        }
-        .timer-top-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 15px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .progress-bar-container {
-            width: 100%;
-            height: 14px;
-            background: #334155;
-            border-radius: 7px;
-            overflow: hidden;
-            position: relative;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #eab308, #22c55e);
-            border-radius: 7px;
-            transition: width 0.4s ease;
-        }
+body{
+  font-family:Arial,Segoe UI,sans-serif;
+  background:radial-gradient(circle at top,#17345c,#07111f 45%,#030712);
+  color:var(--text);
+  min-height:100vh;
+}
 
-        /* APERÇU DE LA TÉLÉVISION EN DIRECT */
-        .tv-preview-container {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border: 3px solid #eab308;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-        .tv-logo-overlay {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #fff;
-            z-index: 10;
-            display: none;
-        }
-        .pos-top-right { top: 12px; right: 12px; }
-        .pos-top-left { top: 12px; left: 12px; }
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
 
-        .ticker-bar {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            border-top: 2px solid #eab308;
-            color: #fde047;
-            padding: 6px 0;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-            overflow: hidden;
-            z-index: 10;
-        }
-        .ticker-inner {
-            display: inline-block;
-            padding-left: 100%;
-            animation: ticker 25s linear infinite;
-        }
-        @keyframes ticker {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(3,7,18,.96);
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+}
 
-        .studio-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+.topbar-inner{
+  max-width:1250px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
 
-        @media (max-width: 820px) {
-            .studio-grid { grid-template-columns: 1fr; }
-        }
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{
+  width:58px;height:58px;
+  object-fit:cover;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid var(--yellow);
+  display:none;
+}
 
-        .card-box {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 20px;
-        }
+.brand-text h1{font-size:20px}
+.brand-text span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:3px;
+}
 
-        .card-box h3 {
-            font-size: 15px;
-            color: #1e3a8a;
-            margin-bottom: 14px;
-            border-left: 4px solid #2563eb;
-            padding-left: 8px;
-        }
+.status{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  background:#111827;
+  border:1px solid var(--border);
+  border-radius:30px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:bold;
+}
 
-        .form-group { margin-bottom: 14px; }
-        label { display: block; font-size: 12px; font-weight: bold; color: #374151; margin-bottom: 5px; }
-        input, select, textarea { 
-            width: 100%; 
-            padding: 11px; 
-            border: 1px solid #d1d5db; 
-            border-radius: 8px; 
-            font-size: 13px; 
-            outline: none; 
-            background: #ffffff;
-            color: #111827;
-        }
-        input:focus, select:focus, textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.status-dot{
+  width:9px;height:9px;
+  background:#22c55e;
+  border-radius:50%;
+}
 
-        .btn-action { 
-            width: 100%;
-            background: #2563eb; 
-            color: white; 
-            border: none; 
-            padding: 12px; 
-            font-weight: bold; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: background 0.2s, transform 0.1s; 
-            margin-top: 5px;
-        }
-        .btn-action:hover { background: #1d4ed8; }
-        .btn-action:active { transform: scale(0.98); }
+.container{
+  width:min(1250px,calc(100% - 24px));
+  margin:18px auto 40px;
+}
 
-        .btn-danger-all { background: #dc2626; margin-top: 10px; }
-        .btn-danger-all:hover { background: #b91c1c; }
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:18px;
+}
 
-        .yt-helper-box {
-            background: #fef2f2;
-            border: 1px solid #f87171;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 14px;
-        }
-        .yt-helper-box p { font-size: 11px; color: #991b1b; margin-bottom: 6px; font-weight: bold; }
-        .yt-search-flex { display: flex; gap: 6px; }
-        .yt-search-flex input { flex: 1; padding: 8px; font-size: 12px; }
-        .yt-search-btn { background: #dc2626; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .yt-search-btn:hover { background: #b91c1c; }
+.card{
+  background:rgba(15,27,45,.96);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+}
 
-        .playlist-section { margin-top: 25px; border-top: 2px solid #f3f4f6; padding-top: 20px; }
-        .playlist-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        .playlist-section h2 { font-size: 16px; color: #1e3a8a; }
-        
-        .program-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
-        .program-item {
-            background: #ffffff; 
-            border: 1px solid #e5e7eb; 
-            border-radius: 10px; 
-            padding: 12px;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            gap: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            flex-wrap: wrap;
-        }
-        .program-info h4 { font-size: 13px; color: #111827; margin-bottom: 3px; }
-        .program-info p { font-size: 11px; color: #6b7280; }
-        
-        .action-btns { display: flex; gap: 6px; }
-        .btn-edit { background: #d97706; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .btn-delete { background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .msg { margin-top: 10px; font-size: 12px; font-weight: bold; text-align: center; }
+.card-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            justify-content: center; align-items: center;
-            padding: 15px; z-index: 100;
-        }
-        .modal-content {
-            background: #ffffff; border-radius: 14px;
-            padding: 22px; width: 100%; max-width: 480px;
-            border: 2px solid #eab308;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .modal-header h3 { font-size: 16px; color: #1e3a8a; }
-        .close-modal { cursor: pointer; font-size: 18px; font-weight: bold; color: #6b7280; }
-    </style>
+.card h2{font-size:16px}
+
+.badge{
+  font-size:10px;
+  font-weight:bold;
+  padding:5px 9px;
+  border-radius:20px;
+  background:#172554;
+  color:#93c5fd;
+}
+
+.on-air{
+  background:#450a0a;
+  color:#fca5a5;
+}
+
+.tv-screen{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  background:#000;
+  border:2px solid var(--yellow);
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.tv-screen iframe{
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+.tv-logo{
+  position:absolute;
+  z-index:10;
+  width:65px;
+  height:65px;
+  object-fit:contain;
+  display:none;
+  pointer-events:none;
+}
+
+.logo-top-right{right:14px;top:14px}
+.logo-top-left{left:14px;top:14px}
+.logo-bottom-right{right:14px;bottom:48px}
+.logo-bottom-left{left:14px;bottom:48px}
+
+.live-label{
+  position:absolute;
+  z-index:20;
+  left:12px;
+  top:12px;
+  background:#dc2626;
+  color:white;
+  padding:5px 9px;
+  border-radius:5px;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.ticker{
+  position:absolute;
+  z-index:30;
+  left:0;right:0;bottom:0;
+  height:38px;
+  background:rgba(3,7,18,.94);
+  border-top:2px solid var(--yellow);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+}
+
+.ticker-track{
+  white-space:nowrap;
+  display:inline-block;
+  padding-left:100%;
+  animation:tickerMove 28s linear infinite;
+  color:#fde047;
+  font-size:13px;
+  font-weight:bold;
+}
+
+@keyframes tickerMove{
+  from{transform:translateX(0)}
+  to{transform:translateX(-100%)}
+}
+
+.now-playing{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+
+.info-box{
+  background:#0b1525;
+  border:1px solid var(--border);
+  padding:11px;
+  border-radius:9px;
+}
+
+.info-box small{
+  color:var(--muted);
+  display:block;
+  font-size:10px;
+  margin-bottom:4px;
+}
+
+.info-box strong{font-size:13px}
+
+.form-group{margin-bottom:13px}
+
+label{
+  display:block;
+  font-size:11px;
+  font-weight:bold;
+  color:#cbd5e1;
+  margin-bottom:6px;
+}
+
+input,textarea,select{
+  width:100%;
+  border:1px solid var(--border);
+  background:#07111f;
+  color:white;
+  border-radius:9px;
+  padding:11px;
+  outline:none;
+}
+
+textarea{resize:vertical}
+
+.btn{
+  border:0;
+  border-radius:9px;
+  padding:11px 14px;
+  color:white;
+  font-weight:bold;
+  font-size:12px;
+}
+
+.btn-primary{background:var(--blue)}
+.btn-success{background:var(--green)}
+.btn-danger{background:var(--red)}
+.btn-warning{background:var(--orange)}
+.btn-secondary{background:#334155}
+.btn-full{width:100%}
+
+.message{
+  min-height:20px;
+  text-align:center;
+  font-size:11px;
+  font-weight:bold;
+  margin-top:9px;
+}
+
+.success{color:#4ade80}
+.error{color:#f87171}
+
+.program-list{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  max-height:600px;
+  overflow-y:auto;
+}
+
+.program{
+  background:#0b1525;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+}
+
+.program-title{font-weight:bold;font-size:13px}
+.program-meta{color:var(--muted);font-size:10px;margin-top:5px}
+
+.program-actions{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.program-actions button{
+  border:0;
+  border-radius:6px;
+  padding:7px 9px;
+  color:white;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.duration{
+  background:#172554;
+  color:#93c5fd;
+  padding:4px 7px;
+  border-radius:5px;
+  font-size:10px;
+}
+
+.progress-wrap{
+  background:#020617;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:18px;
+}
+
+.progress{
+  height:12px;
+  background:#1e293b;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#eab308,#22c55e);
+}
+
+.security-note{
+  font-size:10px;
+  line-height:1.5;
+  color:#94a3b8;
+  background:#020617;
+  border:1px solid var(--border);
+  padding:10px;
+  border-radius:8px;
+  margin-top:12px;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  z-index:5000;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal-content{
+  width:min(500px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#0f1b2d;
+  border:1px solid var(--yellow);
+  border-radius:15px;
+  padding:20px;
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.close{
+  background:none;
+  border:0;
+  color:#fff;
+  font-size:24px;
+}
+
+.empty{
+  color:var(--muted);
+  text-align:center;
+  padding:25px;
+  font-size:12px;
+}
+
+.avatar-preview{
+  width:82px;height:82px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid var(--yellow);
+  display:none;
+  margin:0 auto 10px;
+}
+
+.checkline{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:12px;
+  color:#fde68a;
+  margin:10px 0 14px;
+}
+
+.checkline input{width:auto}
+
+@media(max-width:900px){
+  .dashboard-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+  .now-playing{grid-template-columns:1fr}
+  .topbar-inner{align-items:flex-start}
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header-flex">
-            <h1>
-                MEPLA TV - Studio Régie Pro 
-                <span class="on-air-badge">🔴 ON AIR 24/7</span>
-            </h1>
-            <a href="profil-television.html" class="back-btn">← Retour au Profil Admin</a>
-        </div>
 
-        <!-- GRAND BANDEAU DE SUIVI DU TEMPS 24H -->
-        <div class="timer-banner">
-            <div class="timer-top-info">
-                <span>⏱️ Objectif Grille 24h/24 :</span>
-                <span id="total-duration-display">00h 00m / 24h 00m</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar-fill" id="progress-bar-fill"></div>
-            </div>
-        </div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <img id="header-logo" class="brand-logo" alt="Photo de profil">
+      <div class="brand-text">
+        <h1 id="header-channel-name">MEPLA TV — Studio</h1>
+        <span id="header-subtitle">Régie de programmation de votre chaîne</span>
+      </div>
+    </div>
+    <div class="status">
+      <span class="status-dot"></span>
+      <span id="firebase-status">Vérification du compte…</span>
+    </div>
+  </div>
+</header>
 
-        <!-- APERÇU DE LA TÉLÉVISION EN DIRECT -->
-        <div class="tv-preview-container">
-            <img id="preview-logo" class="tv-logo-overlay" src="" alt="Logo TV">
-            <div id="preview-player-wrapper" style="width:100%; height:100%;">
-                <iframe id="preview-iframe" src="" allow="autoplay; encrypted-media" style="width:100%; height:100%; border:none;"></iframe>
-            </div>
-            <div class="ticker-bar">
-                <div class="ticker-inner" id="preview-ticker">
-                    🙏 Bienvenue sur MEPLA TV • Diffusion en direct 24h/24 et 7j/7 depuis le studio
-                </div>
-            </div>
-        </div>
+<main class="container">
 
-        <div class="studio-grid">
-            <!-- COLONNE 1 : LOGO & BANDEAU DÉFILANT -->
-            <div>
-                <div class="card-box">
-                    <h3>1. Configuration du Logo en Filigrane</h3>
-                    <div class="form-group">
-                        <label>Lien URL du Logo de la Chaîne</label>
-                        <input type="text" id="logo-url" placeholder="https://i.postimg.cc/.../logo.jpg">
-                    </div>
-                    <div class="form-group">
-                        <label>Position sur l'Écran</label>
-                        <select id="logo-position">
-                            <option value="top-right">Haut Droite (Recommandé)</option>
-                            <option value="top-left">Haut Gauche</option>
-                        </select>
-                    </div>
-                    <button class="btn-action" onclick="enregistrerLogo()">Mettre à jour le Logo</button>
-                    <div id="logo-msg" class="msg"></div>
-                </div>
+<section class="card">
+  <div class="card-title">
+    <h2>🔴 Aperçu de l'antenne</h2>
+    <span id="air-badge" class="badge on-air">APERÇU</span>
+  </div>
 
-                <div class="card-box">
-                    <h3>2. Message du Bandeau Défilant (Ticker 24h)</h3>
-                    <div class="form-group">
-                        <label>Texte défilant en bas de l'écran</label>
-                        <textarea id="ticker-text" rows="2" placeholder="Ex: Culte spécial ce dimanche à 9h00..."></textarea>
-                    </div>
-                    <button class="btn-action" onclick="enregistrerTicker()">Diffuser le Bandeau sur l'Antenne</button>
-                    <div id="ticker-msg" class="msg"></div>
-                </div>
-            </div>
+  <div class="tv-screen">
+    <div class="live-label" id="screen-channel-label">MEPLA TV</div>
+    <img id="tv-logo" class="tv-logo logo-top-right" alt="Logo de chaîne">
+    <iframe id="tv-player" title="Aperçu de l'antenne"
+      src="" allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen></iframe>
+    <div class="ticker">
+      <div id="ticker-track" class="ticker-track">
+        Bienvenue sur votre chaîne
+      </div>
+    </div>
+  </div>
 
-            <!-- COLONNE 2 : AJOUT DE VIDÉOS YOUTUBE -->
-            <div class="card-box">
-                <h3>3. Programmer une Émission YouTube</h3>
-                
-                <div class="yt-helper-box">
-                    <p>💡 Recherche YouTube Rapide :</p>
-                    <div class="yt-search-flex">
-                        <input type="text" id="yt-search-query" placeholder="Ex: Culte MEPLA TV...">
-                        <button class="yt-search-btn" onclick="ouvrirRechercheYoutube()">Rechercher ↗</button>
-                    </div>
-                </div>
+  <div class="now-playing">
+    <div class="info-box">
+      <small>PROGRAMME ACTUEL</small>
+      <strong id="current-title">Aucune émission</strong>
+    </div>
+    <div class="info-box">
+      <small>PROCHAINE ÉMISSION</small>
+      <strong id="next-title">—</strong>
+    </div>
+  </div>
 
-                <div class="form-group">
-                    <label>Titre de l'Émission</label>
-                    <input type="text" id="prog-title" placeholder="Ex: Culte d'Adoration">
-                </div>
+  <p class="security-note">
+    Cet écran est un aperçu du studio. La diffusion publique doit utiliser
+    une page de lecture connectée à Firebase.
+  </p>
+</section>
 
-                <div class="form-group">
-                    <label>Lien URL YouTube (ex: https://youtu.be/B06BOTZxMGQ)</label>
-                    <input type="text" id="prog-url" placeholder="Collez le lien YouTube ici">
-                </div>
+<section class="progress-wrap">
+  <div class="card-title">
+    <h2>📡 Durée totale de la grille</h2>
+    <span id="total-duration">00h 00m / 24h 00m</span>
+  </div>
+  <div class="progress">
+    <div id="progress-fill" class="progress-fill"></div>
+  </div>
+</section>
 
-                <div class="form-group">
-                    <label>Durée de la vidéo (en minutes)</label>
-                    <input type="number" id="prog-duration" placeholder="Ex: 45">
-                </div>
+<div class="dashboard-grid">
+  <div>
 
-                <button class="btn-action" id="btn-ajouter" onclick="ajouterProgramme()">+ Ajouter au Programme 24h/24</button>
-                <div id="studio-msg" class="msg"></div>
-            </div>
-        </div>
+    <section class="card">
+      <div class="card-title">
+        <h2>🎬 Publier une vidéo YouTube</h2>
+        <span class="badge">VOTRE CHAÎNE</span>
+      </div>
 
-        <!-- GRILLE DE DIFFUSION -->
-        <div class="playlist-section">
-            <div class="playlist-header-flex">
-                <h2>Grille de Diffusion de la Chaîne (Realtime Database)</h2>
-                <button class="btn-action btn-danger-all" style="width: auto; padding: 6px 12px; font-size: 11px;" onclick="viderTouteLaGrille()">🗑️ Vider toute la grille</button>
-            </div>
-            <div class="program-list" id="program-grid">
-                <p style="font-size: 12px; color: #6b7280; text-align: center;">Chargement des programmes en cours...</p>
-            </div>
-        </div>
+      <div class="form-group">
+        <label for="video-title">Titre du programme</label>
+        <input id="video-title" maxlength="140"
+          placeholder="Ex. : Journal de 20 h">
+      </div>
+
+      <div class="form-group">
+        <label for="video-url">Lien YouTube</label>
+        <input id="video-url" type="url"
+          placeholder="https://www.youtube.com/watch?v=...">
+      </div>
+
+      <div class="form-group">
+        <label for="video-description">Description</label>
+        <textarea id="video-description" rows="3"
+          maxlength="2000" placeholder="Description du programme"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="video-duration">Durée en minutes</label>
+        <input id="video-duration" type="number"
+          min="1" max="1440" value="15">
+      </div>
+
+      <button id="preview-video-btn" class="btn btn-secondary btn-full">
+        👁️ Vérifier l'aperçu
+      </button>
+
+      <div id="youtube-preview" style="display:none;margin-top:12px">
+        <iframe id="youtube-preview-frame" title="Aperçu YouTube"
+          style="width:100%;aspect-ratio:16/9;border:0"
+          allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <strong id="preview-title"></strong>
+        <small id="preview-id"></small>
+      </div>
+
+      <label class="checkline">
+        <input id="play-now-check" type="checkbox">
+        Diffuser cette émission tout de suite
+      </label>
+
+      <button id="publish-video-btn" class="btn btn-primary btn-full">
+        🚀 Publier dans la grille
+      </button>
+      <div id="video-message" class="message"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-title"><h2>📢 Bandeau roulant</h2></div>
+      <div class="form-group">
+        <label for="ticker-input">Texte affiché à l'écran</label>
+        <textarea id="ticker-input" rows="3" maxlength="500"
+          placeholder="Bienvenue sur notre chaîne…"></textarea>
+      </div>
+      <button id="save-ticker" class="btn btn-primary btn-full">
+        📡 Enregistrer le bandeau
+      </button>
+      <div id="ticker-message" class="message"></div>
+    </section>
+
+  </div>
+
+  <div>
+    <section class="card">
+      <div class="card-title"><h2>👤 Identité de la chaîne</h2></div>
+
+      <img id="profile-preview" class="avatar-preview" alt="Photo de profil">
+
+      <div class="form-group">
+        <label for="channel-name-input">Nom de votre chaîne</label>
+        <input id="channel-name-input" maxlength="80"
+          placeholder="Ex. : MEPLA ACTUALITÉS">
+      </div>
+
+      <div class="form-group">
+        <label for="profile-photo-input">URL de la photo de profil</label>
+        <input id="profile-photo-input" type="url"
+          placeholder="https://.../photo.jpg">
+      </div>
+
+      <div class="form-group">
+        <label for="channel-description-input">Description</label>
+        <textarea id="channel-description-input" rows="3"
+          maxlength="500"></textarea>
+      </div>
+
+      <button id="save-profile" class="btn btn-primary btn-full">
+        💾 Enregistrer mon identité
+      </button>
+      <div id="profile-message" class="message"></div>
+
+      <div class="security-note">
+        Saisis une URL HTTPS publique pour ta photo. Le téléversement direct
+        d'un fichier nécessite Firebase Storage.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title"><h2>🖼️ Logo à l'écran</h2></div>
+
+      <div class="form-group">
+        <label for="logo-input">URL du logo</label>
+        <input id="logo-input" type="url" placeholder="https://.../logo.png">
+      </div>
+
+      <div class="form-group">
+        <label for="logo-position">Position du logo</label>
+        <select id="logo-position">
+          <option value="top-right">Haut droite</option>
+          <option value="top-left">Haut gauche</option>
+          <option value="bottom-right">Bas droite</option>
+          <option value="bottom-left">Bas gauche</option>
+        </select>
+      </div>
+
+      <button id="save-logo" class="btn btn-primary btn-full">
+        💾 Enregistrer le logo
+      </button>
+      <div id="logo-message" class="message"></div>
+    </section>
+
+    <section class="card">
+      <h2>⚙️ État de votre antenne</h2>
+      <br>
+      <div class="info-box">
+        <small>IDENTIFIANT FIREBASE AUTH</small>
+        <strong id="tv-id-display">Vérification…</strong>
+      </div>
+      <br>
+      <div class="info-box">
+        <small>PROGRAMMES</small>
+        <strong id="program-count">0</strong>
+      </div>
+      <br>
+      <button id="clear-playlist" class="btn btn-danger btn-full">
+        🗑️ Vider toute la grille
+      </button>
+    </section>
+  </div>
+</div>
+
+<section class="card">
+  <div class="card-title"><h2>📋 Grille de diffusion</h2></div>
+  <div id="program-list" class="program-list">
+    <div class="empty">Chargement…</div>
+  </div>
+</section>
+
+</main>
+
+<div id="edit-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-head">
+      <h2>✏️ Modifier le programme</h2>
+      <button id="close-modal" class="close">×</button>
     </div>
 
-    <!-- MODALE DE MODIFICATION -->
-    <div class="modal" id="edit-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>✏️ Modifier le Programme</h3>
-                <span class="close-modal" onclick="fermerModale()">&times;</span>
-            </div>
-            <input type="hidden" id="edit-key">
-            <div class="form-group">
-                <label>Nouveau Titre</label>
-                <input type="text" id="edit-title">
-            </div>
-            <div class="form-group">
-                <label>Nouveau Lien URL YouTube</label>
-                <input type="text" id="edit-url">
-            </div>
-            <div class="form-group">
-                <label>Nouvelle Durée (en minutes)</label>
-                <input type="number" id="edit-duration">
-            </div>
-            <button class="btn-action" onclick="sauvegarderModification()">Enregistrer les Modifications</button>
-        </div>
+    <input id="edit-key" type="hidden">
+
+    <div class="form-group">
+      <label for="edit-title">Titre</label>
+      <input id="edit-title" maxlength="140">
     </div>
 
-    <script type="module">
-        import { database } from "./js/firebase-config.js";
-        import { ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <div class="form-group">
+      <label for="edit-url">Lien YouTube</label>
+      <input id="edit-url" type="url">
+    </div>
 
-        const tvKey = localStorage.getItem("active_tv_key");
-        if (!tvKey) {
-            window.location.href = "connexion.html";
-        }
+    <div class="form-group">
+      <label for="edit-description">Description</label>
+      <textarea id="edit-description" rows="3"></textarea>
+    </div>
 
-        const tvRef = ref(database, `users/${tvKey}`);
-        const playlistRef = ref(database, `users/${tvKey}/playlist`);
+    <div class="form-group">
+      <label for="edit-duration">Durée en minutes</label>
+      <input id="edit-duration" type="number" min="1" max="1440">
+    </div>
 
-        get(tvRef).then((snapshot) => {
-            if(snapshot.exists()) {
-                const data = snapshot.val();
-                if(data.logoOverlay) {
-                    document.getElementById('logo-url').value = data.logoOverlay.url || "";
-                    document.getElementById('logo-position').value = data.logoOverlay.position || "top-right";
-                }
-                if(data.tickerText) {
-                    document.getElementById('ticker-text').value = data.tickerText;
-                }
-            }
-        });
-
-        window.enregistrerLogo = async function() {
-            const logoUrl = document.getElementById('logo-url').value.trim();
-            const position = document.getElementById('logo-position').value;
-            const msgBox = document.getElementById('logo-msg');
-
-            try {
-                await update(tvRef, {
-                    logoOverlay: { url: logoUrl, position: position, updatedAt: new Date().toISOString() }
-                });
-                msgBox.style.color = "#16a34a";
-                msgBox.innerText = "Logo configuré avec succès !";
-            } catch (error) {
-                msgBox.style.color = "#dc2626";
-                msgBox.innerText = "Erreur : " + error.message;
-            }
-        };
-
-        window.enregistrerTicker = async function() {
-            const tickerText = document.getElementById('ticker-text').value.trim();
-            const msgBox = document.getElementById('ticker-msg');
-
-            try {
-                await update(tvRef, { tickerText: tickerText });
-                msgBox.style.color = "#16a34a";
-                msgBox.innerText = "Bandeau défilant mis à jour sur l'antenne !";
-            } catch (error) {
-                msgBox.style.color = "#dc2626";
-                msgBox.innerText = "Erreur : " + error.message;
-            }
-        };
-
-        function extraireIdYoutube(url) {
-            if (!url) return null;
-            url = url.trim();
-            if (url.includes('?')) url = url.split('?')[0];
-            if (url.includes('&')) url = url.split('&')[0];
-            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
-
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|live\/)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2] && match[2].length === 11) ? match[2] : null;
-        }
-
-        window.ouvrirRechercheYoutube = function() {
-            const query = document.getElementById('yt-search-query').value.trim();
-            const searchUrl = query ? `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}` : `https://www.youtube.com`;
-            window.open(searchUrl, '_blank');
-        };
-
-        // --- ENREGISTREMENT DIRECT DANS REALTIME DATABASE ---
-        window.ajouterProgramme = async function() {
-            const title = document.getElementById('prog-title').value.trim();
-            const urlInput = document.getElementById('prog-url').value.trim();
-            const duration = parseInt(document.getElementById('prog-duration').value) || 15;
-            const msgBox = document.getElementById('studio-msg');
-            const btnAjouter = document.getElementById('btn-ajouter');
-
-            if (!title || !urlInput) {
-                msgBox.style.color = "#dc2626";
-                msgBox.innerText = "Veuillez remplir le titre et le lien YouTube.";
-                return;
-            }
-
-            const youtubeId = extraireIdYoutube(urlInput);
-            if (!youtubeId) {
-                msgBox.style.color = "#dc2626";
-                msgBox.innerText = "Lien YouTube invalide. Vérifiez l'URL.";
-                return;
-            }
-
-            btnAjouter.disabled = true;
-
-            try {
-                // Pousse directement l'objet programme dans la Realtime Database Firebase
-                await push(playlistRef, {
-                    titre: title,
-                    type: "youtube",
-                    url: `https://www.youtube.com/watch?v=${youtubeId}`,
-                    youtubeId: youtubeId,
-                    dureeMinutes: duration,
-                    createdAt: new Date().toISOString()
-                });
-
-                msgBox.style.color = "#16a34a";
-                msgBox.innerText = "Émission enregistrée dans la base de données 24h avec succès !";
-                document.getElementById('prog-title').value = "";
-                document.getElementById('prog-url').value = "";
-                document.getElementById('prog-duration').value = "";
-            } catch (error) {
-                msgBox.style.color = "#dc2626";
-                msgBox.innerText = "Erreur : " + error.message;
-            } finally {
-                btnAjouter.disabled = false;
-            }
-        };
-
-        // Synchronisation en temps réel de l'aperçu et de la grille depuis Realtime Database
-        onValue(tvRef, (snapshot) => {
-            const container = document.getElementById('program-grid');
-            const timerDisplay = document.getElementById('total-duration-display');
-            const progressBarFill = document.getElementById('progress-bar-fill');
-            const previewLogo = document.getElementById('preview-logo');
-            const previewIframe = document.getElementById('preview-iframe');
-            const previewTicker = document.getElementById('preview-ticker');
-            
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-
-                if (data.logoOverlay && data.logoOverlay.url) {
-                    previewLogo.src = data.logoOverlay.url;
-                    previewLogo.className = `tv-logo-overlay pos-${data.logoOverlay.position || 'top-right'}`;
-                    previewLogo.style.display = "block";
-                } else {
-                    previewLogo.style.display = "none";
-                }
-
-                if (data.tickerText) {
-                    previewTicker.innerText = data.tickerText;
-                }
-
-                if (data.playlist) {
-                    container.innerHTML = "";
-                    let totalMinutes = 0;
-                    const keys = Object.keys(data.playlist);
-
-                    keys.forEach((key, index) => {
-                        const item = data.playlist[key];
-                        const itemDuration = parseInt(item.dureeMinutes) || 15;
-                        totalMinutes += itemDuration;
-
-                        // Affichage de la première vidéo dans l'aperçu live du studio
-                        if (index === 0 && item.youtubeId) {
-                            previewIframe.src = `https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&mute=1`;
-                        }
-
-                        const div = document.createElement('div');
-                        div.className = 'program-item';
-                        div.innerHTML = `
-                            <div class="program-info">
-                                <h4>📺 ${item.titre}</h4>
-                                <p>Durée : <strong>${itemDuration} min</strong> • ID: ${item.youtubeId}</p>
-                            </div>
-                            <div class="action-btns">
-                                <button class="btn-edit" onclick="ouvrirModale('${key}', '${item.titre.replace(/'/g, "\\'")}', 'https://www.youtube.com/watch?v=${item.youtubeId}', ${itemDuration})">Modifier</button>
-                                <button class="btn-delete" onclick="supprimerProgramme('${key}')">🗑️ Supprimer</button>
-                            </div>
-                        `;
-                        container.appendChild(div);
-                    });
-
-                    const heures = Math.floor(totalMinutes / 60);
-                    const minutes = totalMinutes % 60;
-                    
-                    if (totalMinutes >= 1440) {
-                        timerDisplay.innerText = `✅ OBJECTIF 24H ATTEINT (${heures}h ${minutes}m)`;
-                        timerDisplay.style.color = "#4ade80";
-                        progressBarFill.style.width = "100%";
-                    } else {
-                        timerDisplay.innerText = `${String(heures).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m / 24h 00m`;
-                        timerDisplay.style.color = "#fde047";
-                        const pourcentage = Math.min(100, (totalMinutes / 1440) * 100);
-                        progressBarFill.style.width = `${pourcentage}%`;
-                    }
-                } else {
-                    container.innerHTML = `<p style="font-size: 12px; color: #6b7280; text-align: center;">Aucun programme planifié. La grille est vide.</p>`;
-                    timerDisplay.innerText = `00h 00m / 24h 00m`;
-                    progressBarFill.style.width = "0%";
-                    previewIframe.src = "";
-                }
-            }
-        });
-
-        window.ouvrirModale = function(key, title, url, duration) {
-            document.getElementById('edit-key').value = key;
-            document.getElementById('edit-title').value = title;
-            document.getElementById('edit-url').value = url;
-            document.getElementById('edit-duration').value = duration;
-            document.getElementById('edit-modal').style.display = 'flex';
-        };
-
-        window.fermerModale = function() {
-            document.getElementById('edit-modal').style.display = 'none';
-        };
-
-        window.sauvegarderModification = async function() {
-            const key = document.getElementById('edit-key').value;
-            const newTitle = document.getElementById('edit-title').value.trim();
-            const newUrl = document.getElementById('edit-url').value.trim();
-            const newDuration = parseInt(document.getElementById('edit-duration').value) || 15;
-
-            if(!newTitle || !newUrl) {
-                alert("Veuillez remplir le titre et le lien.");
-                return;
-            }
-
-            const newYtId = extraireIdYoutube(newUrl);
-            if(!newYtId) {
-                alert("Lien YouTube invalide.");
-                return;
-            }
-
-            try {
-                await update(ref(database, `users/${tvKey}/playlist/${key}`), {
-                    titre: newTitle,
-                    url: `https://www.youtube.com/watch?v=${newYtId}`,
-                    youtubeId: newYtId,
-                    dureeMinutes: newDuration
-                });
-                fermerModale();
-            } catch(error) {
-                alert("Erreur de modification : " + error.message);
-            }
-        };
-
-        window.supprimerProgramme = async function(itemKey) {
-            if (confirm("Voulez-vous retirer cette émission de la base de données ?")) {
-                try {
-                    await remove(ref(database, `users/${tvKey}/playlist/${itemKey}`));
-                } catch (error) {
-                    alert("Erreur de suppression : " + error.message);
-                }
-            }
-        };
-
-        window.viderTouteLaGrille = async function() {
-            if (confirm("ATTENTION : Voulez-vous supprimer toute la programmation de la base de données ?")) {
-                try {
-                    await remove(playlistRef);
-                    alert("Grille vidée avec succès.");
-                } catch (error) {
-                    alert("Erreur : " + error.message);
-                }
-            }
-        };
-    </script>
-</body>
-</html>
+    <button id="save-edit" class="btn btn-success btn-full">
+      💾 Enregistrer
+    </button>
+    <div id="edit-message" class="message"></div>
+  </div>
+</div>
