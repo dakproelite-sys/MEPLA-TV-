@@ -1,399 +1,395 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="h-full bg-slate-50">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0056b3">
-    <title>Mepla TV - Connexion</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background:
-                linear-gradient(rgba(0, 25, 65, 0.35), rgba(0, 25, 65, 0.35)),
-                url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg')
-                no-repeat center center fixed;
-            background-size: cover;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .auth-card {
-            background: rgba(255, 255, 255, 0.97);
-            border-radius: 18px;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 450px;
-            padding: 30px;
-            text-align: center;
-            border-top: 5px solid #0056b3;
-        }
-
-        .logo {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin-bottom: 12px;
-            border-radius: 50%;
-            background: #fff;
-            padding: 5px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .title {
-            color: #111;
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 7px;
-        }
-
-        .subtitle {
-            color: #d9534f;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 23px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-            text-align: left;
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #333;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 13px 43px 13px 14px;
-            border: 2px solid #d4d8de;
-            border-radius: 9px;
-            font-size: 14px;
-            outline: none;
-            background: #fff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-group input:focus {
-            border-color: #0056b3;
-            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 13px;
-            top: 37px;
-            cursor: pointer;
-            color: #666;
-            font-size: 16px;
-        }
-
-        .toggle-password:hover {
-            color: #0056b3;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #0066cc, #003d80);
-            color: #fff;
-            border: none;
-            border-radius: 9px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.2s;
-            margin-top: 7px;
-        }
-
-        .btn-submit:hover {
-            opacity: 0.92;
-            transform: translateY(-1px);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.65;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .message {
-            display: none;
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            line-height: 1.6;
-            overflow-wrap: anywhere;
-            text-align: left;
-        }
-
-        .message.error {
-            display: block;
-            color: #842029;
-            background: #f8d7da;
-            border: 1px solid #f5c2c7;
-        }
-
-        .message.success {
-            display: block;
-            color: #0f5132;
-            background: #d1e7dd;
-            border: 1px solid #badbcc;
-        }
-
-        .footer-link {
-            margin-top: 21px;
-            font-size: 14px;
-            color: #222;
-            line-height: 1.6;
-        }
-
-        .footer-link a {
-            color: #d9534f;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .footer-link a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 13px;
-            }
-
-            .auth-card {
-                padding: 24px 18px;
-            }
-
-            .title {
-                font-size: 20px;
-            }
-
-            .logo {
-                width: 90px;
-                height: 90px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mepla TV - Connexion & Inscription Créateur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
 </head>
+<body class="bg-slate-50 text-slate-800 min-h-full flex flex-col justify-between antialiased selection:bg-blue-600 selection:text-white">
 
-<body>
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      <a href="index.html" class="flex items-center space-x-3 group">
+        <!-- Logo Mepla TV -->
+        <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-slate-200 shadow-sm flex-shrink-0">
+          <img src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Mepla TV Logo" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <span class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 block leading-none">MEPLA TV</span>
+          <span class="text-[10px] font-bold text-blue-600 tracking-wider uppercase flex items-center gap-1 mt-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Espace Créateur de Chaîne
+          </span>
+        </div>
+      </a>
 
-<main class="auth-card">
+      <a href="index.html" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl transition-all flex items-center space-x-2">
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        <span>Accueil</span>
+      </a>
+    </div>
+  </header>
 
-    <img
-        src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg"
-        alt="Logo Mepla TV"
-        class="logo"
-    >
+  <!-- Formulaire Connexion & Inscription -->
+  <main class="max-w-md mx-auto px-4 py-10 w-full flex-1 flex flex-col justify-center">
+    
+    <!-- Zone d'affichage des erreurs/succès -->
+    <div id="alertBox" class="hidden mb-6 p-4 rounded-xl text-xs font-semibold flex items-center space-x-3 transition-all duration-300"></div>
 
-    <h1 class="title">Connexion à votre espace TV</h1>
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xl shadow-slate-200/50">
+      
+      <!-- Onglets d'action -->
+      <div class="flex border-b border-slate-200 mb-6">
+        <button id="tabConnexion" type="button" onclick="basculerMode('connexion')" class="flex-1 pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-all">
+          Connexion
+        </button>
+        <button id="tabInscription" type="button" onclick="basculerMode('inscription')" class="flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-all">
+          Créer une Chaîne
+        </button>
+      </div>
 
-    <p class="subtitle">
-        Télévision Internationale des Missionnaires
-    </p>
-
-    <!-- Formulaire optimisé pour la saisie automatique du clavier -->
-    <form id="loginForm" novalidate>
-
-        <div class="form-group">
-            <label for="email">Adresse e-mail</label>
-            <input
-                type="email"
-                id="email"
-                placeholder="votre.email@exemple.com"
-                autocomplete="username"
-                inputmode="email"
-                required
-            >
+      <form id="authForm" onsubmit="traiterFormulaire(event)" class="space-y-4">
+        
+        <!-- Champ Nom de la Chaîne (Inscription uniquement) -->
+        <div id="fieldNomComplet" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Nom de votre Chaîne TV <span class="text-red-500">*</span></label>
+          <input type="text" id="nomCompletInput" placeholder="Ex: Missionnaires TV" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" autocomplete="organization">
         </div>
 
-        <div class="form-group">
-            <label for="password">Mot de passe</label>
-            <input
-                type="password"
-                id="password"
-                placeholder="Entrez votre mot de passe"
-                autocomplete="current-password"
-                required
-            >
-            <i
-                class="fa-solid fa-eye toggle-password"
-                id="togglePassword"
-                role="button"
-                tabindex="0"
-                aria-label="Afficher ou masquer le mot de passe"
-            ></i>
+        <!-- Champ Description de la Chaîne (Inscription uniquement) -->
+        <div id="fieldDescription" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Description de votre Chaîne TV <span class="text-slate-400 font-normal">(Optionnel)</span></label>
+          <textarea id="descriptionInput" rows="3" placeholder="Présentez brièvement le contenu et la mission de votre chaîne..." class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all resize-none"></textarea>
         </div>
 
-        <button type="submit" class="btn-submit" id="submitButton">
-            Se connecter
+        <!-- Champ Email -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Adresse Email <span class="text-red-500">*</span></label>
+          <input type="email" id="emailInput" placeholder="votre.email@exemple.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" autocomplete="username">
+        </div>
+
+        <!-- Champ Téléphone (Inscription uniquement) -->
+        <div id="fieldTelephone" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Numéro Téléphone / WhatsApp <span class="text-red-500">*</span></label>
+          <input type="tel" id="telephoneInput" placeholder="+229 01020304" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" autocomplete="tel">
+        </div>
+
+        <!-- Champ Mot de passe -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Mot de passe <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <input type="password" id="passwordInput" placeholder="••••••••" class="w-full px-4 py-3 pr-11 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all" autocomplete="current-password">
+            <button type="button" onclick="basculerVisibilitePassword()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-blue-600 transition-colors focus:outline-none">
+              <svg id="eyeOpen" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg id="eyeClosed" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a8.962 8.962 0 012.122-.163c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21f-9-9m-6-6l-1.5-1.5" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case à cocher Conditions (Inscription uniquement) -->
+        <div id="fieldTerms" class="hidden items-start space-x-2 pt-2">
+          <input type="checkbox" id="acceptTerms" class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded transition-all cursor-pointer">
+          <label for="acceptTerms" class="text-xs text-slate-600 leading-tight cursor-pointer">
+            J'ai lu et j'accepte les <a href="#" class="text-blue-600 font-bold hover:underline">conditions d'utilisation</a>.
+          </label>
+        </div>
+
+        <!-- Bouton Soumission principal -->
+        <button type="submit" id="submitBtn" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-blue-600/25 active:scale-95 flex items-center justify-center space-x-2 mt-4">
+          <span id="submitBtnText">Se connecter</span>
+          <svg id="submitSpinner" class="hidden animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
         </button>
 
-        <div id="message" class="message" role="status" aria-live="polite"></div>
+        <!-- Option Mot de passe oublié -->
+        <div id="forgotPasswordContainer" class="text-right pt-1">
+          <button type="button" onclick="reinitialiserMotDePasse()" class="text-xs font-semibold text-blue-600 hover:underline">
+            Mot de passe oublié ?
+          </button>
+        </div>
 
-    </form>
-
-    <div class="footer-link">
-        Vous n'avez pas encore de compte ?
-        <a href="inscription.html">Créer ma chaîne</a>
+      </form>
     </div>
+  </main>
 
-</main>
+  <footer class="py-4 text-center text-xs text-slate-500 border-t border-slate-200 bg-white">
+    © MEPLA TV - Télévision Internationale des Missionnaires. Tous droits réservés.
+  </footer>
 
-<script type="module">
-    import { auth, database } from "./js/firebase-config.js";
-
-    import {
-        signInWithEmailAndPassword
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      createUserWithEmailAndPassword, 
+      updateProfile,
+      sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    import {
-        ref,
-        get
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    // Configuration officielle Mepla TV
+    const firebaseConfig = {
+      apiKey: "AIzaSyDE4IZ6OdS4DnIJk61oopuILZc1Fx7wA6g",
+      authDomain: "mepla-tv.firebaseapp.com",
+      databaseURL: "https://mepla-tv-default-rtdb.firebaseio.com",
+      projectId: "mepla-tv",
+      storageBucket: "mepla-tv.firebasestorage.app",
+      messagingSenderId: "1019186580961",
+      appId: "1:1019186580961:web:84af8dc5d45d90376996a0",
+      measurementId: "G-QPJ7ZF8F93"
+    };
 
-    const form = document.getElementById("loginForm");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const submitButton = document.getElementById("submitButton");
-    const messageBox = document.getElementById("message");
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
 
-    let connexionEnCours = false;
+    let currentMode = 'connexion';
 
-    function afficherMessage(texte, type = "error", htmlExtra = "") {
-        messageBox.innerHTML = texte + (htmlExtra ? " " + htmlExtra : "");
-        messageBox.className = `message ${type}`;
+    function genererNumeroChaine() {
+      return Math.floor(1000 + Math.random() * 9000);
     }
 
-    function obtenirErreur(error) {
-        console.error("Erreur Firebase :", error);
-        const code = error?.code || "";
+    window.basculerVisibilitePassword = function() {
+      const pwdInput = document.getElementById('passwordInput');
+      const eyeOpen = document.getElementById('eyeOpen');
+      const eyeClosed = document.getElementById('eyeClosed');
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+      } else {
+        pwdInput.type = 'password';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+      }
+    };
 
-        switch (code) {
-            case "auth/user-not-found":
-            case "auth/invalid-credential":
-                return {
-                    texte: "Adresse e-mail ou mot de passe incorrect.",
-                    lien: '<br><a href="inscription.html" style="color: #842029; text-decoration: underline; font-weight: bold;">Pas encore inscrit ? Cliquez ici pour créer votre chaîne.</a>'
-                };
-            case "auth/wrong-password":
-                return { texte: "Mot de passe incorrect. Vérifiez puis réessayez.", lien: "" };
-            case "auth/invalid-email":
-                return { texte: "L'adresse e-mail saisie est invalide.", lien: "" };
-            case "auth/too-many-requests":
-                return { texte: "Trop de tentatives échouées. Veuillez patienter quelques minutes.", lien: "" };
-            case "auth/network-request-failed":
-                return { texte: "Connexion Internet indisponible. Vérifiez votre réseau.", lien: "" };
-            default:
-                return { texte: `Échec de la connexion : ${code || "Erreur inconnue"}`, lien: "" };
+    window.basculerMode = function(mode) {
+      currentMode = mode;
+      const fieldNom = document.getElementById('fieldNomComplet');
+      const fieldDesc = document.getElementById('fieldDescription');
+      const fieldTel = document.getElementById('fieldTelephone');
+      const fieldTerms = document.getElementById('fieldTerms');
+      const forgotPasswordContainer = document.getElementById('forgotPasswordContainer');
+      const tabConnexion = document.getElementById('tabConnexion');
+      const tabInscription = document.getElementById('tabInscription');
+      const submitBtnText = document.getElementById('submitBtnText');
+      const pwdInput = document.getElementById('passwordInput');
+
+      document.getElementById('alertBox').classList.add('hidden');
+
+      if (mode === 'inscription') {
+        fieldNom.classList.remove('hidden');
+        fieldDesc.classList.remove('hidden');
+        fieldTel.classList.remove('hidden');
+        fieldTerms.classList.remove('hidden');
+        fieldTerms.classList.add('flex');
+        forgotPasswordContainer.classList.add('hidden');
+
+        pwdInput.setAttribute('autocomplete', 'new-password');
+
+        tabInscription.className = "flex-1 pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-all";
+        tabConnexion.className = "flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-all";
+        submitBtnText.innerText = "Créer ma chaîne TV";
+      } else {
+        fieldNom.classList.add('hidden');
+        fieldDesc.classList.add('hidden');
+        fieldTel.classList.add('hidden');
+        fieldTerms.classList.add('hidden');
+        fieldTerms.classList.remove('flex');
+        forgotPasswordContainer.classList.remove('hidden');
+
+        pwdInput.setAttribute('autocomplete', 'current-password');
+
+        tabConnexion.className = "flex-1 pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition-all";
+        tabInscription.className = "flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-all";
+        submitBtnText.innerText = "Se connecter";
+      }
+    };
+
+    window.reinitialiserMotDePasse = async function() {
+      const email = document.getElementById('emailInput').value.trim();
+      if (!email) {
+        afficherAlerte("Veuillez saisir votre adresse email avant de cliquer sur 'Mot de passe oublié ?'", "error");
+        document.getElementById('emailInput').focus();
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        afficherAlerte("Un email de réinitialisation de mot de passe vous a été envoyé.", "success");
+      } catch (error) {
+        let errText = "Impossible d'envoyer l'email de réinitialisation.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+          errText = "Aucun compte n'est associé à cette adresse email.";
+        } else if (error.code === 'auth/invalid-email') {
+          errText = "Veuillez entrer une adresse email valide.";
         }
+        afficherAlerte(errText, "error");
+      }
+    };
+
+    window.traiterFormulaire = async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+      const channelName = document.getElementById('nomCompletInput').value.trim();
+      const description = document.getElementById('descriptionInput').value.trim();
+      const telephone = document.getElementById('telephoneInput').value.trim();
+
+      if (!email) {
+        afficherAlerte("Veuillez renseigner votre adresse email.", "error");
+        document.getElementById('emailInput').focus();
+        return;
+      }
+
+      if (!password) {
+        afficherAlerte("Veuillez renseigner votre mot de passe.", "error");
+        document.getElementById('passwordInput').focus();
+        return;
+      }
+
+      if (currentMode === 'inscription') {
+        const acceptTerms = document.getElementById('acceptTerms').checked;
+
+        if (!channelName) {
+          afficherAlerte("Veuillez saisir le Nom de votre Chaîne TV.", "error");
+          document.getElementById('nomCompletInput').focus();
+          return;
+        }
+
+        if (!telephone) {
+          afficherAlerte("Veuillez saisir votre numéro de téléphone / WhatsApp.", "error");
+          document.getElementById('telephoneInput').focus();
+          return;
+        }
+
+        if (password.length < 6) {
+          afficherAlerte("Le mot de passe doit contenir au moins 6 caractères.", "error");
+          document.getElementById('passwordInput').focus();
+          return;
+        }
+
+        if (!acceptTerms) {
+          afficherAlerte("Veuillez cocher la case pour accepter les conditions d'utilisation.", "error");
+          return;
+        }
+      }
+
+      afficherChargement(true);
+
+      try {
+        if (currentMode === 'connexion') {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          const snapshot = await get(ref(db, 'users/' + user.uid));
+          if (!snapshot.exists()) {
+            await set(ref(db, 'users/' + user.uid), {
+              uid: user.uid,
+              channelName: user.displayName || "Chaîne TV",
+              description: "",
+              email: user.email,
+              telephone: "",
+              role: "createur_chaine",
+              accountType: "creator",
+              channelNumber: genererNumeroChaine(),
+              isLive: false,
+              createdAt: new Date().toISOString()
+            });
+          }
+
+          try { localStorage.setItem("active_tv_key", user.uid); } catch (_) {}
+
+          afficherAlerte("Connexion réussie ! Redirection...", "success");
+          window.location.replace("profil-television.html");
+
+        } else {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          await updateProfile(user, { displayName: channelName });
+
+          const userData = {
+            uid: user.uid,
+            channelName: channelName,
+            description: description,
+            email: email,
+            telephone: telephone,
+            role: "createur_chaine",
+            accountType: "creator",
+            channelNumber: genererNumeroChaine(),
+            photo: "",
+            isLive: false,
+            createdAt: new Date().toISOString()
+          };
+
+          await set(ref(db, 'users/' + user.uid), userData);
+
+          try { localStorage.setItem("active_tv_key", user.uid); } catch (_) {}
+
+          afficherAlerte("Chaîne créée avec succès ! Redirection...", "success");
+          window.location.replace("profil-television.html");
+        }
+      } catch (error) {
+        let textErreur = error.message;
+
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+          textErreur = "Identifiants incorrects. Vérifiez votre email et mot de passe.";
+        } else if (error.code === 'auth/email-already-in-use') {
+          textErreur = "Cet email est déjà utilisé par un autre compte.";
+        } else if (error.code === 'auth/weak-password') {
+          textErreur = "Le mot de passe doit contenir au moins 6 caractères.";
+        } else if (error.code === 'auth/invalid-email') {
+          textErreur = "Format d'adresse email invalide.";
+        }
+
+        afficherAlerte(textErreur, "error");
+        afficherChargement(false);
+      }
+    };
+
+    function afficherAlerte(message, type) {
+      const box = document.getElementById('alertBox');
+      box.classList.remove('hidden', 'bg-red-50', 'border-red-200', 'text-red-700', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-700');
+      
+      if (type === 'error') {
+        box.classList.add('bg-red-50', 'border', 'border-red-200', 'text-red-700');
+      } else {
+        box.classList.add('bg-emerald-50', 'border', 'border-emerald-200', 'text-emerald-700');
+      }
+      
+      box.innerText = message;
     }
 
-    // Basculer l'affichage du mot de passe
-    const togglePassword = document.getElementById("togglePassword");
-    function basculerMotDePasse() {
-        const masquer = passwordInput.type === "password";
-        passwordInput.type = masquer ? "text" : "password";
-        togglePassword.classList.toggle("fa-eye", !masquer);
-        togglePassword.classList.toggle("fa-eye-slash", masquer);
+    function afficherChargement(isLoading) {
+      const btn = document.getElementById('submitBtn');
+      const spinner = document.getElementById('submitSpinner');
+      if (isLoading) {
+        btn.disabled = true;
+        spinner.classList.remove('hidden');
+      } else {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+      }
     }
-    togglePassword.addEventListener("click", basculerMotDePasse);
-    togglePassword.addEventListener("keydown", event => {
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            basculerMotDePasse();
-        }
-    });
-
-    // Gestion du formulaire de connexion
-    form.addEventListener("submit", async event => {
-        event.preventDefault();
-        if (connexionEnCours) return;
-
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-
-        if (!email) {
-            afficherMessage("Veuillez saisir votre adresse e-mail.");
-            return;
-        }
-
-        if (!password) {
-            afficherMessage("Veuillez saisir votre mot de passe.");
-            return;
-        }
-
-        connexionEnCours = true;
-        submitButton.disabled = true;
-        submitButton.textContent = "Connexion en cours...";
-        messageBox.className = "message";
-        messageBox.textContent = "";
-
-        try {
-            // 1. Authentification Firebase
-            const credential = await signInWithEmailAndPassword(auth, email, password);
-            const user = credential.user;
-
-            // 2. Vérification que le profil existe dans Realtime Database
-            const profilRef = ref(database, `users/${user.uid}`);
-            const snapshot = await get(profilRef);
-
-            if (!snapshot.exists()) {
-                afficherMessage(
-                    "Compte trouvé mais le profil de la chaîne est incomplet.",
-                    "error",
-                    '<br><a href="inscription.html" style="color: #842029; text-decoration: underline; font-weight: bold;">Réinscrivez-vous ici pour finaliser votre chaîne.</a>'
-                );
-                return;
-            }
-
-            // 3. Sauvegarde de la clé active
-            try {
-                localStorage.setItem("active_tv_key", user.uid);
-            } catch (err) {
-                console.warn("Stockage local indisponible :", err);
-            }
-
-            // 4. Message de succès et redirection vers profil-television.html
-            afficherMessage("Connexion réussie ! Chargement de votre chaîne...", "success");
-
-            setTimeout(() => {
-                window.location.replace("profil-television.html");
-            }, 1000);
-
-        } catch (error) {
-            const errInfo = obtenirErreur(error);
-            afficherMessage(errInfo.texte, "error", errInfo.lien);
-        } finally {
-            connexionEnCours = false;
-            submitButton.disabled = false;
-            submitButton.textContent = "Se connecter";
-        }
-    });
-</script>
+  </script>
 
 </body>
 </html>
