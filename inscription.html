@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0056b3">
     <title>Mepla TV - Inscription</title>
-    <!-- Font Awesome pour l'icône de l'œil -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
     <style>
         * {
             box-sizing: border-box;
@@ -13,8 +18,10 @@
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         body {
-            background: url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg') no-repeat center center fixed;
+            background: url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg')
+                no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
             display: flex;
@@ -22,8 +29,9 @@
             justify-content: center;
             padding: 20px;
         }
+
         .auth-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             width: 100%;
@@ -32,35 +40,40 @@
             text-align: center;
             border-top: 5px solid #0056b3;
         }
+
         .logo {
             width: 110px;
             height: 110px;
             object-fit: contain;
             margin-bottom: 10px;
             border-radius: 50%;
-            background: #ffffff;
+            background: #fff;
             padding: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
+
         .title {
             color: #111;
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 5px;
         }
+
         .subtitle {
-            color: #d9534f; /* Rouge accentué */
+            color: #d9534f;
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+
         .form-group {
             margin-bottom: 15px;
             text-align: left;
             position: relative;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 5px;
@@ -68,18 +81,21 @@
             font-size: 13px;
             font-weight: 600;
         }
+
         .form-group input {
             width: 100%;
-            padding: 12px 40px 12px 14px;
+            padding: 12px 42px 12px 14px;
             border: 2px solid #ccc;
             border-radius: 8px;
             font-size: 14px;
             outline: none;
             transition: border-color 0.3s;
         }
+
         .form-group input:focus {
-            border-color: #0056b3; /* Bleu */
+            border-color: #0056b3;
         }
+
         .toggle-password {
             position: absolute;
             right: 12px;
@@ -88,14 +104,16 @@
             color: #666;
             font-size: 16px;
         }
+
         .toggle-password:hover {
             color: #0056b3;
         }
+
         .btn-submit {
             width: 100%;
             padding: 14px;
-            background-color: #0056b3; /* Bleu */
-            color: #ffffff;
+            background-color: #0056b3;
+            color: #fff;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -104,125 +122,312 @@
             transition: background 0.3s ease;
             margin-top: 10px;
         }
+
         .btn-submit:hover {
             background-color: #003d80;
         }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            margin-top: 15px;
+            padding: 11px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .message.error {
+            display: block;
+            color: #842029;
+            background: #f8d7da;
+            border: 1px solid #f5c2c7;
+        }
+
+        .message.success {
+            display: block;
+            color: #0f5132;
+            background: #d1e7dd;
+            border: 1px solid #badbcc;
+        }
+
         .footer-link {
             margin-top: 20px;
             font-size: 14px;
             color: #222;
         }
+
         .footer-link a {
             color: #d9534f;
             text-decoration: none;
             font-weight: bold;
         }
+
         .footer-link a:hover {
             text-decoration: underline;
         }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 23px 18px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
-<body>
 
-    <div class="auth-card">
-        <!-- Logo de la chaîne -->
-        <img src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Logo Mepla TV" class="logo">
-        
+<body>
+    <main class="auth-card">
+        <img
+            src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg"
+            alt="Logo Mepla TV"
+            class="logo"
+        >
+
         <h1 class="title">Bienvenue sur votre plateforme TV</h1>
         <p class="subtitle">Télévision Internationale des Missionnaires</p>
 
         <form id="signupForm">
             <div class="form-group">
                 <label for="channelName">Nom de votre chaîne TV</label>
-                <input type="text" id="channelName" placeholder="Ex: Missionnaires TV" required>
+                <input
+                    type="text"
+                    id="channelName"
+                    placeholder="Ex : Missionnaires TV"
+                    maxlength="80"
+                    autocomplete="organization"
+                    required
+                >
             </div>
 
             <div class="form-group">
-                <label for="email">Adresse Email</label>
-                <input type="email" id="email" placeholder="votre.email@exemple.com" required>
+                <label for="email">Adresse e-mail</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="votre.email@exemple.com"
+                    autocomplete="email"
+                    required
+                >
             </div>
 
             <div class="form-group">
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" placeholder="••••••••" required>
-                <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Au moins 6 caractères"
+                    minlength="6"
+                    autocomplete="new-password"
+                    required
+                >
+                <i
+                    class="fa-solid fa-eye toggle-password"
+                    id="togglePassword"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Afficher ou masquer le mot de passe"
+                ></i>
             </div>
 
             <div class="form-group">
                 <label for="confirmPassword">Confirmer le mot de passe</label>
-                <input type="password" id="confirmPassword" placeholder="••••••••" required>
-                <i class="fa-solid fa-eye toggle-password" id="toggleConfirmPassword"></i>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Confirmez votre mot de passe"
+                    minlength="6"
+                    autocomplete="new-password"
+                    required
+                >
+                <i
+                    class="fa-solid fa-eye toggle-password"
+                    id="toggleConfirmPassword"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Afficher ou masquer la confirmation du mot de passe"
+                ></i>
             </div>
 
-            <button type="submit" class="btn-submit">Créer ma chaîne</button>
+            <button type="submit" class="btn-submit" id="submitButton">
+                Créer ma chaîne
+            </button>
+
+            <div
+                id="message"
+                class="message"
+                role="status"
+                aria-live="polite"
+            ></div>
         </form>
 
         <div class="footer-link">
-            Vous avez déjà un compte ? <a href="connexion.html">Se connecter</a>
+            Vous avez déjà un compte ?
+            <a href="connexion.html">Se connecter</a>
         </div>
-    </div>
+    </main>
 
     <script type="module">
-        import { auth, database } from "./firebase.js";
-        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { auth, database } from "./js/firebase-config.js";
 
-        // Gestion de la visibilité des mots de passe
-        const togglePassword = document.getElementById("togglePassword");
+        import {
+            createUserWithEmailAndPassword,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        import {
+            ref,
+            set
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const form = document.getElementById("signupForm");
+        const channelNameInput = document.getElementById("channelName");
+        const emailInput = document.getElementById("email");
         const passwordInput = document.getElementById("password");
-        togglePassword.addEventListener("click", () => {
-            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-            passwordInput.setAttribute("type", type);
-            togglePassword.classList.toggle("fa-eye");
-            togglePassword.classList.toggle("fa-eye-slash");
-        });
-
-        const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
         const confirmPasswordInput = document.getElementById("confirmPassword");
-        toggleConfirmPassword.addEventListener("click", () => {
-            const type = confirmPasswordInput.getAttribute("type") === "password" ? "text" : "password";
-            confirmPasswordInput.setAttribute("type", type);
-            toggleConfirmPassword.classList.toggle("fa-eye");
-            toggleConfirmPassword.classList.toggle("fa-eye-slash");
-        });
+        const submitButton = document.getElementById("submitButton");
+        const messageBox = document.getElementById("message");
 
-        // Soumission du formulaire d'inscription
-        document.getElementById("signupForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
+        function showMessage(message, type = "error") {
+            messageBox.textContent = message;
+            messageBox.className = `message ${type}`;
+        }
 
-            const channelName = document.getElementById("channelName").value.trim();
-            const email = document.getElementById("email").value.trim();
+        function togglePasswordVisibility(buttonId, input) {
+            const button = document.getElementById(buttonId);
+
+            function toggle() {
+                const isPassword = input.type === "password";
+
+                input.type = isPassword ? "text" : "password";
+
+                button.classList.toggle("fa-eye", !isPassword);
+                button.classList.toggle("fa-eye-slash", isPassword);
+            }
+
+            button.addEventListener("click", toggle);
+
+            button.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggle();
+                }
+            });
+        }
+
+        togglePasswordVisibility("togglePassword", passwordInput);
+        togglePasswordVisibility("toggleConfirmPassword", confirmPasswordInput);
+
+        function getErrorMessage(error) {
+            switch (error.code) {
+                case "auth/email-already-in-use":
+                    return "Cette adresse e-mail possède déjà un compte. Connectez-vous plutôt.";
+
+                case "auth/invalid-email":
+                    return "L'adresse e-mail saisie n'est pas valide.";
+
+                case "auth/weak-password":
+                    return "Le mot de passe est trop faible. Utilisez au moins 6 caractères.";
+
+                case "auth/network-request-failed":
+                    return "Connexion impossible. Vérifiez votre connexion Internet.";
+
+                case "auth/operation-not-allowed":
+                    return "L'inscription par e-mail n'est pas activée dans Firebase Authentication.";
+
+                case "PERMISSION_DENIED":
+                case "database/permission-denied":
+                    return "Firebase refuse l'enregistrement. Vérifiez les règles de sécurité de Realtime Database.";
+
+                default:
+                    return error.message || "Une erreur inattendue est survenue.";
+            }
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const channelName = channelNameInput.value.trim();
+            const email = emailInput.value.trim();
             const password = passwordInput.value;
             const confirmPassword = confirmPasswordInput.value;
 
-            if (password !== confirmPassword) {
-                alert("Les mots de passe ne correspondent pas.");
+            if (!channelName) {
+                showMessage("Veuillez saisir le nom de votre chaîne TV.");
+                channelNameInput.focus();
                 return;
             }
 
+            if (password.length < 6) {
+                showMessage("Le mot de passe doit contenir au moins 6 caractères.");
+                passwordInput.focus();
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage("Les deux mots de passe ne correspondent pas.");
+                confirmPasswordInput.focus();
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Création du compte...";
+            messageBox.className = "message";
+            messageBox.textContent = "";
+
             try {
-                // 1. Création du compte dans Firebase Auth
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+                // 1. Créer le compte Firebase Authentication.
+                const credential = await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
 
-                // 2. Génération d'un numéro de chaîne unique (ex: 7894)
-                const channelNumber = Math.floor(1000 + Math.random() * 9000);
+                const user = credential.user;
 
-                // 3. Enregistrement des données dans Realtime Database sous `users/{uid}`
-                await set(ref(database, 'users/' + user.uid), {
+                // 2. Afficher le nom de la chaîne dans le profil Firebase.
+                await updateProfile(user, {
+                    displayName: channelName
+                });
+
+                // 3. Générer un numéro de chaîne.
+                const channelNumber = Math.floor(
+                    1000 + Math.random() * 9000
+                );
+
+                // 4. Enregistrer le profil dans users/{uid}.
+                await set(ref(database, `users/${user.uid}`), {
                     uid: user.uid,
                     channelName: channelName,
-                    email: email,
+                    email: user.email || email,
                     channelNumber: channelNumber,
+                    description: "",
+                    photo: "",
+                    isLive: false,
                     createdAt: new Date().toISOString()
                 });
 
-                // 4. Redirection vers profil télévision
-                window.location.href = "profil.html";
+                showMessage(
+                    "Votre chaîne a été créée. Ouverture de votre profil...",
+                    "success"
+                );
+
+                // 5. Ouvrir le fichier de profil utilisé par Mepla TV.
+                window.location.replace("profil-television.html");
 
             } catch (error) {
-                console.error("Erreur d'inscription:", error);
-                alert("Erreur d'inscription : " + error.message);
+                console.error("Erreur d'inscription :", error);
+                showMessage(getErrorMessage(error));
+                submitButton.disabled = false;
+                submitButton.textContent = "Créer ma chaîne";
             }
         });
     </script>

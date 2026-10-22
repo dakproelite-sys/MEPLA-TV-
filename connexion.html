@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0056b3">
+
     <title>Mepla TV - Connexion</title>
-    <!-- Font Awesome pour l'icône de l'œil -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
     <style>
         * {
             box-sizing: border-box;
@@ -13,8 +19,10 @@
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         body {
-            background: url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg') no-repeat center center fixed;
+            background: url('https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg')
+                no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
             display: flex;
@@ -22,8 +30,9 @@
             justify-content: center;
             padding: 20px;
         }
+
         .auth-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             width: 100%;
@@ -32,22 +41,25 @@
             text-align: center;
             border-top: 5px solid #0056b3;
         }
+
         .logo {
             width: 110px;
             height: 110px;
             object-fit: contain;
             margin-bottom: 10px;
             border-radius: 50%;
-            background: #ffffff;
+            background: #fff;
             padding: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
+
         .title {
             color: #111;
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 5px;
         }
+
         .subtitle {
             color: #d9534f;
             font-size: 14px;
@@ -56,11 +68,13 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+
         .form-group {
             margin-bottom: 18px;
             text-align: left;
             position: relative;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 5px;
@@ -68,18 +82,21 @@
             font-size: 13px;
             font-weight: 600;
         }
+
         .form-group input {
             width: 100%;
-            padding: 12px 40px 12px 14px;
+            padding: 12px 42px 12px 14px;
             border: 2px solid #ccc;
             border-radius: 8px;
             font-size: 14px;
             outline: none;
             transition: border-color 0.3s;
         }
+
         .form-group input:focus {
             border-color: #0056b3;
         }
+
         .toggle-password {
             position: absolute;
             right: 12px;
@@ -88,14 +105,16 @@
             color: #666;
             font-size: 16px;
         }
+
         .toggle-password:hover {
             color: #0056b3;
         }
+
         .btn-submit {
             width: 100%;
             padding: 14px;
             background-color: #0056b3;
-            color: #ffffff;
+            color: #fff;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -104,86 +123,277 @@
             transition: background 0.3s ease;
             margin-top: 10px;
         }
+
         .btn-submit:hover {
             background-color: #003d80;
         }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            margin-top: 15px;
+            padding: 11px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+            text-align: left;
+        }
+
+        .message.error {
+            display: block;
+            color: #842029;
+            background: #f8d7da;
+            border: 1px solid #f5c2c7;
+        }
+
+        .message.success {
+            display: block;
+            color: #0f5132;
+            background: #d1e7dd;
+            border: 1px solid #badbcc;
+        }
+
         .footer-link {
             margin-top: 20px;
             font-size: 14px;
             color: #222;
         }
+
         .footer-link a {
             color: #d9534f;
             text-decoration: none;
             font-weight: bold;
         }
+
         .footer-link a:hover {
             text-decoration: underline;
         }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 24px 18px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-    <div class="auth-card">
-        <!-- Logo de la chaîne -->
-        <img src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg" alt="Logo Mepla TV" class="logo">
-        
+    <main class="auth-card">
+
+        <img
+            src="https://i.postimg.cc/Zqm3K70t/grok-1792570897280.jpg"
+            alt="Logo Mepla TV"
+            class="logo"
+        >
+
         <h1 class="title">Connexion à votre espace</h1>
-        <p class="subtitle">Télévision Internationale des Missionnaires</p>
+
+        <p class="subtitle">
+            Télévision Internationale des Missionnaires
+        </p>
 
         <form id="loginForm">
+
             <div class="form-group">
-                <label for="email">Adresse Email</label>
-                <input type="email" id="email" placeholder="votre.email@exemple.com" required>
+                <label for="email">Adresse e-mail</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="votre.email@exemple.com"
+                    autocomplete="email"
+                    required
+                >
             </div>
 
             <div class="form-group">
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" placeholder="••••••••" required>
-                <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Votre mot de passe"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <i
+                    class="fa-solid fa-eye toggle-password"
+                    id="togglePassword"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Afficher ou masquer le mot de passe"
+                ></i>
             </div>
 
-            <button type="submit" class="btn-submit">Se connecter</button>
+            <button
+                type="submit"
+                class="btn-submit"
+                id="submitButton"
+            >
+                Se connecter
+            </button>
+
+            <div
+                id="message"
+                class="message"
+                role="status"
+                aria-live="polite"
+            ></div>
+
         </form>
 
         <div class="footer-link">
-            Pas encore de compte ? <a href="inscription.html">Créer une chaîne</a>
+            Pas encore de compte ?
+            <a href="inscription.html">Créer une chaîne</a>
         </div>
-    </div>
+
+    </main>
 
     <script type="module">
-        import { auth } from "./firebase.js";
-        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { auth, database } from "./js/firebase-config.js";
 
-        // Afficher / Masquer le mot de passe
-        const togglePassword = document.getElementById("togglePassword");
+        import {
+            signInWithEmailAndPassword
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        import {
+            ref,
+            get
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const form = document.getElementById("loginForm");
+        const emailInput = document.getElementById("email");
         const passwordInput = document.getElementById("password");
-        togglePassword.addEventListener("click", () => {
-            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-            passwordInput.setAttribute("type", type);
-            togglePassword.classList.toggle("fa-eye");
-            togglePassword.classList.toggle("fa-eye-slash");
+        const togglePassword = document.getElementById("togglePassword");
+        const submitButton = document.getElementById("submitButton");
+        const messageBox = document.getElementById("message");
+
+        // Afficher un message à l'utilisateur.
+        function showMessage(message, type = "error") {
+            messageBox.textContent = message;
+            messageBox.className = `message ${type}`;
+        }
+
+        // Afficher ou masquer le mot de passe.
+        function toggleVisibility() {
+            const isHidden = passwordInput.type === "password";
+
+            passwordInput.type = isHidden ? "text" : "password";
+
+            togglePassword.classList.toggle("fa-eye", !isHidden);
+            togglePassword.classList.toggle("fa-eye-slash", isHidden);
+        }
+
+        togglePassword.addEventListener("click", toggleVisibility);
+
+        togglePassword.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                toggleVisibility();
+            }
         });
 
-        // Soumission du formulaire de connexion
-        document.getElementById("loginForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
+        // Traduire les principales erreurs Firebase.
+        function getLoginError(error) {
+            switch (error.code) {
+                case "auth/invalid-email":
+                    return "L'adresse e-mail n'est pas valide.";
 
-            const email = document.getElementById("email").value.trim();
+                case "auth/invalid-credential":
+                case "auth/wrong-password":
+                case "auth/user-not-found":
+                    return "Adresse e-mail ou mot de passe incorrect.";
+
+                case "auth/user-disabled":
+                    return "Ce compte a été désactivé. Contactez l'administrateur.";
+
+                case "auth/too-many-requests":
+                    return "Trop de tentatives. Réessayez plus tard.";
+
+                case "auth/network-request-failed":
+                    return "Connexion Internet indisponible. Vérifiez votre réseau.";
+
+                case "auth/operation-not-allowed":
+                    return "La connexion par e-mail n'est pas activée dans Firebase.";
+
+                default:
+                    return "Impossible de vous connecter pour le moment. Vérifiez votre connexion et réessayez.";
+            }
+        }
+
+        // Connexion de l'utilisateur.
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const email = emailInput.value.trim();
             const password = passwordInput.value;
 
+            if (!email || !password) {
+                showMessage("Veuillez saisir votre adresse e-mail et votre mot de passe.");
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Connexion en cours...";
+
+            messageBox.className = "message";
+            messageBox.textContent = "";
+
             try {
-                // Authentification Firebase
-                await signInWithEmailAndPassword(auth, email, password);
-                
-                // Redirection directe vers la page profil télévision
-                window.location.href = "profil.html";
+                // 1. Authentifier l'utilisateur avec Firebase.
+                const credential = await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+                const user = credential.user;
+
+                // 2. Vérifier que son profil existe dans la base.
+                const profileSnapshot = await get(
+                    ref(database, `users/${user.uid}`)
+                );
+
+                if (!profileSnapshot.exists()) {
+                    showMessage(
+                        "Votre compte est connecté, mais son profil de chaîne est introuvable dans la base de données. Contactez l'administrateur."
+                    );
+
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Se connecter";
+                    return;
+                }
+
+                // 3. Préparer la clé utilisée par les anciennes pages,
+                // sans remplacer l'authentification Firebase.
+                localStorage.setItem("active_tv_key", user.uid);
+
+                // 4. Rediriger vers le nom exact du fichier de profil.
+                showMessage("Connexion réussie. Ouverture de votre profil...", "success");
+
+                window.location.replace("profil-television.html");
 
             } catch (error) {
-                console.error("Erreur de connexion:", error);
-                alert("Identifiants incorrects ou compte inexistant.");
+                console.error("Erreur de connexion :", error);
+
+                showMessage(getLoginError(error));
+
+                submitButton.disabled = false;
+                submitButton.textContent = "Se connecter";
             }
         });
     </script>
+
 </body>
 </html>
