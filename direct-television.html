@@ -1,1063 +1,765 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07111f">
-<title>MEPLA TV — Régie de diffusion</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV Studio Pro - Régie & Jingle Dynamique</title>
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+    body {
+      background: radial-gradient(circle at center, #1a1a24 0%, #0b0b0f 100%);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-<style>
-:root{
-  --bg:#050b15;
-  --panel:#0d192b;
-  --panel2:#101f34;
-  --border:#263d58;
-  --gold:#facc15;
-  --blue:#2563eb;
-  --green:#16a34a;
-  --red:#dc2626;
-  --text:#f8fafc;
-  --muted:#9fb0c7;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
-  padding:12px;min-height:100vh;
-}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.5;cursor:not-allowed}
-header{
-  max-width:1400px;margin:0 auto 14px;
-  background:var(--panel);border:1px solid var(--border);
-  border-bottom:2px solid var(--gold);border-radius:12px;
-  padding:14px;display:flex;justify-content:space-between;
-  align-items:center;gap:12px;flex-wrap:wrap
-}
-.brand{font-size:25px;font-weight:900}
-.brand span{color:var(--gold)}
-.subtitle{font-size:12px;color:var(--muted)}
-.header-actions{display:flex;gap:8px;flex-wrap:wrap}
-button{
-  border:0;border-radius:8px;padding:10px 13px;
-  font-weight:750;color:white;background:var(--blue)
-}
-.green{background:var(--green)}
-.red{background:var(--red)}
-.gold{background:#eab308;color:#111827}
-.gray{background:#334155}
-.layout{
-  max-width:1400px;margin:auto;
-  display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);
-  gap:14px
-}
-.panel{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:12px;padding:15px;min-width:0
-}
-.panel h2{font-size:16px;color:var(--gold);margin-bottom:12px}
-.panel h3{font-size:13px;margin:14px 0 7px}
-.tv{
-  position:relative;width:100%;aspect-ratio:16/9;
-  background:#000;border:2px solid var(--gold);
-  border-radius:10px;overflow:hidden
-}
-#tvPlayer,#tvVideo{
-  position:absolute;inset:0;width:100%;height:100%;
-  border:0;object-fit:contain;background:#000
-}
-#tvVideo{display:none}
-#offline{
-  position:absolute;inset:0;z-index:8;background:#000;
-  display:flex;align-items:center;justify-content:center;
-  text-align:center;color:#f87171;font-weight:900;padding:20px
-}
-#tvLogo{
-  position:absolute;z-index:10;width:55px;height:55px;
-  object-fit:contain;display:none;top:12px;right:12px;
-  background:#0008;border-radius:50%
-}
-.logo-tl{left:12px!important;right:auto!important}
-.logo-br{top:auto!important;bottom:45px!important}
-.logo-bl{top:auto!important;bottom:45px!important;left:12px!important;right:auto!important}
-#ticker{
-  position:absolute;z-index:11;bottom:0;left:0;width:100%;
-  background:#07111fe8;border-top:2px solid var(--gold);
-  padding:9px 0;overflow:hidden;white-space:nowrap;
-  font-size:13px;font-weight:750;color:#fde68a
-}
-#ticker span{display:inline-block;padding-left:100%;animation:scroll 24s linear infinite}
-@keyframes scroll{to{transform:translateX(-100%)}}
-.status{margin:10px 0;color:#86efac;font-size:13px;overflow-wrap:anywhere}
-.field{margin-bottom:10px}
-.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-input,select,textarea{
-  width:100%;padding:10px;background:#050e1b;color:white;
-  border:1px solid #344b67;border-radius:7px;min-width:0
-}
-textarea{min-height:75px;resize:vertical}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.row>*{flex:1;min-width:110px}
-.decor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.decor{
-  height:65px;border:2px solid var(--border);border-radius:7px;
-  background-size:cover;background-position:center
-}
-.decor.selected{border-color:var(--green)}
-.preview{
-  width:100%;aspect-ratio:16/9;background:#000;
-  border:1px solid var(--border);border-radius:8px;object-fit:cover
-}
-.list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.item{
-  border:1px solid var(--border);border-radius:8px;
-  padding:10px;display:flex;align-items:center;gap:8px;
-  justify-content:space-between;flex-wrap:wrap
-}
-.item-info{flex:1;min-width:130px;overflow-wrap:anywhere}
-.item-info small{display:block;color:var(--muted);margin-top:4px}
-.item-actions{display:flex;gap:5px;flex-wrap:wrap}
-.item-actions button{padding:7px 9px;font-size:12px}
-.small{font-size:11px;color:var(--muted);line-height:1.6}
-hr{border:0;border-top:1px solid var(--border);margin:15px 0}
-.full{grid-column:1/-1}
-footer{text-align:center;color:var(--muted);font-size:12px;padding:25px 0}
-.notice{
-  border:1px solid #854d0e;background:#42200655;color:#fde68a;
-  padding:10px;border-radius:8px;font-size:12px;line-height:1.6;margin-bottom:12px
-}
-@media(max-width:850px){
-  .layout{grid-template-columns:1fr}
-  .brand{font-size:21px}
-  header{align-items:flex-start}
-}
-</style>
+    /* Entête Studio TV */
+    header {
+      background-color: rgba(33, 33, 33, 0.95);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #383838;
+      backdrop-filter: blur(10px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+    .brand i {
+      color: #ff0000;
+      font-size: 1.6rem;
+    }
+    .badge-live {
+      background: #383838;
+      color: #aaa;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .badge-live.active {
+      background: #ff0000;
+      color: #fff;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+
+    /* Layout Principal */
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 16px;
+      padding: 16px;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    /* Moniteur Vidéo TV Broadcast */
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border: 2px solid #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    
+    #outputCanvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+
+    #sourceVideo {
+      display: none;
+    }
+
+    /* Écran d'Animation de Jingle / Intro TV (S'affiche avant le direct) */
+    #introOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0d1b2a 0%, #000814 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    #introOverlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .intro-logo {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      animation: bounceIn 1s infinite alternate;
+    }
+    .intro-logo span { color: #ff0000; }
+    .intro-text {
+      font-size: 1.1rem;
+      color: #3ea6ff;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-weight: 700;
+    }
+    .intro-spinner {
+      margin-top: 20px;
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top: 4px solid #ff0000;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes bounceIn { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }
+
+    /* Logo TV Dynamique (Watermark) */
+    .tv-logo-watermark {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 5;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+    }
+    .tv-logo-watermark span { color: #ff0000; }
+
+    .overlay-info {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      backdrop-filter: blur(5px);
+      z-index: 5;
+      border-left: 3px solid #3ea6ff;
+    }
+
+    /* Bandeau Défilant */
+    .ticker-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(200, 0, 0, 0.9);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      z-index: 5;
+      font-weight: 700;
+      overflow: hidden;
+      border-top: 2px solid #ffcc00;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+    }
+    .ticker-title {
+      background: #ffcc00;
+      color: #000;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      white-space: nowrap;
+      font-weight: 900;
+    }
+    .ticker-text-wrapper {
+      overflow: hidden;
+      white-space: nowrap;
+      width: 100%;
+    }
+    .ticker-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 20s linear infinite;
+      font-size: 0.95rem;
+    }
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
+    }
+
+    /* Barre de Régie */
+    .controls-bar {
+      background-color: rgba(33, 33, 33, 0.95);
+      padding: 14px 18px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border: 1px solid #383838;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      background-color: #383838;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+    }
+    button:hover {
+      background-color: #505050;
+      transform: translateY(-1px);
+    }
+    button.btn-danger { background-color: #cc0000; }
+    button.btn-danger:hover { background-color: #ff0000; }
+    button.btn-success { background-color: #2e7d32; }
+    button.btn-warning { background-color: #f57c00; }
+    button.active-state { background-color: #3ea6ff; color: #000; font-weight: 700; }
+
+    /* Panneau Régie Droite */
+    .sidebar {
+      background-color: rgba(33, 33, 33, 0.9);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 1px solid #383838;
+      height: 100%;
+      overflow-y: auto;
+    }
+    .panel-title {
+      font-size: 0.95rem;
+      border-bottom: 1px solid #383838;
+      padding-bottom: 8px;
+      color: #3ea6ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Grille de sélection des 15 fonds de studio */
+    .background-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .bg-thumb {
+      background: #181818;
+      border: 2px solid #383838;
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .bg-thumb:hover { border-color: #3ea6ff; background: #222; }
+    .bg-thumb.selected { border-color: #3ea6ff; background: rgba(62, 166, 255, 0.2); }
+
+    /* Compteur d'Audience */
+    .audience-box {
+      background: #121212;
+      border-radius: 8px;
+      border: 1px solid #383838;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-align: center;
+    }
+    .audience-number { font-size: 2.2rem; font-weight: 900; color: #3ea6ff; }
+    .audience-peak { font-size: 0.75rem; color: #ffcc00; font-weight: bold; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: 0.8rem; color: #aaa; }
+    input, select { background-color: #121212; border: 1px solid #383838; color: white; padding: 8px 10px; border-radius: 6px; outline: none; font-size: 0.85rem; }
+    input:focus, select:focus { border-color: #3ea6ff; }
+
+    @media (max-width: 900px) {
+      .main-container { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
+      body { overflow: auto; }
+    }
+  </style>
 </head>
-
 <body>
 
-<header>
-  <div>
-    <div class="brand">MEPLA <span>TV</span></div>
-    <div class="subtitle">Régie • Studio • Programmation • Messages</div>
+  <!-- Entête Studio -->
+  <header>
+    <div class="brand">
+      <i class="fa-solid fa-tower-broadcast"></i>
+      <span id="headerChannelName">TV STUDIO CONTROL PRO</span>
+    </div>
+    <div id="liveBadge" class="badge-live">HORS LIGNE</div>
+  </header>
+
+  <div class="main-container">
+    
+    <!-- Colonne Gauche : Moniteur & Commandes -->
+    <div class="left-column">
+      <div class="video-wrapper">
+        <!-- Animation de Jingle d'antenne (Intro TV avant le direct) -->
+        <div id="introOverlay">
+          <div class="intro-logo" id="introLogoText">DAKPRO<span>TV</span></div>
+          <div class="intro-text">PRÉPARATION DE L'ANTENNE...</div>
+          <div class="intro-spinner"></div>
+        </div>
+
+        <!-- Logo TV dynamique injecté depuis Firebase -->
+        <div class="tv-logo-watermark" id="watermarkBrand">DAKPRO<span>TV</span></div>
+
+        <video id="sourceVideo" autoplay playsinline muted></video>
+        <canvas id="outputCanvas"></canvas>
+        
+        <div class="overlay-info" id="streamStats">
+          <i class="fa-solid fa-signal"></i> Régie HD Prête
+        </div>
+
+        <div class="ticker-bar" id="tickerBar">
+          <div class="ticker-title">INFO DIRECT</div>
+          <div class="ticker-text-wrapper">
+            <div class="ticker-text" id="tickerTextDisplay">
+              Bienvenue sur votre chaîne de télévision en direct - Édition Spéciale
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls-bar">
+        <div class="btn-group">
+          <button id="toggleCamBtn" onclick="toggleCamera()"><i class="fa-solid fa-video"></i> Caméra</button>
+          <button id="toggleMicBtn" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i> Micro</button>
+          <button id="toggleScreenBtn" onclick="shareScreen()"><i class="fa-solid fa-desktop"></i> Écran</button>
+          <button id="adCutBtn" class="btn-warning" onclick="triggerAdBreak()"><i class="fa-solid fa-rectangle-ad"></i> Coupure Pub</button>
+        </div>
+
+        <div class="btn-group">
+          <button id="actionLiveBtn" class="btn-danger" onclick="toggleLiveStream()">
+            <i class="fa-solid fa-satellite-dish"></i> PASSER EN DIRECT
+          </button>
+          <button id="downloadReplayBtn" style="display:none;" class="btn-success" onclick="downloadReplay()">
+            <i class="fa-solid fa-download"></i> Télécharger Replay
+          </button>
+        </div>
+      </div>
+
+      <div style="background: rgba(33,33,33,0.8); padding: 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center; border: 1px solid #383838;">
+        <div class="form-group" style="flex:1;">
+          <label>Source Caméra / Périphérique</label>
+          <select id="cameraSelect" onchange="startCamera()"></select>
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Vidéo Pub / Secours (.mp4)</label>
+          <input type="text" id="adVideoUrl" value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne Droite : Sélecteur de 15 Fonds & Régie -->
+    <div class="sidebar">
+      <h3 class="panel-title"><i class="fa-solid fa-image"></i> Choix du Décor Studio (15 Fonds)</h3>
+      
+      <div class="background-grid" id="bgGrid">
+        <div class="bg-thumb selected" onclick="setStudioBackground(1)">Plateau Bleu HD</div>
+        <div class="bg-thumb" onclick="setStudioBackground(2)">Studio News Pro</div>
+        <div class="bg-thumb" onclick="setStudioBackground(3)">Cyber Néon Noir</div>
+        <div class="bg-thumb" onclick="setStudioBackground(4)">Or & Luxe TV</div>
+        <div class="bg-thumb" onclick="setStudioBackground(5)">Plateau Talk-Show</div>
+        <div class="bg-thumb" onclick="setStudioBackground(6)">Grand Angle Vert</div>
+        <div class="bg-thumb" onclick="setStudioBackground(7)">Studio Minimaliste</div>
+        <div class="bg-thumb" onclick="setStudioBackground(8)">Ambiance Soirée</div>
+        <div class="bg-thumb" onclick="setStudioBackground(9)">Écran Géant LED</div>
+        <div class="bg-thumb" onclick="setStudioBackground(10)">Bureau Exécutif</div>
+        <div class="bg-thumb" onclick="setStudioBackground(11)">Néon Violet Pro</div>
+        <div class="bg-thumb" onclick="setStudioBackground(12)">Futuriste Blanc</div>
+        <div class="bg-thumb" onclick="setStudioBackground(13)">Espace Spatial TV</div>
+        <div class="bg-thumb" onclick="setStudioBackground(14)">Ambiance Chaud/Cuivre</div>
+        <div class="bg-thumb" onclick="setStudioBackground(15)">Culte Noir & Rouge</div>
+      </div>
+
+      <h3 class="panel-title"><i class="fa-solid fa-chart-line"></i> Audience d'Antenne</h3>
+      <div class="audience-box">
+        <div style="font-size:0.75rem; color:#aaa; text-transform:uppercase;"><i class="fa-solid fa-users"></i> Spectateurs en Direct</div>
+        <div class="audience-number" id="viewerCount">0</div>
+        <div class="audience-peak" id="peakCount">Pic d'audience : 0</div>
+      </div>
+
+      <div class="form-group">
+        <label>Texte Défilant en bas d'écran</label>
+        <input type="text" id="tickerInput" value="Bienvenue sur votre chaîne de télévision en direct - Édition Spéciale" oninput="updateTickerText()">
+      </div>
+    </div>
+
   </div>
-  <div class="header-actions">
-    <button id="refreshBtn" class="gray">Actualiser</button>
-    <button id="playlistBtn" class="green">Playlist 24 h</button>
-    <button id="stopBtn" class="red">Couper la chaîne</button>
-  </div>
-</header>
 
-<main class="layout">
+  <!-- Intégration Firebase & Récupération du Logo / Nom de la chaîne -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, push, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  <section class="panel">
-    <h2>📺 Aperçu de la chaîne</h2>
-    <div class="tv" id="tv">
-      <iframe id="tvPlayer"
-        title="Lecteur MEPLA TV"
-        src=""
-        allow="autoplay; encrypted-media; picture-in-picture"
-        allowfullscreen></iframe>
+    const firebaseConfig = {
+      apiKey: "VOTRE_API_KEY",
+      authDomain: "votre-projet.firebaseapp.com",
+      databaseURL: "https://votre-projet-default-rtdb.firebaseio.com",
+      projectId: "votre-projet",
+      storageBucket: "votre-projet.appspot.com",
+      messagingSenderId: "XXXXXX",
+      appId: "XXXXXX"
+    };
 
-      <video id="tvVideo" autoplay playsinline muted></video>
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-      <img id="tvLogo" alt="Logo MEPLA TV">
-
-      <div id="offline" style="display:none">
-        📺 MEPLA TV — CHAÎNE HORS LIGNE
-      </div>
-
-      <div id="ticker"><span id="tickerText">
-        Bienvenue sur MEPLA TV
-      </span></div>
-    </div>
-
-    <div id="status" class="status">Connexion à Firebase…</div>
-
-    <div class="notice">
-      Cet aperçu affiche les vidéos intégrées et les états de la régie.
-      La caméra locale n'est pas transmise automatiquement aux visiteurs.
-      Pour un véritable direct public, connecte un service de streaming (OBS, YouTube Live, etc.).
-    </div>
-
-    <h3>🎥 Prévisualisation caméra locale</h3>
-    <video id="preview" class="preview" autoplay playsinline muted></video>
-    <div class="row" style="margin-top:8px">
-      <button id="cameraBtn">Activer la caméra</button>
-      <button id="cameraStopBtn" class="gray">Arrêter la caméra</button>
-    </div>
-
-    <hr>
-    <h3>🚦 Commandes de diffusion</h3>
-    <div class="row">
-      <button id="liveBtn" class="red">Activer le mode direct</button>
-      <button id="playlistModeBtn" class="green">Reprendre la playlist</button>
-    </div>
-    <p class="small" style="margin-top:8px">
-      Le mode direct indique l'état de la régie. La transmission réelle de la
-      caméra exige un serveur ou un service de streaming.
-    </p>
-  </section>
-
-  <section class="panel">
-    <h2>⚙️ Configuration du studio</h2>
-
-    <div class="field">
-      <label>Nom de la chaîne</label>
-      <input id="channelName" maxlength="80" placeholder="MEPLA TV">
-    </div>
-
-    <div class="field">
-      <label>Description</label>
-      <textarea id="channelDescription" maxlength="500"
-        placeholder="Description de la chaîne"></textarea>
-    </div>
-
-    <h3>🎨 Décor du studio</h3>
-    <div class="decor-grid" id="decorGrid">
-      <button class="decor selected"
-        data-url="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200"
-        style="background-image:url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300')"
-        aria-label="Décor studio 1"></button>
-      <button class="decor"
-        data-url="https://images.unsplash.com/photo-1577495508048-b635879837f1?w=1200"
-        style="background-image:url('https://images.unsplash.com/photo-1577495508048-b635879837f1?w=300')"
-        aria-label="Décor studio 2"></button>
-      <button class="decor"
-        data-url="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200"
-        style="background-image:url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=300')"
-        aria-label="Décor studio 3"></button>
-    </div>
-
-    <div class="field" style="margin-top:8px">
-      <label>URL d'un décor personnalisé</label>
-      <input id="backgroundUrl" type="url" placeholder="https://exemple.com/decor.jpg">
-    </div>
-
-    <h3>🖼️ Logo de la chaîne</h3>
-    <div class="field">
-      <label>URL de l'image du logo</label>
-      <input id="logoUrl" type="url" placeholder="https://exemple.com/logo.png">
-    </div>
-    <div class="field">
-      <label>Position du logo</label>
-      <select id="logoPosition">
-        <option value="tr">Haut droite</option>
-        <option value="tl">Haut gauche</option>
-        <option value="br">Bas droite</option>
-        <option value="bl">Bas gauche</option>
-      </select>
-    </div>
-
-    <button id="saveSettingsBtn" class="gold" style="width:100%">
-      Enregistrer les réglages
-    </button>
-
-    <hr>
-    <h2>📖 Messages et versets</h2>
-
-    <div class="field">
-      <label>Verset prédéfini</label>
-      <select id="preset">
-        <option value="">Choisir un verset</option>
-        <option value="Car Dieu a tant aimé le monde qu'il a donné son Fils unique. (Jean 3:16)">Jean 3:16 — Amour</option>
-        <option value="L'Éternel est mon berger : je ne manquerai de rien. (Psaume 23:1)">Psaume 23:1 — Confiance</option>
-        <option value="Confie-toi en l'Éternel de tout ton cœur. (Proverbes 3:5)">Proverbes 3:5 — Sagesse</option>
-        <option value="Je puis tout par Christ qui me fortifie. (Philippiens 4:13)">Philippiens 4:13 — Force</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>Message à publier</label>
-      <textarea id="messageText" maxlength="500"
-        placeholder="Tape ton message ici…"></textarea>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label>Début (facultatif)</label>
-        <input id="messageStart" type="datetime-local">
-      </div>
-      <div class="field">
-        <label>Fin (facultatif)</label>
-        <input id="messageEnd" type="datetime-local">
-      </div>
-    </div>
-
-    <button id="publishMessageBtn" class="gold" style="width:100%">
-      Publier / Programmer le message
-    </button>
-
-    <div id="messagesList" class="list"></div>
-  </section>
-
-  <section class="panel full">
-    <h2>🎬 Programmation YouTube</h2>
-
-    <div class="row">
-      <div class="field">
-        <label>Titre du programme</label>
-        <input id="programTitle" maxlength="120" placeholder="Titre de l'émission">
-      </div>
-      <div class="field">
-        <label>URL YouTube</label>
-        <input id="programUrl" type="url" placeholder="https://www.youtube.com/watch?v=...">
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label>Durée prévue en minutes</label>
-        <input id="programDuration" type="number" min="1" max="1440" value="30">
-      </div>
-      <div class="field">
-        <label>Ordre de diffusion</label>
-        <input id="programOrder" type="number" min="1" value="1">
-      </div>
-    </div>
-
-    <div class="row">
-      <button id="addProgramBtn" class="green">Ajouter à la playlist</button>
-      <button id="playNowBtn" class="red">Diffuser maintenant</button>
-    </div>
-
-    <p class="small" style="margin-top:8px">
-      Le bouton « Diffuser maintenant » donne la priorité à la vidéo dans ce
-      lecteur. Le lecteur public doit appliquer la même règle pour que tous les
-      téléspectateurs voient le changement.
-    </p>
-
-    <div id="playlistList" class="list"></div>
-  </section>
-
-</main>
-
-<footer>MEPLA TV • Régie automatisée • Toujours avec vous</footer>
-
-<script type="module">
-import { auth, database } from "./js/firebase-config.js";
-
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-import {
-  ref, get, set, update, push, remove, onValue
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-const $ = id => document.getElementById(id);
-
-let uid = null;
-let rootRef = null;
-let playlist = {};
-let messages = {};
-let channelData = {};
-let selectedBackground =
-  "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200";
-let localStream = null;
-let unsubscribe = null;
-let lastPlayerUrl = "";
-let priorityTimer = null;
-
-/* ========== STATUS & ERREURS ========== */
-const setStatus = (message, error = false) => {
-  $("status").textContent = message;
-  $("status").style.color = error ? "#f87171" : "#86efac";
-};
-
-/* ========== UTILITAIRES ========== */
-function safeHttpUrl(value) {
-  try {
-    const url = new URL(value);
-    return (url.protocol === "https:" || url.protocol === "http:") ? url.href : "";
-  } catch {
-    return "";
-  }
-}
-
-function getYouTubeId(value) {
-  try {
-    const url = new URL(value.trim());
-    let id = "";
-
-    if (url.hostname.includes("youtu.be")) {
-      id = url.pathname.split("/").filter(Boolean)[0] || "";
-    } else if (
-      url.hostname.includes("youtube.com") ||
-      url.hostname.includes("youtube-nocookie.com")
-    ) {
-      if (url.pathname === "/watch") {
-        id = url.searchParams.get("v") || "";
-      } else {
-        const parts = url.pathname.split("/").filter(Boolean);
-        if (["embed", "shorts", "live"].includes(parts[0])) {
-          id = parts[1] || "";
+    // Récupération dynamique du nom et du logo depuis Firebase (Nœud utilisateur/chaîne)
+    const channelMetaRef = ref(db, 'channels/dakproelite/metadata');
+    onValue(channelMetaRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        if (data.channelName) {
+          document.getElementById('headerChannelName').innerText = data.channelName.toUpperCase();
+        }
+        if (data.channelLogoText) {
+          const logoHtml = `${data.channelLogoText}<span>TV</span>`;
+          document.getElementById('watermarkBrand').innerHTML = logoHtml;
+          document.getElementById('introLogoText').innerHTML = logoHtml;
         }
       }
-    }
-    return /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : "";
-  } catch {
-    return "";
-  }
-}
-
-function youtubeEmbed(id) {
-  return "https://www.youtube-nocookie.com/embed/" +
-    encodeURIComponent(id) +
-    "?autoplay=1&playsinline=1&rel=0";
-}
-
-function dateToMs(value) {
-  if (!value) return null;
-  const ms = new Date(value).getTime();
-  return Number.isFinite(ms) ? ms : null;
-}
-
-function makeButton(label, className, callback) {
-  const button = document.createElement("button");
-  button.textContent = label;
-  button.className = className || "gray";
-  button.addEventListener("click", () => {
-    try {
-      callback();
-    } catch (e) {
-      setStatus("Erreur : " + e.message, true);
-    }
-  });
-  return button;
-}
-
-function makeItem(title, detail, actions) {
-  const item = document.createElement("div");
-  item.className = "item";
-
-  const info = document.createElement("div");
-  info.className = "item-info";
-
-  const strong = document.createElement("strong");
-  strong.textContent = title;
-
-  const small = document.createElement("small");
-  small.textContent = detail;
-
-  info.append(strong, small);
-
-  const actionBox = document.createElement("div");
-  actionBox.className = "item-actions";
-  actions.forEach(btn => actionBox.appendChild(btn));
-
-  item.append(info, actionBox);
-  return item;
-}
-
-/* ========== LOGO ========== */
-function showLogo(settings) {
-  const logo = $("tvLogo");
-  const url = safeHttpUrl(settings?.logoUrl || "");
-
-  logo.className = "";
-  logo.id = "tvLogo";
-
-  if (!url) {
-    logo.style.display = "none";
-    logo.removeAttribute("src");
-    return;
-  }
-
-  const positions = {
-    tr: "",
-    tl: "logo-tl",
-    br: "logo-br",
-    bl: "logo-bl"
-  };
-
-  logo.className = positions[settings.logoPosition] || "";
-  logo.src = url;
-  logo.style.display = "block";
-  logo.onerror = () => { logo.style.display = "none"; };
-}
-
-/* ========== PLAYLIST ========== */
-function getPlaylistEntries() {
-  return Object.entries(playlist)
-    .filter(([, p]) => p && typeof p === "object")
-    .sort((a, b) => Number(a[1].order || 9999) - Number(b[1].order || 9999));
-}
-
-async function moveProgram(key, direction) {
-  const entries = getPlaylistEntries();
-  const index = entries.findIndex(([k]) => k === key);
-  const targetIndex = index + direction;
-
-  if (index < 0 || targetIndex < 0 || targetIndex >= entries.length) return;
-
-  const [currKey, currProg] = entries[index];
-  const [targKey, targProg] = entries[targetIndex];
-
-  const currOrder = Number(currProg.order || index + 1);
-  const targOrder = Number(targProg.order || targetIndex + 1);
-
-  const updates = {};
-  updates[`users/\( {uid}/playlist/ \){currKey}/order`] = targOrder;
-  updates[`users/\( {uid}/playlist/ \){targKey}/order`] = currOrder;
-
-  await update(ref(database), updates);
-  setStatus("Ordre de la playlist mis à jour.");
-}
-
-function renderPlaylist() {
-  const list = $("playlistList");
-  list.replaceChildren();
-
-  const entries = getPlaylistEntries();
-
-  if (!entries.length) {
-    list.textContent = "Aucun programme enregistré.";
-    return;
-  }
-
-  entries.forEach(([key, program], index) => {
-    const moveUp = makeButton("↑", "gray", async () => {
-      await moveProgram(key, -1);
     });
 
-    const moveDown = makeButton("↓", "gray", async () => {
-      await moveProgram(key, 1);
-    });
-
-    const play = makeButton("▶ Maintenant", "green", async () => {
-      await playProgramNow(key, program);
-    });
-
-    const del = makeButton("Supprimer", "red", async () => {
-      if (!confirm(`Supprimer « ${program.title || "ce programme"} » ?`)) return;
-      await remove(ref(database, `users/\( {uid}/playlist/ \){key}`));
-      setStatus("Programme supprimé.");
-    });
-
-    list.appendChild(makeItem(
-      `${Number(program.order || index + 1)}. ${program.title || "Programme"}`,
-      `YouTube • ${program.youtubeId || "ID absent"} • ${program.durationMinutes || 30} min`,
-      [moveUp, moveDown, play, del]
-    ));
-  });
-}
-
-/* ========== MESSAGES ========== */
-function renderMessages() {
-  const list = $("messagesList");
-  list.replaceChildren();
-
-  const entries = Object.entries(messages)
-    .sort((a, b) => Number(a[1].startAt || 0) - Number(b[1].startAt || 0));
-
-  if (!entries.length) {
-    list.textContent = "Aucun message programmé.";
-    return;
-  }
-
-  entries.forEach(([key, msg]) => {
-    const now = Date.now();
-    let state = "Activé";
-    if (msg.startAt && now < msg.startAt) state = "À venir";
-    if (msg.endAt && now >= msg.endAt) state = "Terminé";
-
-    const del = makeButton("Supprimer", "red", async () => {
-      await remove(ref(database, `users/\( {uid}/messages/ \){key}`));
-      setStatus("Message supprimé.");
-    });
-
-    list.appendChild(makeItem(
-      msg.text || "Message",
-      `${state} • Début : ${msg.startAt ? new Date(msg.startAt).toLocaleString() : "immédiat"} • Fin : ${msg.endAt ? new Date(msg.endAt).toLocaleString() : "sans limite"}`,
-      [del]
-    ));
-  });
-}
-
-function getCurrentMessage() {
-  const now = Date.now();
-  const active = Object.values(messages)
-    .filter(msg =>
-      msg.enabled !== false &&
-      (!msg.startAt || now >= Number(msg.startAt)) &&
-      (!msg.endAt || now < Number(msg.endAt))
-    )
-    .sort((a, b) => Number(b.startAt || 0) - Number(a.startAt || 0));
-
-  return active[0]?.text || channelData.currentTicker || "Bienvenue sur MEPLA TV";
-}
-
-/* ========== PROGRAMME COURANT ========== */
-function getCurrentProgram() {
-  const override = channelData.liveOverride;
-
-  if (override && override.enabled && Number(override.endsAt) > Date.now()) {
-    return override;
-  }
-
-  const entries = getPlaylistEntries()
-    .filter(([, p]) => p.enabled !== false);
-
-  if (!entries.length) return null;
-
-  const anchor = Number(channelData.playlistAnchorAt || 0);
-  if (!anchor) return entries[0][1];
-
-  const totalMs = entries.reduce(
-    (sum, [, p]) => sum + Math.max(1, Number(p.durationMinutes || 30)) * 60000,
-    0
-  );
-
-  if (!totalMs) return entries[0][1];
-
-  let position = ((Date.now() - anchor) % totalMs + totalMs) % totalMs;
-
-  for (const [, p] of entries) {
-    const duration = Math.max(1, Number(p.durationMinutes || 30)) * 60000;
-    if (position < duration) return p;
-    position -= duration;
-  }
-
-  return entries[0][1];
-}
-
-/* ========== LECTEUR ========== */
-function renderPlayer(data) {
-  const offline = $("offline");
-  const player = $("tvPlayer");
-  const video = $("tvVideo");
-
-  $("tickerText").textContent = getCurrentMessage();
-  showLogo(data.settings || {});
-
-  if (data.settings?.studioBackground) {
-    selectedBackground = data.settings.studioBackground;
-  }
-
-  if (data.broadcast?.isLive === false) {
-    offline.style.display = "flex";
-    player.style.display = "none";
-    video.style.display = "none";
-    player.src = "";
-    video.pause();
-    lastPlayerUrl = "";
-    return;
-  }
-
-  offline.style.display = "none";
-
-  const mode = data.broadcast?.mode || "playlist";
-
-  if (mode === "camera") {
-    player.style.display = "none";
-    video.style.display = "block";
-    setStatus("Mode caméra sélectionné. La caméra locale reste sur cet appareil. Configure un service de streaming pour la diffusion publique.");
-    return;
-  }
-
-  player.style.display = "block";
-  video.style.display = "none";
-
-  let target = "";
-
-  if (mode === "override") {
-    const override = data.liveOverride;
-    if (override && Number(override.endsAt) > Date.now() && override.youtubeId) {
-      target = youtubeEmbed(override.youtubeId);
-    }
-  }
-
-  if (!target) {
-    const program = getCurrentProgram();
-    if (program?.youtubeId) target = youtubeEmbed(program.youtubeId);
-  }
-
-  if (target && target !== lastPlayerUrl) {
-    player.src = target;
-    lastPlayerUrl = target;
-  } else if (!target && lastPlayerUrl) {
-    player.src = "";
-    lastPlayerUrl = "";
-  }
-}
-
-/* ========== TIMER ========== */
-function startLiveTimer() {
-  if (priorityTimer) clearInterval(priorityTimer);
-  priorityTimer = setInterval(() => {
-    if (!uid) return;
-    $("tickerText").textContent = getCurrentMessage();
-    if (channelData.broadcast?.mode === "playlist") {
-      renderPlayer(channelData);
-    }
-  }, 15000);
-}
-
-/* ========== RÉGLAGES ========== */
-async function saveSettings() {
-  const background = safeHttpUrl($("backgroundUrl").value.trim()) || selectedBackground;
-
-  const settings = {
-    channelName: $("channelName").value.trim() || "MEPLA TV",
-    channelDescription: $("channelDescription").value.trim(),
-    studioBackground: background,
-    logoUrl: safeHttpUrl($("logoUrl").value.trim()),
-    logoPosition: $("logoPosition").value,
-    updatedAt: Date.now()
-  };
-
-  await update(ref(database, `users/${uid}/settings`), settings);
-  await update(rootRef, {
-    channelName: settings.channelName,
-    channelDescription: settings.channelDescription
-  });
-
-  setStatus("Réglages enregistrés.");
-}
-
-/* ========== BROADCAST ========== */
-async function setBroadcast(mode, isLive = true) {
-  await update(ref(database, `users/${uid}/broadcast`), {
-    mode,
-    isLive,
-    updatedAt: Date.now()
-  });
-  setStatus(isLive ? `Commande enregistrée : ${mode}` : "Chaîne coupée.");
-}
-
-async function playProgramNow(key, program) {
-  const durationMs = Math.max(1, Number(program.durationMinutes || 30)) * 60000;
-
-  await update(rootRef, {
-    liveOverride: {
-      enabled: true,
-      playlistKey: key,
-      title: program.title || "Programme prioritaire",
-      youtubeId: program.youtubeId,
-      startedAt: Date.now(),
-      endsAt: Date.now() + durationMs
-    },
-    broadcast: {
-      mode: "override",
-      isLive: true,
-      updatedAt: Date.now()
-    }
-  });
-
-  setStatus("Programme prioritaire commandé.");
-}
-
-/* ========== CAMÉRA ========== */
-async function startCameraPreview() {
-  try {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      throw new Error("Caméra indisponible. Utilise HTTPS ou localhost.");
-    }
-
-    stopCameraPreview();
-
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video: { width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: true
-    });
-
-    $("preview").srcObject = localStream;
-    setStatus("Caméra locale activée pour la prévisualisation.");
-  } catch (error) {
-    setStatus("Impossible d'activer la caméra : " + error.message, true);
-  }
-}
-
-function stopCameraPreview() {
-  if (localStream) {
-    localStream.getTracks().forEach(track => track.stop());
-    localStream = null;
-  }
-  $("preview").srcObject = null;
-}
-
-/* ========== ABONNEMENT FIREBASE ========== */
-function subscribeToData() {
-  if (unsubscribe) unsubscribe();
-
-  unsubscribe = onValue(rootRef, snapshot => {
-    if (!snapshot.exists()) {
-      setStatus("Profil de chaîne introuvable.", true);
-      return;
-    }
-
-    channelData = snapshot.val() || {};
-    playlist = channelData.playlist || {};
-    messages = channelData.messages || {};
-
-    const settings = channelData.settings || {};
-    $("channelName").value = settings.channelName || channelData.channelName || "MEPLA TV";
-    $("channelDescription").value = settings.channelDescription || channelData.channelDescription || "";
-    $("backgroundUrl").value = settings.studioBackground || selectedBackground;
-    $("logoUrl").value = settings.logoUrl || "";
-    $("logoPosition").value = settings.logoPosition || "tr";
-
-    document.querySelectorAll(".decor").forEach(button => {
-      button.classList.toggle("selected", button.dataset.url === (settings.studioBackground || selectedBackground));
-    });
-
-    renderPlaylist();
-    renderMessages();
-    renderPlayer(channelData);
-
-    const live = channelData.broadcast?.isLive !== false;
-    setStatus(live
-      ? `Chaîne en ligne • Mode : ${channelData.broadcast?.mode || "playlist"}`
-      : "Chaîne hors ligne");
-  }, error => {
-    setStatus("Erreur Firebase : " + error.message, true);
-  });
-}
-
-/* ========== ÉVÉNEMENTS ========== */
-$("preset").addEventListener("change", () => {
-  if ($("preset").value) $("messageText").value = $("preset").value;
-});
-
-document.querySelectorAll(".decor").forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(".decor").forEach(el => el.classList.remove("selected"));
-    button.classList.add("selected");
-    selectedBackground = button.dataset.url;
-    $("backgroundUrl").value = selectedBackground;
-  });
-});
-
-$("saveSettingsBtn").addEventListener("click", async () => {
-  try {
-    await saveSettings();
-  } catch (e) {
-    setStatus("Enregistrement impossible : " + e.message, true);
-  }
-});
-
-$("cameraBtn").addEventListener("click", startCameraPreview);
-$("cameraStopBtn").addEventListener("click", stopCameraPreview);
-
-$("liveBtn").addEventListener("click", async () => {
-  try {
-    await setBroadcast("camera", true);
-    await startCameraPreview();
-  } catch (e) {
-    setStatus("Erreur mode direct : " + e.message, true);
-  }
-});
-
-$("playlistModeBtn").addEventListener("click", async () => {
-  try {
-    await setBroadcast("playlist", true);
-  } catch (e) {
-    setStatus(e.message, true);
-  }
-});
-
-$("playlistBtn").addEventListener("click", async () => {
-  try {
-    await setBroadcast("playlist", true);
-  } catch (e) {
-    setStatus(e.message, true);
-  }
-});
-
-$("stopBtn").addEventListener("click", async () => {
-  if (!confirm("Confirmer la coupure de MEPLA TV ?")) return;
-
-  try {
-    await update(ref(database, `users/${uid}/broadcast`), {
-      mode: "offline",
-      isLive: false,
-      updatedAt: Date.now()
-    });
-    stopCameraPreview();
-    setStatus("Chaîne coupée.");
-  } catch (e) {
-    setStatus("Erreur de coupure : " + e.message, true);
-  }
-});
-
-$("refreshBtn").addEventListener("click", async () => {
-  try {
-    const snapshot = await get(rootRef);
-    if (snapshot.exists()) {
-      channelData = snapshot.val();
-      playlist = channelData.playlist || {};
-      messages = channelData.messages || {};
-      renderPlaylist();
-      renderMessages();
-      renderPlayer(channelData);
-      setStatus("Régie actualisée.");
-    }
-  } catch (e) {
-    setStatus("Actualisation impossible : " + e.message, true);
-  }
-});
-
-$("publishMessageBtn").addEventListener("click", async () => {
-  const text = $("messageText").value.trim();
-  if (!text) {
-    setStatus("Saisis un message ou choisis un verset.", true);
-    return;
-  }
-
-  const startAt = dateToMs($("messageStart").value);
-  const endAt = dateToMs($("messageEnd").value);
-
-  if (startAt !== null && endAt !== null && endAt <= startAt) {
-    setStatus("La fin doit être postérieure au début.", true);
-    return;
-  }
-
-  try {
-    const messageRef = push(ref(database, `users/${uid}/messages`));
-    await set(messageRef, {
-      text,
-      startAt,
-      endAt,
-      enabled: true,
-      createdAt: Date.now()
-    });
-
-    if (!startAt || startAt <= Date.now()) {
-      await update(rootRef, { currentTicker: text });
-    }
-
-    $("messageText").value = "";
-    $("messageStart").value = "";
-    $("messageEnd").value = "";
-    setStatus("Message publié ou programmé.");
-  } catch (e) {
-    setStatus("Publication impossible : " + e.message, true);
-  }
-});
-
-$("addProgramBtn").addEventListener("click", async () => {
-  const title = $("programTitle").value.trim();
-  const youtubeId = getYouTubeId($("programUrl").value.trim());
-  const durationMinutes = Number($("programDuration").value);
-  const order = Math.max(1, Number($("programOrder").value) || 1);
-
-  if (!title) {
-    setStatus("Saisis le titre du programme.", true);
-    return;
-  }
-  if (!youtubeId) {
-    setStatus("URL YouTube invalide.", true);
-    return;
-  }
-  if (!Number.isFinite(durationMinutes) || durationMinutes < 1 || durationMinutes > 1440) {
-    setStatus("La durée doit être entre 1 et 1440 minutes.", true);
-    return;
-  }
-
-  try {
-    const programRef = push(ref(database, `users/${uid}/playlist`));
-    await set(programRef, {
-      title,
-      youtubeId,
-      durationMinutes,
-      order,
-      enabled: true,
-      createdAt: Date.now()
-    });
-
-    $("programTitle").value = "";
-    $("programUrl").value = "";
-    setStatus("Programme ajouté à la playlist.");
-  } catch (e) {
-    setStatus("Ajout impossible : " + e.message, true);
-  }
-});
-
-$("playNowBtn").addEventListener("click", async () => {
-  const title = $("programTitle").value.trim() || "Vidéo prioritaire";
-  const youtubeId = getYouTubeId($("programUrl").value.trim());
-  const durationMinutes = Number($("programDuration").value);
-
-  if (!youtubeId) {
-    setStatus("Colle une URL YouTube valide.", true);
-    return;
-  }
-  if (!Number.isFinite(durationMinutes) || durationMinutes < 1) {
-    setStatus("Indique une durée valide.", true);
-    return;
-  }
-
-  try {
-    await update(rootRef, {
-      liveOverride: {
-        enabled: true,
-        title,
-        youtubeId,
-        startedAt: Date.now(),
-        endsAt: Date.now() + durationMinutes * 60000
-      },
-      broadcast: {
-        mode: "override",
-        isLive: true,
-        updatedAt: Date.now()
+    // Compteur d'audience en temps réel
+    const viewerCountElement = document.getElementById('viewerCount');
+    const peakCountElement = document.getElementById('peakCount');
+    const connectionsRef = ref(db, 'channels/dakproelite/active_viewers');
+    const myConnectionRef = push(connectionsRef);
+
+    let peakViewers = 0;
+    set(myConnectionRef, true);
+    onDisconnect(myConnectionRef).remove();
+
+    onValue(connectionsRef, (snapshot) => {
+      const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+      viewerCountElement.innerText = count;
+      if (count > peakViewers) {
+        peakViewers = count;
+        peakCountElement.innerText = `Pic d'audience : ${peakViewers}`;
       }
     });
-    setStatus("Diffusion prioritaire programmée.");
-  } catch (e) {
-    setStatus("Impossible de lancer la vidéo : " + e.message, true);
-  }
-});
+  </script>
 
-/* ========== AUTH ========== */
-onAuthStateChanged(auth, async user => {
-  if (!user) {
-    window.location.replace("connexion.html");
-    return;
-  }
+  <script>
+    let localStream = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isLive = false;
+    let isCamMuted = false;
+    let isMicMuted = false;
+    let recordedBlobUrl = null;
+    let selectedBgStyle = 1;
 
-  uid = user.uid;
-  rootRef = ref(database, `users/${uid}`);
+    const sourceVideo = document.getElementById('sourceVideo');
+    const outputCanvas = document.getElementById('outputCanvas');
+    const ctx = outputCanvas.getContext('2d');
+    const cameraSelect = document.getElementById('cameraSelect');
+    const liveBadge = document.getElementById('liveBadge');
+    const actionLiveBtn = document.getElementById('actionLiveBtn');
+    const streamStats = document.getElementById('streamStats');
+    const downloadReplayBtn = document.getElementById('downloadReplayBtn');
+    const introOverlay = document.getElementById('introOverlay');
 
-  try {
-    const snapshot = await get(rootRef);
-
-    if (!snapshot.exists()) {
-      await set(rootRef, {
-        channelName: user.displayName || "MEPLA TV",
-        channelDescription: "",
-        currentTicker: "Bienvenue sur MEPLA TV",
-        broadcast: {
-          mode: "playlist",
-          isLive: true,
-          updatedAt: Date.now()
-        },
-        settings: {
-          channelName: user.displayName || "MEPLA TV",
-          channelDescription: "",
-          studioBackground: selectedBackground,
-          logoUrl: user.photoURL || "",
-          logoPosition: "tr"
-        },
-        playlist: {},
-        messages: {},
-        playlistAnchorAt: Date.now()
+    function setStudioBackground(bgNum) {
+      selectedBgStyle = bgNum;
+      document.querySelectorAll('.bg-thumb').forEach((el, index) => {
+        if (index + 1 === bgNum) {
+          el.classList.add('selected');
+        } else {
+          el.classList.remove('selected');
+        }
       });
     }
 
-    subscribeToData();
-    startLiveTimer();
-  } catch (e) {
-    setStatus("Impossible de charger la chaîne : " + e.message, true);
-  }
-});
+    async function initDevices() {
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        
+        cameraSelect.innerHTML = '';
+        videoDevices.forEach((device, index) => {
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          option.text = device.label || `Caméra ${index + 1}`;
+          cameraSelect.appendChild(option);
+        });
 
-window.addEventListener("beforeunload", () => {
-  stopCameraPreview();
-  if (unsubscribe) unsubscribe();
-  if (priorityTimer) clearInterval(priorityTimer);
-});
-</script>
+        await startCamera();
+      } catch (err) {
+        console.error("Erreur périphériques :", err);
+        streamStats.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#ffcc00"></i> Caméra non autorisée.`;
+      }
+    }
+
+    async function startCamera() {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+      }
+
+      const deviceId = cameraSelect.value;
+      const constraints = {
+        video: { deviceId: deviceId ? { exact: deviceId } : undefined, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: true
+      };
+
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia(constraints);
+        sourceVideo.srcObject = localStream;
+        sourceVideo.muted = true;
+        await sourceVideo.play();
+        renderStudioBackground();
+      } catch (err) {
+        alert("Impossible d'activer la caméra.");
+      }
+    }
+
+    function renderStudioBackground() {
+      if (sourceVideo.paused || sourceVideo.ended) return;
+
+      outputCanvas.width = sourceVideo.videoWidth || 1280;
+      outputCanvas.height = sourceVideo.videoHeight || 720;
+      const w = outputCanvas.width;
+      const h = outputCanvas.height;
+
+      let grad = ctx.createLinearGradient(0, 0, w, h);
+      if (selectedBgStyle === 1) { grad.addColorStop(0, '#0d1b2a'); grad.addColorStop(1, '#000814'); }
+      else if (selectedBgStyle === 2) { grad.addColorStop(0, '#1f1c2c'); grad.addColorStop(1, '#928dab'); }
+      else if (selectedBgStyle === 3) { grad.addColorStop(0, '#0f2027'); grad.addColorStop(1, '#2c5364'); }
+      else if (selectedBgStyle === 4) { grad.addColorStop(0, '#232526'); grad.addColorStop(1, '#414345'); }
+      else if (selectedBgStyle === 5) { grad.addColorStop(0, '#141e30'); grad.addColorStop(1, '#243b55'); }
+      else if (selectedBgStyle === 6) { grad.addColorStop(0, '#11998e'); grad.addColorStop(1, '#38ef7d'); }
+      else if (selectedBgStyle === 7) { grad.addColorStop(0, '#2c3e50'); grad.addColorStop(1, '#3498db'); }
+      else if (selectedBgStyle === 8) { grad.addColorStop(0, '#4ca1af'); grad.addColorStop(1, '#2c3e50'); }
+      else if (selectedBgStyle === 9) { grad.addColorStop(0, '#3a6073'); grad.addColorStop(1, '#16222a'); }
+      else if (selectedBgStyle === 10) { grad.addColorStop(0, '#2b5876'); grad.addColorStop(1, '#4e4376'); }
+      else if (selectedBgStyle === 11) { grad.addColorStop(0, '#4e54c8'); grad.addColorStop(1, '#8f94fb'); }
+      else if (selectedBgStyle === 12) { grad.addColorStop(0, '#7f7fd5'); grad.addColorStop(1, '#91eae4'); }
+      else if (selectedBgStyle === 13) { grad.addColorStop(0, '#000428'); grad.addColorStop(1, '#004e92'); }
+      else if (selectedBgStyle === 14) { grad.addColorStop(0, '#cb356b'); grad.addColorStop(1, '#bd3f32'); }
+      else { grad.addColorStop(0, '#000000'); grad.addColorStop(1, '#434343'); }
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 3, 350, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.drawImage(sourceVideo, 0, 0, w, h);
+
+      requestAnimationFrame(renderStudioBackground);
+    }
+
+    function toggleCamera() {
+      if(localStream) {
+        const videoTrack = localStream.getVideoTracks()[0];
+        if (videoTrack) {
+          videoTrack.enabled = !videoTrack.enabled;
+          isCamMuted = !videoTrack.enabled;
+          const btn = document.getElementById('toggleCamBtn');
+          btn.classList.toggle('active-state', isCamMuted);
+          btn.innerHTML = isCamMuted ? `<i class="fa-solid fa-video-slash"></i> Caméra Off` : `<i class="fa-solid fa-video"></i> Caméra`;
+        }
+      }
+    }
+
+    function toggleMic() {
+      if(localStream) {
+        const audioTrack = localStream.getAudioTracks()[0];
+        if (audioTrack) {
+          audioTrack.enabled = !audioTrack.enabled;
+          isMicMuted = !audioTrack.enabled;
+          const btn = document.getElementById('toggleMicBtn');
+          btn.classList.toggle('active-state', isMicMuted);
+          btn.innerHTML = isMicMuted ? `<i class="fa-solid fa-microphone-slash"></i> Micro Off` : `<i class="fa-solid fa-microphone"></i> Micro`;
+        }
+      }
+    }
+
+    async function shareScreen() {
+      try {
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        sourceVideo.srcObject = screenStream;
+        localStream = screenStream;
+        document.getElementById('toggleScreenBtn').classList.add('active-state');
+      } catch (err) {
+        console.log("Partage annulé.");
+      }
+    }
+
+    function updateTickerText() {
+      const val = document.getElementById('tickerInput').value;
+      document.getElementById('tickerTextDisplay').innerText = val || "Direct TV";
+    }
+
+    // Gestion du direct avec l'animation de Jingle d'antenne (Intro de quelques secondes)
+    function toggleLiveStream() {
+      if (!isLive) {
+        startLiveWithIntro();
+      } else {
+        stopLive();
+      }
+    }
+
+    function startLiveWithIntro() {
+      // 1. Afficher l'animation d'intro / Jingle professionnel
+      introOverlay.classList.add('active');
+      streamStats.innerHTML = `<i class="fa-solid fa-film" style="color:#ffcc00"></i> Diffusion du Jingle d'Antenne...`;
+
+      // 2. Patienter 3.5 secondes (temps de l'animation d'intro) puis basculer en direct
+      setTimeout(() => {
+        introOverlay.classList.remove('active');
+        startLive();
+      }, 3500);
+    }
+
+    function startLive() {
+      isLive = true;
+      downloadReplayBtn.style.display = "none";
+      liveBadge.classList.add('active');
+      liveBadge.innerText = "EN DIRECT";
+      actionLiveBtn.innerHTML = `<i class="fa-solid fa-stop"></i> ARRÊTER LE DIRECT`;
+      actionLiveBtn.classList.remove('btn-danger');
+      actionLiveBtn.classList.add('btn-success');
+      streamStats.innerHTML = `<i class="fa-solid fa-circle" style="color:red"></i> En Direct HD (Studio Pro)`;
+
+      recordedChunks = [];
+      try {
+        const canvasStream = outputCanvas.captureStream(30);
+        const audioTrack = localStream.getAudioTracks()[0];
+        if (audioTrack) canvasStream.addTrack(audioTrack);
+
+        mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm;codecs=vp9' });
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+        mediaRecorder.start(1000);
+      } catch (e) {
+        console.log("MediaRecorder non supporté.");
+      }
+    }
+
+    function stopLive() {
+      isLive = false;
+      introOverlay.classList.remove('active');
+      liveBadge.classList.remove('active');
+      liveBadge.innerText = "HORS LIGNE";
+      actionLiveBtn.classList.remove('btn-success');
+      actionLiveBtn.classList.add('btn-danger');
+      actionLiveBtn.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> PASSER EN DIRECT`;
+      streamStats.innerText = "Direct terminé - Redirection vers la pub...";
+
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          recordedBlobUrl = URL.createObjectURL(blob);
+          downloadReplayBtn.style.display = "flex";
+        };
+      }
+
+      setTimeout(() => {
+        playPostLiveProgram();
+      }, 1200);
+    }
+
+    function triggerAdBreak() {
+      introOverlay.classList.remove('active');
+      streamStats.innerHTML = `<i class="fa-solid fa-rectangle-ad" style="color:#ffcc00"></i> Page de publicité en cours...`;
+      playPostLiveProgram();
+    }
+
+    function playPostLiveProgram() {
+      const adUrl = document.getElementById('adVideoUrl').value;
+      if (adUrl) {
+        sourceVideo.srcObject = null;
+        sourceVideo.src = adUrl;
+        sourceVideo.muted = false;
+        sourceVideo.play();
+      }
+    }
+
+    function downloadReplay() {
+      if (recordedBlobUrl) {
+        const a = document.createElement('a');
+        a.href = recordedBlobUrl;
+        a.download = `DAKPRO_TV_Replay_${Date.now()}.webm`;
+        a.click();
+      }
+    }
+
+    window.onload = initDevices;
+  </script>
 </body>
 </html>
