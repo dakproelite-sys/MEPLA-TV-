@@ -1,1698 +1,478 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07111f">
-
-<title>MEPLA TV — Studio de Régie</title>
-
-<style>
-:root{
-  --bg:#07111f;
-  --panel:#0f1b2d;
-  --panel2:#0b1525;
-  --border:#263852;
-  --text:#f8fafc;
-  --muted:#94a3b8;
-  --blue:#2563eb;
-  --green:#16a34a;
-  --red:#dc2626;
-  --orange:#f97316;
-  --yellow:#eab308;
-}
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body{
-  font-family:Arial,Segoe UI,sans-serif;
-  background:radial-gradient(circle at top,#17345c,#07111f 45%,#030712);
-  color:var(--text);
-  min-height:100vh;
-}
-
-button,input,textarea,select{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-  touch-action:manipulation;
-}
-
-button:disabled{
-  opacity:.55;
-  cursor:wait;
-}
-
-input,textarea,select{
-  width:100%;
-  border:1px solid var(--border);
-  background:#07111f;
-  color:white;
-  border-radius:9px;
-  padding:11px;
-  outline:none;
-}
-
-input:focus,textarea:focus,select:focus{
-  border-color:#60a5fa;
-  box-shadow:0 0 0 2px #2563eb30;
-}
-
-textarea{
-  resize:vertical;
-}
-
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:rgba(3,7,18,.97);
-  border-bottom:1px solid var(--border);
-  padding:12px 16px;
-}
-
-.topbar-inner{
-  max-width:1250px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  min-width:0;
-}
-
-.brand-logo{
-  width:54px;
-  height:54px;
-  object-fit:cover;
-  border-radius:50%;
-  background:#fff;
-  border:2px solid var(--yellow);
-  display:none;
-}
-
-.brand-text h1{
-  font-size:20px;
-  overflow-wrap:anywhere;
-}
-
-.brand-text span{
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  margin-top:4px;
-}
-
-.status{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  background:#111827;
-  border:1px solid var(--border);
-  border-radius:30px;
-  padding:8px 12px;
-  font-size:11px;
-  font-weight:bold;
-  max-width:48%;
-  overflow-wrap:anywhere;
-}
-
-.status-dot{
-  flex:0 0 9px;
-  width:9px;
-  height:9px;
-  background:#eab308;
-  border-radius:50%;
-}
-
-.status-dot.online{
-  background:#22c55e;
-}
-
-.status-dot.error{
-  background:#ef4444;
-}
-
-.container{
-  width:min(1250px,calc(100% - 24px));
-  margin:18px auto 40px;
-}
-
-.card{
-  background:rgba(15,27,45,.97);
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:17px;
-  margin-bottom:17px;
-  min-width:0;
-}
-
-.card-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:15px;
-}
-
-.card h2{
-  font-size:16px;
-}
-
-.badge{
-  font-size:10px;
-  font-weight:bold;
-  padding:5px 9px;
-  border-radius:20px;
-  background:#172554;
-  color:#93c5fd;
-}
-
-.tv-screen{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  background:#000;
-  border:2px solid var(--yellow);
-  border-radius:12px;
-  overflow:hidden;
-}
-
-.tv-screen iframe{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  border:0;
-  background:#000;
-}
-
-.tv-logo{
-  position:absolute;
-  z-index:10;
-  width:60px;
-  height:60px;
-  object-fit:contain;
-  display:none;
-  pointer-events:none;
-}
-
-.logo-top-right{right:12px;top:12px}
-.logo-top-left{left:12px;top:12px}
-.logo-bottom-right{right:12px;bottom:48px}
-.logo-bottom-left{left:12px;bottom:48px}
-
-.live-label{
-  position:absolute;
-  z-index:20;
-  left:12px;
-  top:12px;
-  background:#dc2626;
-  color:white;
-  padding:5px 9px;
-  border-radius:5px;
-  font-size:10px;
-  font-weight:bold;
-}
-
-.ticker{
-  position:absolute;
-  z-index:30;
-  left:0;
-  right:0;
-  bottom:0;
-  height:36px;
-  background:rgba(3,7,18,.96);
-  border-top:2px solid var(--yellow);
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-}
-
-.ticker-track{
-  white-space:nowrap;
-  display:inline-block;
-  padding-left:100%;
-  animation:tickerMove 26s linear infinite;
-  color:#fde047;
-  font-size:13px;
-  font-weight:bold;
-}
-
-@keyframes tickerMove{
-  from{transform:translateX(0)}
-  to{transform:translateX(-100%)}
-}
-
-.now-playing{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:12px;
-}
-
-.info-box{
-  background:var(--panel2);
-  border:1px solid var(--border);
-  padding:11px;
-  border-radius:9px;
-  min-width:0;
-}
-
-.info-box small{
-  color:var(--muted);
-  display:block;
-  font-size:10px;
-  margin-bottom:5px;
-}
-
-.info-box strong{
-  font-size:13px;
-  overflow-wrap:anywhere;
-}
-
-.dashboard-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);
-  gap:17px;
-}
-
-.form-group{
-  margin-bottom:13px;
-}
-
-label{
-  display:block;
-  font-size:11px;
-  font-weight:bold;
-  color:#cbd5e1;
-  margin-bottom:6px;
-}
-
-.btn{
-  display:inline-flex;
-  justify-content:center;
-  align-items:center;
-  gap:6px;
-  border:0;
-  border-radius:8px;
-  padding:11px 13px;
-  color:white;
-  font-weight:bold;
-  font-size:12px;
-  min-height:40px;
-}
-
-.btn-primary{background:var(--blue)}
-.btn-success{background:var(--green)}
-.btn-danger{background:var(--red)}
-.btn-warning{background:var(--orange)}
-.btn-secondary{background:#334155}
-.btn-full{width:100%}
-
-.btn:active{
-  transform:scale(.99);
-}
-
-.message{
-  min-height:20px;
-  text-align:center;
-  font-size:11px;
-  font-weight:bold;
-  line-height:1.5;
-  margin-top:9px;
-  overflow-wrap:anywhere;
-}
-
-.success{color:#4ade80}
-.error{color:#f87171}
-
-.security-note{
-  font-size:10px;
-  line-height:1.6;
-  color:var(--muted);
-  background:#020617;
-  border:1px solid var(--border);
-  padding:11px;
-  border-radius:8px;
-  margin-top:12px;
-}
-
-.checkline{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  font-size:12px;
-  color:#fde68a;
-  margin:12px 0;
-}
-
-.checkline input{
-  width:auto;
-}
-
-.progress-wrap{
-  background:#020617;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:15px;
-  margin-bottom:17px;
-}
-
-.progress{
-  height:12px;
-  background:#1e293b;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.progress-fill{
-  height:100%;
-  width:0;
-  background:linear-gradient(90deg,#eab308,#22c55e);
-  transition:width .3s;
-}
-
-.program-list{
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-  max-height:600px;
-  overflow-y:auto;
-}
-
-.program{
-  background:var(--panel2);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:12px;
-}
-
-.program-title{
-  font-weight:bold;
-  font-size:13px;
-  overflow-wrap:anywhere;
-}
-
-.program-meta{
-  color:var(--muted);
-  font-size:10px;
-  line-height:1.6;
-  margin-top:5px;
-  overflow-wrap:anywhere;
-}
-
-.program-actions{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-  margin-top:10px;
-}
-
-.program-actions button{
-  border:0;
-  border-radius:6px;
-  padding:8px 10px;
-  color:white;
-  font-size:10px;
-  font-weight:bold;
-}
-
-.empty{
-  color:var(--muted);
-  text-align:center;
-  padding:22px;
-  font-size:12px;
-}
-
-.avatar-preview{
-  width:82px;
-  height:82px;
-  border-radius:50%;
-  object-fit:cover;
-  border:2px solid var(--yellow);
-  display:none;
-  margin:0 auto 10px;
-}
-
-.modal{
-  display:none;
-  position:fixed;
-  z-index:5000;
-  inset:0;
-  background:rgba(0,0,0,.8);
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-}
-
-.modal.open{
-  display:flex;
-}
-
-.modal-content{
-  width:min(500px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:#0f1b2d;
-  border:1px solid var(--yellow);
-  border-radius:15px;
-  padding:20px;
-}
-
-.modal-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:15px;
-}
-
-.close{
-  background:none;
-  border:0;
-  color:white;
-  font-size:26px;
-  min-width:35px;
-}
-
-.toolbar{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.toolbar .btn{
-  flex:1;
-}
-
-footer{
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  padding:20px;
-}
-
-@media(max-width:850px){
-  .dashboard-grid{
-    grid-template-columns:1fr;
-  }
-}
-
-@media(max-width:600px){
-  .topbar-inner{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
-  .status{
-    max-width:100%;
-  }
-
-  .brand-text h1{
-    font-size:18px;
-  }
-
-  .now-playing{
-    grid-template-columns:1fr;
-  }
-
-  .card{
-    padding:13px;
-  }
-
-  .tv-logo{
-    width:43px;
-    height:43px;
-  }
-
-  .program-actions button{
-    flex:1;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAKPRO TV - Master 24/7 & Bassin de Diffusion</title>
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+    body {
+      background: #0b0b0f;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      background-color: #1a1a24;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #383838;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+    .brand i { color: #ff0000; font-size: 1.5rem; }
+    .status-badge {
+      background: #2e7d32;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 320px 1fr 360px;
+      gap: 16px;
+      padding: 16px;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    .column {
+      background-color: #1a1a24;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 1px solid #383838;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .center-column {
+      background: transparent;
+      border: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .panel-title {
+      font-size: 0.95rem;
+      border-bottom: 1px solid #383838;
+      padding-bottom: 8px;
+      color: #3ea6ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border: 2px solid #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tv-logo-watermark {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 5;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+      max-width: 140px;
+    }
+    .tv-logo-watermark img {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .tv-logo-watermark span {
+      font-weight: 900;
+      font-size: 0.85rem;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .on-air-overlay {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(200, 0, 0, 0.9);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      z-index: 5;
+      display: none;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: 0.8rem; color: #aaa; }
+    input, select { background-color: #121212; border: 1px solid #383838; color: white; padding: 8px 10px; border-radius: 6px; outline: none; font-size: 0.85rem; }
+    input:focus, select:focus { border-color: #3ea6ff; }
+    
+    button {
+      background-color: #3ea6ff;
+      color: #000;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    button:hover { background-color: #61b8ff; }
+
+    .playlist-container {
+      flex: 1;
+      background: #121212;
+      border-radius: 8px;
+      border: 1px solid #383838;
+      overflow-y: auto;
+      max-height: 250px;
+      padding: 8px;
+    }
+    .playlist-item {
+      padding: 8px;
+      border-bottom: 1px solid #222;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .playlist-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+
+    @media (max-width: 1000px) {
+      .main-container { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
+      body { overflow: auto; }
+    }
+  </style>
 </head>
-
 <body>
 
-<header class="topbar">
-  <div class="topbar-inner">
-
+  <header>
     <div class="brand">
-      <img id="header-logo" class="brand-logo" alt="Logo de la chaîne">
+      <i class="fa-solid fa-tv"></i>
+      <span id="headerChannelName">DAKPRO TV - MASTER 24/7</span>
+    </div>
+    <div id="masterStatus" class="status-badge">SYSTÈME EN LIGNE</div>
+  </header>
 
-      <div class="brand-text">
-        <h1 id="header-channel-name">MEPLA TV — Studio</h1>
-        <span id="header-subtitle">Régie de programmation de votre chaîne</span>
+  <div class="main-container">
+    
+    <!-- Colonne 1 : Profil de la Chaîne -->
+    <div class="column">
+      <h3 class="panel-title"><i class="fa-solid fa-user-gear"></i> Profil de la Chaîne</h3>
+      
+      <div id="authStatus" style="font-size: 0.8rem; color: #ffcc00; padding: 6px; background: #121212; border-radius: 4px;">
+        Connexion à Firebase...
+      </div>
+
+      <div class="form-group">
+        <label>Nom de la Chaîne</label>
+        <input type="text" id="profileChannelName" placeholder="Ex: DAKPRO TV">
+      </div>
+
+      <div class="form-group">
+        <label>URL du Logo de la Chaîne (Image)</label>
+        <input type="text" id="profileLogoUrl" placeholder="https://exemple.com/logo.png">
+      </div>
+
+      <div class="form-group">
+        <label>Position du Logo</label>
+        <select id="profileLogoPosition">
+          <option value="left">Coin Supérieur Gauche</option>
+          <option value="right">Coin Supérieur Droit</option>
+        </select>
+      </div>
+
+      <button onclick="saveChannelProfile()"><i class="fa-solid fa-floppy-disk"></i> Enregistrer le Profil</button>
+    </div>
+
+    <!-- Colonne 2 : Lecteur Master (Centre) -->
+    <div class="center-column">
+      <div class="video-wrapper">
+        <div class="tv-logo-watermark" id="watermarkBrand" style="left: 16px; right: auto;">
+          <img id="watermarkImg" src="" style="display:none;" alt="Logo">
+          <span id="watermarkText">DAKPRO TV</span>
+        </div>
+        
+        <div class="on-air-overlay" id="onAirBadge"><i class="fa-solid fa-satellite-dish"></i> EN DIRECT</div>
+
+        <video id="masterVideo" controls autoplay playsinline></video>
+      </div>
+
+      <div style="background: #1a1a24; padding: 14px; border-radius: 8px; border: 1px solid #383838;">
+        <h4 style="font-size: 0.9rem; color: #3ea6ff; margin-bottom: 4px;"><i class="fa-solid fa-circle-play"></i> En diffusion en ce moment :</h4>
+        <p id="currentPlayingTitle" style="font-size: 0.85rem; color: #ccc;">Chargement de la grille 24/7...</p>
       </div>
     </div>
 
-    <div class="status">
-      <span id="status-dot" class="status-dot"></span>
-      <span id="firebase-status">Connexion à Firebase…</span>
-    </div>
-
-  </div>
-</header>
-
-<main class="container">
-
-  <!-- APERÇU -->
-
-  <section class="card">
-
-    <div class="card-title">
-      <h2>📺 Aperçu de l'antenne</h2>
-      <span id="air-badge" class="badge">APERÇU</span>
-    </div>
-
-    <div class="tv-screen">
-
-      <div id="screen-channel-label" class="live-label">MEPLA TV</div>
-
-      <img id="tv-logo" class="tv-logo logo-top-right" alt="Logo de chaîne">
-
-      <iframe
-        id="tv-player"
-        title="Lecteur MEPLA TV"
-        src=""
-        allow="autoplay; encrypted-media; picture-in-picture"
-        allowfullscreen>
-      </iframe>
-
-      <div class="ticker">
-        <div id="ticker-track" class="ticker-track">
-          Bienvenue sur MEPLA TV
-        </div>
+    <!-- Colonne 3 : Grille de Programmes (Droite) -->
+    <div class="column">
+      <h3 class="panel-title"><i class="fa-solid fa-list-check"></i> Ajouter un Clip / Film</h3>
+      
+      <div class="form-group">
+        <label>Titre du Média</label>
+        <input type="text" id="mediaTitle" placeholder="Ex: Clip Vidéo - Artiste X">
       </div>
 
-    </div>
-
-    <div class="now-playing">
-
-      <div class="info-box">
-        <small>PROGRAMME ACTUEL</small>
-        <strong id="current-title">Aucune émission</strong>
+      <div class="form-group">
+        <label>URL Directe (.mp4)</label>
+        <input type="text" id="mediaUrl" placeholder="https://exemple.com/video.mp4">
       </div>
 
-      <div class="info-box">
-        <small>PROCHAINE ÉMISSION</small>
-        <strong id="next-title">—</strong>
-      </div>
+      <button onclick="addNewMediaToFirebase()"><i class="fa-solid fa-plus"></i> Ajouter à la Grille</button>
 
-    </div>
-
-    <div class="security-note">
-      Cet écran est un aperçu du studio. Pour que les changements soient
-      visibles par tous les téléspectateurs, le lecteur public doit lire
-      les mêmes données Firebase.
-    </div>
-
-  </section>
-
-  <!-- DURÉE -->
-
-  <section class="progress-wrap">
-
-    <div class="card-title">
-      <h2>📡 Durée de la grille</h2>
-      <span id="total-duration">0 min / 1440 min</span>
-    </div>
-
-    <div class="progress">
-      <div id="progress-fill" class="progress-fill"></div>
-    </div>
-
-  </section>
-
-  <div class="dashboard-grid">
-
-    <div>
-
-      <!-- PUBLICATION YOUTUBE -->
-
-      <section class="card">
-
-        <div class="card-title">
-          <h2>🎬 Publier une vidéo</h2>
-          <span class="badge">YOUTUBE</span>
-        </div>
-
-        <div class="form-group">
-          <label for="video-title">Titre du programme</label>
-          <input id="video-title" maxlength="140"
-            placeholder="Ex. : Journal de 20 h">
-        </div>
-
-        <div class="form-group">
-          <label for="video-url">Lien YouTube</label>
-          <input id="video-url" type="url"
-            placeholder="https://www.youtube.com/watch?v=...">
-        </div>
-
-        <div class="form-group">
-          <label for="video-description">Description</label>
-          <textarea id="video-description" rows="3"
-            maxlength="2000"
-            placeholder="Description du programme"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="video-duration">Durée en minutes</label>
-          <input id="video-duration" type="number"
-            min="1" max="1440" value="15">
-        </div>
-
-        <button id="preview-video-btn"
-          type="button"
-          class="btn btn-secondary btn-full">
-          👁️ Vérifier l'aperçu
-        </button>
-
-        <div id="youtube-preview" style="display:none;margin-top:12px">
-
-          <iframe id="youtube-preview-frame"
-            title="Aperçu YouTube"
-            style="width:100%;aspect-ratio:16/9;border:0"
-            allow="autoplay; encrypted-media"
-            allowfullscreen>
-          </iframe>
-
-          <p id="preview-title" style="margin-top:8px"></p>
-          <p id="preview-id" class="program-meta"></p>
-
-        </div>
-
-        <label class="checkline">
-          <input id="play-now-check" type="checkbox">
-          Diffuser immédiatement
-        </label>
-
-        <button id="publish-video-btn"
-          type="button"
-          class="btn btn-primary btn-full">
-          🚀 Publier dans la grille
-        </button>
-
-        <div id="video-message" class="message" aria-live="polite"></div>
-
-      </section>
-
-      <!-- BANDEAU -->
-
-      <section class="card">
-
-        <div class="card-title">
-          <h2>📢 Bandeau roulant</h2>
-        </div>
-
-        <div class="form-group">
-          <label for="ticker-input">Message à afficher</label>
-          <textarea id="ticker-input" rows="3"
-            maxlength="500"
-            placeholder="Bienvenue sur MEPLA TV…"></textarea>
-        </div>
-
-        <button id="save-ticker"
-          type="button"
-          class="btn btn-primary btn-full">
-          📡 Enregistrer le bandeau
-        </button>
-
-        <div id="ticker-message" class="message" aria-live="polite"></div>
-
-      </section>
-
-    </div>
-
-    <div>
-
-      <!-- IDENTITÉ -->
-
-      <section class="card">
-
-        <div class="card-title">
-          <h2>👤 Identité de la chaîne</h2>
-        </div>
-
-        <img id="profile-preview" class="avatar-preview" alt="Aperçu du profil">
-
-        <div class="form-group">
-          <label for="channel-name-input">Nom de la chaîne</label>
-          <input id="channel-name-input"
-            maxlength="80"
-            placeholder="MEPLA TV">
-        </div>
-
-        <div class="form-group">
-          <label for="profile-photo-input">URL de la photo de profil</label>
-          <input id="profile-photo-input"
-            type="url"
-            placeholder="https://exemple.com/photo.jpg">
-        </div>
-
-        <div class="form-group">
-          <label for="channel-description-input">Description</label>
-          <textarea id="channel-description-input"
-            rows="3"
-            maxlength="500"
-            placeholder="Description de la chaîne"></textarea>
-        </div>
-
-        <button id="save-profile"
-          type="button"
-          class="btn btn-primary btn-full">
-          💾 Enregistrer mon identité
-        </button>
-
-        <div id="profile-message" class="message" aria-live="polite"></div>
-
-      </section>
-
-      <!-- LOGO -->
-
-      <section class="card">
-
-        <div class="card-title">
-          <h2>🖼️ Logo à l'écran</h2>
-        </div>
-
-        <div class="form-group">
-          <label for="logo-input">URL du logo</label>
-          <input id="logo-input"
-            type="url"
-            placeholder="https://exemple.com/logo.png">
-        </div>
-
-        <div class="form-group">
-          <label for="logo-position">Position du logo</label>
-          <select id="logo-position">
-            <option value="top-right">Haut droite</option>
-            <option value="top-left">Haut gauche</option>
-            <option value="bottom-right">Bas droite</option>
-            <option value="bottom-left">Bas gauche</option>
-          </select>
-        </div>
-
-        <button id="save-logo"
-          type="button"
-          class="btn btn-primary btn-full">
-          💾 Enregistrer le logo
-        </button>
-
-        <div id="logo-message" class="message" aria-live="polite"></div>
-
-      </section>
-
-      <!-- ÉTAT -->
-
-      <section class="card">
-
-        <h2>⚙️ État de votre antenne</h2>
-
-        <div class="info-box" style="margin-top:14px">
-          <small>IDENTIFIANT FIREBASE AUTH</small>
-          <strong id="tv-id-display">Vérification…</strong>
-        </div>
-
-        <div class="info-box" style="margin-top:10px">
-          <small>NOMBRE DE PROGRAMMES</small>
-          <strong id="program-count">0</strong>
-        </div>
-
-        <div class="toolbar" style="margin-top:12px">
-
-          <button id="refresh-btn"
-            type="button"
-            class="btn btn-secondary">
-            🔄 Actualiser
-          </button>
-
-          <button id="clear-playlist"
-            type="button"
-            class="btn btn-danger">
-            🗑️ Vider la grille
-          </button>
-
-        </div>
-
-        <div id="system-message" class="message" aria-live="polite"></div>
-
-      </section>
-
+      <h3 class="panel-title" style="margin-top: 10px;"><i class="fa-solid fa-calendar-days"></i> Grille Programmée</h3>
+      <div class="playlist-container" id="playlistItems"></div>
     </div>
 
   </div>
 
-  <!-- GRILLE -->
-
-  <section class="card">
-
-    <div class="card-title">
-      <h2>📋 Grille de diffusion</h2>
-    </div>
-
-    <div id="program-list" class="program-list">
-      <div class="empty">Connexion en cours…</div>
-    </div>
-
-  </section>
-
-</main>
-
-<!-- MODALE DE MODIFICATION -->
-
-<div id="edit-modal" class="modal">
-
-  <div class="modal-content">
-
-    <div class="modal-head">
-      <h2>✏️ Modifier le programme</h2>
-      <button id="close-modal"
-        type="button"
-        class="close"
-        aria-label="Fermer">×</button>
-    </div>
-
-    <input id="edit-key" type="hidden">
-
-    <div class="form-group">
-      <label for="edit-title">Titre</label>
-      <input id="edit-title" maxlength="140">
-    </div>
-
-    <div class="form-group">
-      <label for="edit-url">Lien YouTube</label>
-      <input id="edit-url" type="url">
-    </div>
-
-    <div class="form-group">
-      <label for="edit-description">Description</label>
-      <textarea id="edit-description" rows="3" maxlength="2000"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="edit-duration">Durée en minutes</label>
-      <input id="edit-duration" type="number" min="1" max="1440">
-    </div>
-
-    <button id="save-edit"
-      type="button"
-      class="btn btn-success btn-full">
-      💾 Enregistrer les modifications
-    </button>
-
-    <div id="edit-message" class="message" aria-live="polite"></div>
-
-  </div>
-
-</div>
-
-<script type="module">
-import { auth, database } from "./js/firebase-config.js";
-
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-import {
-  ref,
-  get,
-  set,
-  update,
-  push,
-  remove,
-  onValue
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-
-/* =========================================
-   MEPLA TV — CONFIGURATION
-========================================= */
-
-const $ = id => document.getElementById(id);
-
-let uid = null;
-let rootRef = null;
-
-let playlist = {};
-let channelData = {};
-let currentProgramKey = null;
-let unsubscribe = null;
-let busy = false;
-
-const DEFAULT_CHANNEL_NAME = "MEPLA TV";
-
-
-/* =========================================
-   MESSAGES ET ERREURS (affichage immédiat)
-========================================= */
-
-function showMessage(id, text, type = "success") {
-  const element = $(id);
-  if (!element) return;
-
-  element.textContent = text;
-  element.className = "message " + type;
-}
-
-function setStatus(text, type = "online") {
-  $("firebase-status").textContent = text;
-  const dot = $("status-dot");
-  dot.className = "status-dot";
-  if (type === "error") {
-    dot.classList.add("error");
-  } else if (type === "online") {
-    dot.classList.add("online");
-  }
-}
-
-function reportError(context, error, messageId = "system-message") {
-  console.error(context, error);
-  const msg = context + " : " + (error?.message || String(error));
-  showMessage(messageId, msg, "error");
-  setStatus(msg, "error");
-}
-
-async function runAction(button, callback, messageId = "system-message") {
-  if (button.disabled) return;
-  button.disabled = true;
-  try {
-    await callback();
-  } catch (error) {
-    reportError("Opération impossible", error, messageId);
-  } finally {
-    button.disabled = false;
-  }
-}
-
-
-/* =========================================
-   VALIDATION DES URLS
-========================================= */
-
-function safeHttpUrl(value) {
-  try {
-    const url = new URL(value);
-    if (!["https:", "http:"].includes(url.protocol)) return "";
-    return url.href;
-  } catch {
-    return "";
-  }
-}
-
-function getYouTubeId(value) {
-  try {
-    const url = new URL(value.trim());
-    let id = "";
-
-    if (url.hostname === "youtu.be" || url.hostname === "www.youtu.be") {
-      id = url.pathname.split("/").filter(Boolean)[0] || "";
-    } else if (
-      ["youtube.com", "www.youtube.com", "m.youtube.com",
-       "youtube-nocookie.com", "www.youtube-nocookie.com"].includes(url.hostname)
-    ) {
-      if (url.pathname === "/watch") {
-        id = url.searchParams.get("v") || "";
-      } else {
-        const parts = url.pathname.split("/").filter(Boolean);
-        if (["embed", "shorts", "live"].includes(parts[0])) {
-          id = parts[1] || "";
-        }
-      }
-    }
-    return /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : "";
-  } catch {
-    return "";
-  }
-}
-
-function youtubeEmbed(id) {
-  return "https://www.youtube-nocookie.com/embed/" +
-    encodeURIComponent(id) +
-    "?autoplay=1&playsinline=1&rel=0";
-}
-
-
-/* =========================================
-   UTILITAIRES
-========================================= */
-
-function getPlaylistEntries() {
-  return Object.entries(playlist)
-    .filter(([, program]) => program && typeof program === "object")
-    .sort((a, b) => {
-      const orderA = Number(a[1].order || 999999);
-      const orderB = Number(b[1].order || 999999);
-      return orderA - orderB;
-    });
-}
-
-function getTotalDuration() {
-  return getPlaylistEntries().reduce((total, [, program]) => {
-    return total + Math.max(0, Number(program.durationMinutes) || 0);
-  }, 0);
-}
-
-function formatDuration(minutes) {
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  return `${String(hours).padStart(2, "0")}h ${String(remainingMinutes).padStart(2, "0")}m`;
-}
-
-function normalizeError(error) {
-  const code = error?.code || "";
-  if (code.includes("permission-denied")) {
-    return "Accès refusé par les règles Firebase. Vérifie les autorisations.";
-  }
-  if (code.includes("network")) {
-    return "Erreur réseau. Vérifie ta connexion Internet.";
-  }
-  if (code.includes("unauthenticated")) {
-    return "Session expirée. Reconnecte-toi.";
-  }
-  return error?.message || "Erreur inconnue.";
-}
-
-
-/* =========================================
-   APERÇU ET IDENTITÉ
-========================================= */
-
-function renderChannelIdentity(data) {
-  const settings = data.settings || {};
-  const name = settings.channelName || data.channelName || DEFAULT_CHANNEL_NAME;
-
-  $("header-channel-name").textContent = name + " — Studio";
-  $("screen-channel-label").textContent = name;
-  $("channel-name-input").value = name;
-  $("channel-description-input").value = settings.channelDescription || data.channelDescription || "";
-  $("ticker-input").value = data.currentTicker || "";
-
-  const photo = safeHttpUrl(settings.profilePhotoUrl || "");
-  const profilePreview = $("profile-preview");
-  const headerLogo = $("header-logo");
-
-  if (photo) {
-    profilePreview.src = photo;
-    profilePreview.style.display = "block";
-    headerLogo.src = photo;
-    headerLogo.style.display = "block";
-    profilePreview.onerror = () => { profilePreview.style.display = "none"; };
-    headerLogo.onerror = () => { headerLogo.style.display = "none"; };
-    $("profile-photo-input").value = photo;
-  } else {
-    profilePreview.style.display = "none";
-    headerLogo.style.display = "none";
-    $("profile-photo-input").value = "";
-  }
-
-  $("logo-input").value = settings.logoUrl || "";
-  $("logo-position").value = settings.logoPosition || "top-right";
-  renderLogo(settings);
-}
-
-function renderLogo(settings) {
-  const logo = $("tv-logo");
-  const url = safeHttpUrl(settings.logoUrl || "");
-  logo.className = "tv-logo";
-
-  const positions = {
-    "top-right": "logo-top-right",
-    "top-left": "logo-top-left",
-    "bottom-right": "logo-bottom-right",
-    "bottom-left": "logo-bottom-left"
-  };
-
-  logo.classList.add(positions[settings.logoPosition] || "logo-top-right");
-
-  if (!url) {
-    logo.style.display = "none";
-    logo.removeAttribute("src");
-    return;
-  }
-
-  logo.src = url;
-  logo.style.display = "block";
-  logo.onerror = () => { logo.style.display = "none"; };
-}
-
-
-/* =========================================
-   LECTEUR YOUTUBE
-========================================= */
-
-function playProgram(program, key = null) {
-  if (!program?.youtubeId) {
-    showMessage("system-message", "Ce programme ne possède pas d'identifiant YouTube valide.", "error");
-    setStatus("ID YouTube manquant", "error");
-    return;
-  }
-
-  const player = $("tv-player");
-  player.src = youtubeEmbed(program.youtubeId);
-  currentProgramKey = key;
-
-  $("current-title").textContent = program.title || "Programme sans titre";
-  $("air-badge").textContent = "LECTURE";
-  $("air-badge").style.background = "#14532d";
-  $("air-badge").style.color = "#86efac";
-
-  showMessage("system-message", "Vidéo chargée dans l'aperçu. La lecture peut dépendre de YouTube.", "success");
-}
-
-function renderProgramInformation() {
-  const entries = getPlaylistEntries();
-
-  if (!entries.length) {
-    $("current-title").textContent = "Aucune émission";
-    $("next-title").textContent = "—";
-    $("tv-player").src = "";
-    currentProgramKey = null;
-    $("air-badge").textContent = "EN ATTENTE";
-    $("air-badge").style.background = "#172554";
-    $("air-badge").style.color = "#93c5fd";
-    return;
-  }
-
-  let current = entries.find(([key]) => key === currentProgramKey);
-  if (!current) current = entries[0];
-
-  $("current-title").textContent = current[1].title || "Programme sans titre";
-  const next = entries.find(([key]) => key !== current[0]);
-  $("next-title").textContent = next ? (next[1].title || "Programme sans titre") : "Aucun autre programme";
-}
-
-
-/* =========================================
-   DURÉE DE LA GRILLE
-========================================= */
-
-function renderDuration() {
-  const total = getTotalDuration();
-  \( ("total-duration").textContent = ` \){formatDuration(total)} / 24h 00m`;
-  $("progress-fill").style.width = Math.min(100, (total / 1440) * 100) + "%";
-}
-
-
-/* =========================================
-   LISTE DES PROGRAMMES
-========================================= */
-
-function makeActionButton(label, className, callback) {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = className;
-  button.textContent = label;
-  button.addEventListener("click", () => {
-    runAction(button, callback);
-  });
-  return button;
-}
-
-function renderPlaylist() {
-  const list = $("program-list");
-  list.replaceChildren();
-
-  const entries = getPlaylistEntries();
-  $("program-count").textContent = String(entries.length);
-  renderDuration();
-
-  if (!entries.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "Aucun programme enregistré.";
-    list.appendChild(empty);
-    renderProgramInformation();
-    return;
-  }
-
-  entries.forEach(([key, program], index) => {
-    const item = document.createElement("article");
-    item.className = "program";
-
-    const title = document.createElement("div");
-    title.className = "program-title";
-    title.textContent = `${index + 1}. ${program.title || "Programme sans titre"}`;
-
-    const meta = document.createElement("div");
-    meta.className = "program-meta";
-    meta.textContent = `${Number(program.durationMinutes) || 0} min • YouTube : ${program.youtubeId || "ID manquant"}`;
-
-    const actions = document.createElement("div");
-    actions.className = "program-actions";
-
-    actions.appendChild(
-      makeActionButton("▶ Lire", "btn-success", async () => {
-        playProgram(program, key);
-      })
-    );
-
-    actions.appendChild(
-      makeActionButton("✏️ Modifier", "btn-secondary", async () => {
-        openEditModal(key, program);
-      })
-    );
-
-    actions.appendChild(
-      makeActionButton("↑ Monter", "btn-secondary", async () => {
-        await moveProgram(key, -1);
-      })
-    );
-
-    actions.appendChild(
-      makeActionButton("↓ Descendre", "btn-secondary", async () => {
-        await moveProgram(key, 1);
-      })
-    );
-
-    actions.appendChild(
-      makeActionButton("🗑️ Supprimer", "btn-danger", async () => {
-        if (!confirm(`Supprimer « ${program.title || "ce programme"} » ?`)) return;
-        await remove(ref(database, `users/\( {uid}/playlist/ \){key}`));
-        showMessage("system-message", "Programme supprimé.", "success");
-      })
-    );
-
-    item.append(title, meta, actions);
-    list.appendChild(item);
-  });
-
-  renderProgramInformation();
-}
-
-
-/* =========================================
-   DÉPLACEMENT D'UN PROGRAMME
-========================================= */
-
-async function moveProgram(key, direction) {
-  const entries = getPlaylistEntries();
-  const index = entries.findIndex(([entryKey]) => entryKey === key);
-  const targetIndex = index + direction;
-
-  if (index < 0 || targetIndex < 0 || targetIndex >= entries.length) return;
-
-  const [currentKey, currentProgram] = entries[index];
-  const [targetKey, targetProgram] = entries[targetIndex];
-
-  const currentOrder = Number(currentProgram.order || index + 1);
-  const targetOrder = Number(targetProgram.order || targetIndex + 1);
-
-  const updates = {};
-  updates[`users/\( {uid}/playlist/ \){currentKey}/order`] = targetOrder;
-  updates[`users/\( {uid}/playlist/ \){targetKey}/order`] = currentOrder;
-
-  await update(ref(database), updates);
-  showMessage("system-message", "Ordre de diffusion modifié.", "success");
-}
-
-
-/* =========================================
-   MODIFICATION D'UN PROGRAMME
-========================================= */
-
-function openEditModal(key, program) {
-  $("edit-key").value = key;
-  $("edit-title").value = program.title || "";
-  \( ("edit-url").value = program.youtubeId ? `https://www.youtube.com/watch?v= \){program.youtubeId}` : "";
-  $("edit-description").value = program.description || "";
-  $("edit-duration").value = Number(program.durationMinutes) || 15;
-  showMessage("edit-message", "", "success");
-  $("edit-modal").classList.add("open");
-}
-
-function closeEditModal() {
-  $("edit-modal").classList.remove("open");
-}
-
-$("close-modal").addEventListener("click", closeEditModal);
-
-$("edit-modal").addEventListener("click", event => {
-  if (event.target === $("edit-modal")) closeEditModal();
-});
-
-$("save-edit").addEventListener("click", async () => {
-  const button = $("save-edit");
-  await runAction(button, async () => {
-    const key = $("edit-key").value;
-    const title = $("edit-title").value.trim();
-    const youtubeId = getYouTubeId($("edit-url").value);
-    const description = $("edit-description").value.trim();
-    const duration = Number($("edit-duration").value);
-
-    if (!key) throw new Error("Programme introuvable.");
-    if (!title) throw new Error("Le titre est obligatoire.");
-    if (!youtubeId) throw new Error("Lien YouTube invalide.");
-    if (!Number.isInteger(duration) || duration < 1 || duration > 1440) {
-      throw new Error("La durée doit être comprise entre 1 et 1440 minutes.");
-    }
-
-    await update(ref(database, `users/\( {uid}/playlist/ \){key}`), {
-      title,
-      youtubeId,
-      description,
-      durationMinutes: duration,
-      updatedAt: Date.now()
-    });
-
-    closeEditModal();
-    showMessage("system-message", "Programme modifié avec succès.", "success");
-  }, "edit-message");
-});
-
-
-/* =========================================
-   APERÇU AVANT PUBLICATION
-========================================= */
-
-$("preview-video-btn").addEventListener("click", async () => {
-  const button = $("preview-video-btn");
-  await runAction(button, async () => {
-    const title = $("video-title").value.trim();
-    const youtubeId = getYouTubeId($("video-url").value.trim());
-
-    if (!youtubeId) throw new Error("Colle un lien YouTube valide.");
-
-    $("youtube-preview-frame").src = youtubeEmbed(youtubeId);
-    $("preview-title").textContent = title || "Aperçu de la vidéo";
-    $("preview-id").textContent = "Identifiant vidéo : " + youtubeId;
-    $("youtube-preview").style.display = "block";
-
-    showMessage("video-message", "Aperçu chargé. Vérifie la lecture dans le lecteur.", "success");
-  }, "video-message");
-});
-
-
-/* =========================================
-   PUBLICATION D'UN PROGRAMME
-========================================= */
-
-$("publish-video-btn").addEventListener("click", async () => {
-  const button = $("publish-video-btn");
-  await runAction(button, async () => {
-    if (!uid) throw new Error("Utilisateur non connecté.");
-
-    const title = $("video-title").value.trim();
-    const youtubeId = getYouTubeId($("video-url").value.trim());
-    const description = $("video-description").value.trim();
-    const duration = Number($("video-duration").value);
-    const playNow = $("play-now-check").checked;
-
-    if (!title) throw new Error("Le titre du programme est obligatoire.");
-    if (!youtubeId) throw new Error("Lien YouTube invalide.");
-    if (!Number.isInteger(duration) || duration < 1 || duration > 1440) {
-      throw new Error("La durée doit être comprise entre 1 et 1440 minutes.");
-    }
-
-    const entries = getPlaylistEntries();
-    const programRef = push(ref(database, `users/${uid}/playlist`));
-
-    const program = {
-      title,
-      youtubeId,
-      description,
-      durationMinutes: duration,
-      order: entries.length + 1,
-      enabled: true,
-      createdAt: Date.now()
+  <!-- Intégration Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "VOTRE_API_KEY",
+      authDomain: "votre-projet.firebaseapp.com",
+      databaseURL: "https://votre-projet-default-rtdb.firebaseio.com",
+      projectId: "votre-projet",
+      storageBucket: "votre-projet.appspot.com",
+      messagingSenderId: "XXXXXX",
+      appId: "XXXXXX"
     };
 
-    await set(programRef, program);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
 
-    if (playNow) {
-      playProgram(program, programRef.key);
-      await update(ref(database, `users/${uid}/broadcast`), {
-        mode: "override",
-        isLive: true,
-        updatedAt: Date.now()
-      });
-      await set(ref(database, `users/${uid}/liveOverride`), {
-        enabled: true,
-        title,
-        youtubeId,
-        playlistKey: programRef.key,
-        startedAt: Date.now(),
-        endsAt: Date.now() + duration * 60000
-      });
-    }
+    const masterVideo = document.getElementById('masterVideo');
+    const currentPlayingTitle = document.getElementById('currentPlayingTitle');
+    const playlistContainer = document.getElementById('playlistItems');
+    const onAirBadge = document.getElementById('onAirBadge');
+    const authStatus = document.getElementById('authStatus');
 
-    $("video-title").value = "";
-    $("video-url").value = "";
-    $("video-description").value = "";
-    $("video-duration").value = "15";
-    $("play-now-check").checked = false;
+    let currentUserId = null;
+    let playlist = [];
+    let currentIndex = 0;
+    let isLiveActive = false;
 
-    showMessage(
-      "video-message",
-      playNow ? "Programme enregistré et commande de lecture envoyée." : "Programme ajouté à la grille.",
-      "success"
-    );
-  }, "video-message");
-});
-
-
-/* =========================================
-   BANDEAU ROULANT
-========================================= */
-
-$("save-ticker").addEventListener("click", async () => {
-  const button = $("save-ticker");
-  await runAction(button, async () => {
-    const text = $("ticker-input").value.trim();
-    if (!text) throw new Error("Saisis un texte pour le bandeau.");
-
-    await update(ref(database, `users/${uid}`), {
-      currentTicker: text,
-      tickerUpdatedAt: Date.now()
+    signInAnonymously(auth).catch((error) => {
+      authStatus.innerText = "Erreur d'authentification.";
     });
 
-    $("ticker-track").textContent = text;
-    showMessage("ticker-message", "Bandeau enregistré avec succès.", "success");
-  }, "ticker-message");
-});
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        authStatus.innerText = "Connecté (ID sécurisé)";
+        authStatus.style.color = "#2e7d32";
 
-
-/* =========================================
-   IDENTITÉ DE LA CHAÎNE
-========================================= */
-
-$("save-profile").addEventListener("click", async () => {
-  const button = $("save-profile");
-  await runAction(button, async () => {
-    const name = $("channel-name-input").value.trim();
-    const description = $("channel-description-input").value.trim();
-    const photoValue = $("profile-photo-input").value.trim();
-
-    if (!name) throw new Error("Le nom de la chaîne est obligatoire.");
-
-    const photo = photoValue ? safeHttpUrl(photoValue) : "";
-    if (photoValue && !photo) {
-      throw new Error("URL de photo invalide. Utilise une URL HTTP ou HTTPS.");
-    }
-
-    await update(ref(database, `users/${uid}/settings`), {
-      channelName: name,
-      channelDescription: description,
-      profilePhotoUrl: photo,
-      updatedAt: Date.now()
+        loadUserProfile(currentUserId);
+        loadPlaylist(currentUserId);
+        listenLiveStatus(currentUserId);
+      }
     });
 
-    await update(ref(database, `users/${uid}`), {
-      channelName: name,
-      channelDescription: description
-    });
+    function loadUserProfile(userId) {
+      const profileRef = ref(db, `users/${userId}/channel_profile`);
+      onValue(profileRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const profile = snapshot.val();
+          document.getElementById('profileChannelName').value = profile.channelName || "";
+          document.getElementById('profileLogoUrl').value = profile.logoUrl || "";
+          document.getElementById('profileLogoPosition').value = profile.position || "left";
 
-    showMessage("profile-message", "Identité enregistrée.", "success");
-  }, "profile-message");
-});
-
-
-/* =========================================
-   LOGO
-========================================= */
-
-$("save-logo").addEventListener("click", async () => {
-  const button = $("save-logo");
-  await runAction(button, async () => {
-    const value = $("logo-input").value.trim();
-    const logoUrl = value ? safeHttpUrl(value) : "";
-    if (value && !logoUrl) throw new Error("URL de logo invalide.");
-
-    const logoPosition = $("logo-position").value;
-
-    await update(ref(database, `users/${uid}/settings`), {
-      logoUrl,
-      logoPosition,
-      updatedAt: Date.now()
-    });
-
-    renderLogo({ logoUrl, logoPosition });
-    showMessage("logo-message", "Logo enregistré.", "success");
-  }, "logo-message");
-});
-
-
-/* =========================================
-   VIDER LA GRILLE
-========================================= */
-
-$("clear-playlist").addEventListener("click", async () => {
-  const button = $("clear-playlist");
-  if (!confirm("Attention : supprimer tous les programmes de la grille ?")) return;
-
-  await runAction(button, async () => {
-    await remove(ref(database, `users/${uid}/playlist`));
-    await remove(ref(database, `users/${uid}/liveOverride`));
-    await update(ref(database, `users/${uid}/broadcast`), {
-      mode: "playlist",
-      isLive: true,
-      updatedAt: Date.now()
-    });
-    $("tv-player").src = "";
-    showMessage("system-message", "Grille vidée.", "success");
-  });
-});
-
-
-/* =========================================
-   ACTUALISER
-========================================= */
-
-$("refresh-btn").addEventListener("click", async () => {
-  const button = $("refresh-btn");
-  await runAction(button, async () => {
-    const snapshot = await get(rootRef);
-    if (!snapshot.exists()) throw new Error("Profil de chaîne introuvable dans Firebase.");
-
-    channelData = snapshot.val() || {};
-    playlist = channelData.playlist || {};
-    renderChannelIdentity(channelData);
-    renderPlaylist();
-    $("ticker-track").textContent = channelData.currentTicker || "Bienvenue sur MEPLA TV";
-    showMessage("system-message", "Données actualisées.", "success");
-  });
-});
-
-
-/* =========================================
-   ABONNEMENT TEMPS RÉEL FIREBASE
-========================================= */
-
-function subscribeToData() {
-  if (unsubscribe) {
-    unsubscribe();
-    unsubscribe = null;
-  }
-
-  unsubscribe = onValue(
-    rootRef,
-    snapshot => {
-      channelData = snapshot.val() || {};
-      playlist = channelData.playlist || {};
-      renderChannelIdentity(channelData);
-      renderPlaylist();
-      $("ticker-track").textContent = channelData.currentTicker || "Bienvenue sur MEPLA TV";
-      setStatus("Firebase connecté", "online");
-    },
-    error => {
-      reportError("Erreur de lecture Firebase : " + normalizeError(error), error);
-    }
-  );
-}
-
-
-/* =========================================
-   ERREURS JAVASCRIPT
-========================================= */
-
-window.addEventListener("error", event => {
-  console.error("Erreur JavaScript :", event.message);
-  setStatus("Erreur JavaScript : " + event.message, "error");
-  showMessage("system-message", "Erreur JavaScript : " + event.message, "error");
-});
-
-window.addEventListener("unhandledrejection", event => {
-  console.error("Erreur asynchrone :", event.reason);
-  const msg = "Erreur asynchrone : " + normalizeError(event.reason);
-  setStatus(msg, "error");
-  showMessage("system-message", msg, "error");
-});
-
-
-/* =========================================
-   AUTHENTIFICATION
-========================================= */
-
-onAuthStateChanged(auth, async user => {
-  if (!user) {
-    setStatus("Connexion requise", "error");
-    $("tv-id-display").textContent = "Non connecté";
-    window.location.replace("connexion.html");
-    return;
-  }
-
-  uid = user.uid;
-  $("tv-id-display").textContent = uid;
-  rootRef = ref(database, `users/${uid}`);
-
-  try {
-    const snapshot = await get(rootRef);
-
-    if (!snapshot.exists()) {
-      await set(rootRef, {
-        channelName: user.displayName || DEFAULT_CHANNEL_NAME,
-        channelDescription: "",
-        currentTicker: "Bienvenue sur MEPLA TV",
-        settings: {
-          channelName: user.displayName || DEFAULT_CHANNEL_NAME,
-          channelDescription: "",
-          profilePhotoUrl: "",
-          logoUrl: "",
-          logoPosition: "top-right"
-        },
-        playlist: {},
-        broadcast: {
-          mode: "playlist",
-          isLive: true,
-          updatedAt: Date.now()
+          updateWatermarkUI(profile.channelName, profile.logoUrl, profile.position);
         }
       });
     }
 
-    subscribeToData();
-    setStatus("Compte connecté", "online");
+    window.saveChannelProfile = function() {
+      if (!currentUserId) return alert("Non authentifié !");
+      const channelName = document.getElementById('profileChannelName').value.trim();
+      const logoUrl = document.getElementById('profileLogoUrl').value.trim();
+      const position = document.getElementById('profileLogoPosition').value;
 
-  } catch (error) {
-    reportError("Chargement de la chaîne impossible : " + normalizeError(error), error);
-  }
-});
+      set(ref(db, `users/${currentUserId}/channel_profile`), { channelName, logoUrl, position })
+        .then(() => alert("Profil enregistré avec succès !"))
+        .catch((e) => alert("Erreur : " + e.message));
+    };
 
+    function updateWatermarkUI(name, logoUrl, position) {
+      const watermarkBrand = document.getElementById('watermarkBrand');
+      const watermarkImg = document.getElementById('watermarkImg');
+      const watermarkText = document.getElementById('watermarkText');
+      const headerChannelName = document.getElementById('headerChannelName');
 
-/* =========================================
-   NETTOYAGE
-========================================= */
+      if (name) {
+        watermarkText.innerText = name;
+        headerChannelName.innerText = name.toUpperCase() + " - MASTER 24/7";
+      }
 
-window.addEventListener("beforeunload", () => {
-  if (unsubscribe) unsubscribe();
-});
-</script>
+      if (logoUrl) {
+        watermarkImg.src = logoUrl;
+        watermarkImg.style.display = 'block';
+      } else {
+        watermarkImg.style.display = 'none';
+      }
 
-<footer>
-  MEPLA TV • Studio de régie • Programmation et gestion de la chaîne
-</footer>
+      if (position === 'right') {
+        watermarkBrand.style.left = 'auto';
+        watermarkBrand.style.right = '16px';
+      } else {
+        watermarkBrand.style.right = 'auto';
+        watermarkBrand.style.left = '16px';
+      }
+    }
 
+    // Gestion rigoureuse de l'état du Direct vs Grille 24/7
+    function listenLiveStatus(userId) {
+      const liveStatusRef = ref(db, `users/${userId}/is_live`);
+      const liveUrlRef = ref(db, `users/${userId}/live_url`);
+
+      onValue(liveStatusRef, (snapshot) => {
+        isLiveActive = snapshot.val();
+        if (isLiveActive) {
+          onAirBadge.style.display = 'block';
+          currentPlayingTitle.innerText = "🔴 DIFFUSION EN DIRECT";
+          
+          // Récupérer l'URL du flux direct si disponible
+          onValue(liveUrlRef, (urlSnap) => {
+            if (urlSnap.exists() && urlSnap.val()) {
+              masterVideo.src = urlSnap.val();
+              masterVideo.play().catch(e => console.log("Attente de lecture direct..."));
+            }
+          }, { onlyOnce: true });
+        } else {
+          onAirBadge.style.display = 'none';
+          // Reprise immédiate de la grille 24/7 sans espace vide
+          if (playlist.length > 0) {
+            playCurrentMedia();
+          }
+        }
+      });
+    }
+
+    function loadPlaylist(userId) {
+      const playlistRef = ref(db, `users/${userId}/playlist`);
+      onValue(playlistRef, (snapshot) => {
+        playlist = [];
+        playlistContainer.innerHTML = '';
+        
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          Object.keys(data).forEach(key => { playlist.push(data[key]); });
+          renderPlaylistUI();
+
+          if (!isLiveActive && masterVideo.paused && playlist.length > 0) {
+            currentIndex = 0;
+            playCurrentMedia();
+          }
+        } else {
+          currentPlayingTitle.innerText = "Aucun média programmé.";
+        }
+      });
+    }
+
+    function playCurrentMedia() {
+      if (isLiveActive || playlist.length === 0) return;
+      
+      const currentMedia = playlist[currentIndex];
+      masterVideo.src = currentMedia.url;
+      currentPlayingTitle.innerText = currentMedia.title;
+      masterVideo.play().catch(e => console.log("Lecture automatique en attente..."));
+
+      masterVideo.onended = () => {
+        if (!isLiveActive) {
+          currentIndex = (currentIndex + 1) % playlist.length;
+          playCurrentMedia();
+        }
+      };
+    }
+
+    function renderPlaylistUI() {
+      playlistContainer.innerHTML = '';
+      playlist.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'playlist-item';
+        div.innerHTML = `<span>${index + 1}. ${item.title}</span> <i class="fa-solid fa-film" style="color:#3ea6ff;"></i>`;
+        playlistContainer.appendChild(div);
+      });
+    }
+
+    window.addNewMediaToFirebase = function() {
+      if (!currentUserId) return alert("Non authentifié !");
+      const title = document.getElementById('mediaTitle').value.trim();
+      const url = document.getElementById('mediaUrl').value.trim();
+
+      if (title && url) {
+        set(push(ref(db, `users/${currentUserId}/playlist`)), { title, url });
+        document.getElementById('mediaTitle').value = '';
+        document.getElementById('mediaUrl').value = '';
+      } else {
+        alert("Remplissez le titre et l'URL.");
+      }
+    };
+  </script>
 </body>
 </html>
