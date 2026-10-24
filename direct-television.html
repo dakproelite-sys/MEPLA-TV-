@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TV Studio Pro - Régie & Jingle Dynamique</title>
+  <title>MEPLA TV - Régie Direct Studio Pro HD</title>
   <!-- FontAwesome Icons & Google Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -16,42 +16,39 @@
       font-family: 'Roboto', sans-serif;
     }
     body {
-      background: radial-gradient(circle at center, #1a1a24 0%, #0b0b0f 100%);
+      background: #0b0b0f;
       color: #ffffff;
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      overflow-y: auto;
     }
 
     /* Entête Studio TV */
     header {
-      background-color: rgba(33, 33, 33, 0.95);
-      padding: 12px 24px;
+      background-color: #1a1a24;
+      padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #383838;
-      backdrop-filter: blur(10px);
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       font-weight: 900;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       letter-spacing: 1px;
     }
-    .brand i {
-      color: #ff0000;
-      font-size: 1.6rem;
-    }
+    .brand i { color: #ff0000; font-size: 1.4rem; }
+    
     .badge-live {
       background: #383838;
       color: #aaa;
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 4px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: bold;
       letter-spacing: 1px;
     }
@@ -60,32 +57,20 @@
       color: #fff;
       animation: pulse 1.5s infinite;
     }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
-
-    /* Layout Principal */
+    /* Layout Principal Vertical et Large */
     .main-container {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 16px;
-      padding: 16px;
-      flex: 1;
-      height: calc(100vh - 60px);
-      overflow: hidden;
-    }
-
-    .left-column {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      overflow-y: auto;
+      gap: 16px;
+      padding: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
     }
 
-    /* Moniteur Vidéo TV Broadcast */
+    /* Moniteur Vidéo PRO & Canvas Studio derrière la personne */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -93,156 +78,91 @@
       border-radius: 12px;
       overflow: hidden;
       aspect-ratio: 16 / 9;
-      border: 2px solid #333;
+      border: 3px solid #333;
       box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
+    #sourceVideo { display: none; }
     #outputCanvas {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      background: #000;
     }
 
-    #sourceVideo {
-      display: none;
-    }
-
-    /* Écran d'Animation de Jingle / Intro TV (S'affiche avant le direct) */
-    #introOverlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #0d1b2a 0%, #000814 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.5s ease;
-    }
-    #introOverlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .intro-logo {
-      font-size: 2.5rem;
-      font-weight: 900;
-      color: #fff;
-      margin-bottom: 10px;
-      letter-spacing: 2px;
-      animation: bounceIn 1s infinite alternate;
-    }
-    .intro-logo span { color: #ff0000; }
-    .intro-text {
-      font-size: 1.1rem;
-      color: #3ea6ff;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      font-weight: 700;
-    }
-    .intro-spinner {
-      margin-top: 20px;
-      width: 40px;
-      height: 40px;
-      border: 4px solid rgba(255,255,255,0.1);
-      border-top: 4px solid #ff0000;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    @keyframes bounceIn { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }
-
-    /* Logo TV Dynamique (Watermark) */
+    /* Logo de la chaîne en filigrane */
     .tv-logo-watermark {
       position: absolute;
-      top: 16px;
-      right: 16px;
-      background: rgba(0, 0, 0, 0.6);
+      top: 14px;
+      left: 14px;
+      background: rgba(0, 0, 0, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 6px 12px;
-      border-radius: 4px;
+      padding: 4px 10px;
+      border-radius: 6px;
       font-weight: 900;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
+      font-size: 0.85rem;
       color: #fff;
       display: flex;
       align-items: center;
       gap: 6px;
       z-index: 5;
-      pointer-events: none;
       backdrop-filter: blur(4px);
     }
     .tv-logo-watermark span { color: #ff0000; }
 
-    .overlay-info {
+    /* Grand Chronomètre d'Antenne */
+    .timer-overlay {
       position: absolute;
-      top: 16px;
-      left: 16px;
-      background: rgba(0, 0, 0, 0.8);
+      bottom: 14px;
+      right: 14px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid #ff0000;
       padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      backdrop-filter: blur(5px);
-      z-index: 5;
-      border-left: 3px solid #3ea6ff;
-    }
-
-    /* Bandeau Défilant */
-    .ticker-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(200, 0, 0, 0.9);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      z-index: 5;
-      font-weight: 700;
-      overflow: hidden;
-      border-top: 2px solid #ffcc00;
-      box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
-    }
-    .ticker-title {
-      background: #ffcc00;
-      color: #000;
-      padding: 8px 16px;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      white-space: nowrap;
+      border-radius: 8px;
       font-weight: 900;
-    }
-    .ticker-text-wrapper {
-      overflow: hidden;
-      white-space: nowrap;
-      width: 100%;
-    }
-    .ticker-text {
-      display: inline-block;
-      padding-left: 100%;
-      animation: marquee 20s linear infinite;
-      font-size: 0.95rem;
-    }
-    @keyframes marquee {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-100%, 0); }
-    }
-
-    /* Barre de Régie */
-    .controls-bar {
-      background-color: rgba(33, 33, 33, 0.95);
-      padding: 14px 18px;
-      border-radius: 10px;
+      font-size: 1.1rem;
+      color: #fff;
+      z-index: 5;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
+      gap: 8px;
+      backdrop-filter: blur(4px);
+    }
+    .timer-overlay i { color: #ff0000; animation: blink 1s infinite; }
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+
+    /* Grille de sélection des fonds de studio lumineux */
+    .studio-bg-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .bg-btn {
+      background: #121212;
+      border: 2px solid #383838;
+      color: #fff;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      transition: 0.2s;
+    }
+    .bg-btn:hover { border-color: #3ea6ff; background: #222; }
+    .bg-btn.active { border-color: #3ea6ff; background: rgba(62,166,255,0.3); }
+
+    /* Barre de Contrôle Régie Pro */
+    .controls-bar {
+      background-color: #1a1a24;
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
       gap: 12px;
       border: 1px solid #383838;
     }
@@ -250,42 +170,41 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      justify-content: center;
     }
     button {
       background-color: #383838;
       color: white;
       border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
+      padding: 12px 18px;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: bold;
       display: flex;
       align-items: center;
       gap: 8px;
       transition: all 0.2s ease;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      flex: 1;
+      justify-content: center;
+      min-width: 140px;
     }
-    button:hover {
-      background-color: #505050;
-      transform: translateY(-1px);
-    }
-    button.btn-danger { background-color: #cc0000; }
+    button:hover { background-color: #505050; }
+    button.btn-danger { background-color: #cc0000; flex: 2; font-size: 1rem; }
     button.btn-danger:hover { background-color: #ff0000; }
-    button.btn-success { background-color: #2e7d32; }
-    button.btn-warning { background-color: #f57c00; }
-    button.active-state { background-color: #3ea6ff; color: #000; font-weight: 700; }
+    button.btn-success { background-color: #2e7d32; flex: 2; font-size: 1rem; }
+    button.btn-download { background-color: #3ea6ff; color: #000; flex: 2; }
+    button.active-state { background-color: #3ea6ff; color: #000; }
 
-    /* Panneau Régie Droite */
-    .sidebar {
-      background-color: rgba(33, 33, 33, 0.9);
+    /* Panneau Paramètres & Statistiques */
+    .panel {
+      background-color: #1a1a24;
       border-radius: 12px;
       padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
       border: 1px solid #383838;
-      height: 100%;
-      overflow-y: auto;
     }
     .panel-title {
       font-size: 0.95rem;
@@ -297,54 +216,20 @@
       gap: 8px;
     }
 
-    /* Grille de sélection des 15 fonds de studio */
-    .background-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      max-height: 200px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-    .bg-thumb {
-      background: #181818;
-      border: 2px solid #383838;
-      border-radius: 6px;
-      padding: 8px;
-      text-align: center;
-      cursor: pointer;
-      font-size: 0.75rem;
-      font-weight: 600;
-      transition: 0.2s;
-    }
-    .bg-thumb:hover { border-color: #3ea6ff; background: #222; }
-    .bg-thumb.selected { border-color: #3ea6ff; background: rgba(62, 166, 255, 0.2); }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: 0.8rem; color: #aaa; }
+    select { background-color: #121212; border: 1px solid #383838; color: white; padding: 10px; border-radius: 6px; outline: none; font-size: 0.9rem; }
 
-    /* Compteur d'Audience */
     .audience-box {
       background: #121212;
       border-radius: 8px;
       border: 1px solid #383838;
-      padding: 14px;
+      padding: 12px;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      gap: 4px;
-      text-align: center;
     }
-    .audience-number { font-size: 2.2rem; font-weight: 900; color: #3ea6ff; }
-    .audience-peak { font-size: 0.75rem; color: #ffcc00; font-weight: bold; }
-
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    label { font-size: 0.8rem; color: #aaa; }
-    input, select { background-color: #121212; border: 1px solid #383838; color: white; padding: 8px 10px; border-radius: 6px; outline: none; font-size: 0.85rem; }
-    input:focus, select:focus { border-color: #3ea6ff; }
-
-    @media (max-width: 900px) {
-      .main-container { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
-      body { overflow: auto; }
-    }
+    .audience-number { font-size: 1.5rem; font-weight: 900; color: #3ea6ff; }
   </style>
 </head>
 <body>
@@ -352,174 +237,163 @@
   <!-- Entête Studio -->
   <header>
     <div class="brand">
-      <i class="fa-solid fa-tower-broadcast"></i>
-      <span id="headerChannelName">TV STUDIO CONTROL PRO</span>
+      <i class="fa-solid fa-satellite-dish"></i>
+      <span id="headerChannelName">MEPLA TV - RÉGIE DIRECT</span>
     </div>
     <div id="liveBadge" class="badge-live">HORS LIGNE</div>
   </header>
 
   <div class="main-container">
     
-    <!-- Colonne Gauche : Moniteur & Commandes -->
-    <div class="left-column">
-      <div class="video-wrapper">
-        <!-- Animation de Jingle d'antenne (Intro TV avant le direct) -->
-        <div id="introOverlay">
-          <div class="intro-logo" id="introLogoText">DAKPRO<span>TV</span></div>
-          <div class="intro-text">PRÉPARATION DE L'ANTENNE...</div>
-          <div class="intro-spinner"></div>
-        </div>
-
-        <!-- Logo TV dynamique injecté depuis Firebase -->
-        <div class="tv-logo-watermark" id="watermarkBrand">DAKPRO<span>TV</span></div>
-
-        <video id="sourceVideo" autoplay playsinline muted></video>
-        <canvas id="outputCanvas"></canvas>
-        
-        <div class="overlay-info" id="streamStats">
-          <i class="fa-solid fa-signal"></i> Régie HD Prête
-        </div>
-
-        <div class="ticker-bar" id="tickerBar">
-          <div class="ticker-title">INFO DIRECT</div>
-          <div class="ticker-text-wrapper">
-            <div class="ticker-text" id="tickerTextDisplay">
-              Bienvenue sur votre chaîne de télévision en direct - Édition Spéciale
-            </div>
-          </div>
-        </div>
+    <!-- Moniteur Vidéo Grand Écran Central (Canvas Dynamique avec Éclairage Studio) -->
+    <div class="video-wrapper">
+      <div class="tv-logo-watermark" id="watermarkBrand">MEPLA<span>TV</span></div>
+      
+      <!-- Chronomètre du direct en grand -->
+      <div class="timer-overlay" id="timerDisplay" style="display:none;">
+        <i class="fa-solid fa-circle"></i> <span id="timeCounter">00:00</span>
       </div>
 
-      <div class="controls-bar">
-        <div class="btn-group">
-          <button id="toggleCamBtn" onclick="toggleCamera()"><i class="fa-solid fa-video"></i> Caméra</button>
-          <button id="toggleMicBtn" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i> Micro</button>
-          <button id="toggleScreenBtn" onclick="shareScreen()"><i class="fa-solid fa-desktop"></i> Écran</button>
-          <button id="adCutBtn" class="btn-warning" onclick="triggerAdBreak()"><i class="fa-solid fa-rectangle-ad"></i> Coupure Pub</button>
-        </div>
+      <video id="sourceVideo" autoplay playsinline muted></video>
+      <canvas id="outputCanvas"></canvas>
+    </div>
 
-        <div class="btn-group">
-          <button id="actionLiveBtn" class="btn-danger" onclick="toggleLiveStream()">
-            <i class="fa-solid fa-satellite-dish"></i> PASSER EN DIRECT
-          </button>
-          <button id="downloadReplayBtn" style="display:none;" class="btn-success" onclick="downloadReplay()">
-            <i class="fa-solid fa-download"></i> Télécharger Replay
-          </button>
-        </div>
-      </div>
-
-      <div style="background: rgba(33,33,33,0.8); padding: 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center; border: 1px solid #383838;">
-        <div class="form-group" style="flex:1;">
-          <label>Source Caméra / Périphérique</label>
-          <select id="cameraSelect" onchange="startCamera()"></select>
-        </div>
-        <div class="form-group" style="flex:1;">
-          <label>Vidéo Pub / Secours (.mp4)</label>
-          <input type="text" id="adVideoUrl" value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">
-        </div>
+    <!-- Sélecteur de Fonds Lumineux Studio -->
+    <div class="panel">
+      <h3 class="panel-title"><i class="fa-solid fa-palette"></i> Éclairage & Fonds Studio Lumineux</h3>
+      <div class="studio-bg-grid">
+        <button class="bg-btn active" onclick="setStudioBg(1)">Blanc Lumineux</button>
+        <button class="bg-btn" onclick="setStudioBg(2)">Bleu Électrique</button>
+        <button class="bg-btn" onclick="setStudioBg(3)">Jaune Studio</button>
+        <button class="bg-btn" onclick="setStudioBg(4)">Cyber Néon</button>
       </div>
     </div>
 
-    <!-- Colonne Droite : Sélecteur de 15 Fonds & Régie -->
-    <div class="sidebar">
-      <h3 class="panel-title"><i class="fa-solid fa-image"></i> Choix du Décor Studio (15 Fonds)</h3>
-      
-      <div class="background-grid" id="bgGrid">
-        <div class="bg-thumb selected" onclick="setStudioBackground(1)">Plateau Bleu HD</div>
-        <div class="bg-thumb" onclick="setStudioBackground(2)">Studio News Pro</div>
-        <div class="bg-thumb" onclick="setStudioBackground(3)">Cyber Néon Noir</div>
-        <div class="bg-thumb" onclick="setStudioBackground(4)">Or & Luxe TV</div>
-        <div class="bg-thumb" onclick="setStudioBackground(5)">Plateau Talk-Show</div>
-        <div class="bg-thumb" onclick="setStudioBackground(6)">Grand Angle Vert</div>
-        <div class="bg-thumb" onclick="setStudioBackground(7)">Studio Minimaliste</div>
-        <div class="bg-thumb" onclick="setStudioBackground(8)">Ambiance Soirée</div>
-        <div class="bg-thumb" onclick="setStudioBackground(9)">Écran Géant LED</div>
-        <div class="bg-thumb" onclick="setStudioBackground(10)">Bureau Exécutif</div>
-        <div class="bg-thumb" onclick="setStudioBackground(11)">Néon Violet Pro</div>
-        <div class="bg-thumb" onclick="setStudioBackground(12)">Futuriste Blanc</div>
-        <div class="bg-thumb" onclick="setStudioBackground(13)">Espace Spatial TV</div>
-        <div class="bg-thumb" onclick="setStudioBackground(14)">Ambiance Chaud/Cuivre</div>
-        <div class="bg-thumb" onclick="setStudioBackground(15)">Culte Noir & Rouge</div>
+    <!-- Barre de Contrôle Régie Pro -->
+    <div class="controls-bar">
+      <div class="btn-group">
+        <button id="toggleCamBtn" onclick="toggleCamera()"><i class="fa-solid fa-video"></i> Caméra</button>
+        <button id="switchCameraBtn" onclick="switchCamera()"><i class="fa-solid fa-camera-rotate"></i> Pivoter Caméra</button>
+        <button id="toggleMicBtn" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i> Micro</button>
       </div>
 
-      <h3 class="panel-title"><i class="fa-solid fa-chart-line"></i> Audience d'Antenne</h3>
-      <div class="audience-box">
-        <div style="font-size:0.75rem; color:#aaa; text-transform:uppercase;"><i class="fa-solid fa-users"></i> Spectateurs en Direct</div>
-        <div class="audience-number" id="viewerCount">0</div>
-        <div class="audience-peak" id="peakCount">Pic d'audience : 0</div>
+      <div class="btn-group">
+        <button id="actionLiveBtn" class="btn-danger" onclick="toggleLiveStream()">
+          <i class="fa-solid fa-satellite-dish"></i> PASSER EN DIRECT
+        </button>
+        <button id="downloadReplayBtn" class="btn-download" style="display:none;" onclick="downloadReplayVideo()">
+          <i class="fa-solid fa-download"></i> Télécharger le Replay HD
+        </button>
+      </div>
+    </div>
+
+    <!-- Paramètres et Audience -->
+    <div class="panel">
+      <h3 class="panel-title"><i class="fa-solid fa-user-gear"></i> Paramètres du Studio & Audience</h3>
+      
+      <div id="authStatus" style="font-size: 0.8rem; color: #ffcc00; padding: 6px; background: #121212; border-radius: 4px;">
+        Connexion à Firebase...
       </div>
 
       <div class="form-group">
-        <label>Texte Défilant en bas d'écran</label>
-        <input type="text" id="tickerInput" value="Bienvenue sur votre chaîne de télévision en direct - Édition Spéciale" oninput="updateTickerText()">
+        <label>Sélectionner la Caméra</label>
+        <select id="cameraSelect" onchange="changeCameraDevice()"></select>
+      </div>
+
+      <div class="audience-box">
+        <span style="font-size:0.85rem; color:#aaa;"><i class="fa-solid fa-users"></i> Spectateurs en direct sur la chaîne</span>
+        <div class="audience-number" id="viewerCount">0</div>
       </div>
     </div>
 
   </div>
 
-  <!-- Intégration Firebase & Récupération du Logo / Nom de la chaîne -->
+  <!-- Intégration Firebase officiel Mepla TV -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, push, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "VOTRE_API_KEY",
-      authDomain: "votre-projet.firebaseapp.com",
-      databaseURL: "https://votre-projet-default-rtdb.firebaseio.com",
-      projectId: "votre-projet",
-      storageBucket: "votre-projet.appspot.com",
-      messagingSenderId: "XXXXXX",
-      appId: "XXXXXX"
+      apiKey: "AIzaSyDE4IZ6OdS4DnIJk61oopuILZc1Fx7wA6g",
+      authDomain: "mepla-tv.firebaseapp.com",
+      databaseURL: "https://mepla-tv-default-rtdb.firebaseio.com",
+      projectId: "mepla-tv",
+      storageBucket: "mepla-tv.firebasestorage.app",
+      messagingSenderId: "1019186580961",
+      appId: "1:1019186580961:web:84af8dc5d45d90376996a0",
+      measurementId: "G-QPJ7ZF8F93"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // Récupération dynamique du nom et du logo depuis Firebase (Nœud utilisateur/chaîne)
-    const channelMetaRef = ref(db, 'channels/dakproelite/metadata');
-    onValue(channelMetaRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        if (data.channelName) {
-          document.getElementById('headerChannelName').innerText = data.channelName.toUpperCase();
-        }
-        if (data.channelLogoText) {
-          const logoHtml = `${data.channelLogoText}<span>TV</span>`;
-          document.getElementById('watermarkBrand').innerHTML = logoHtml;
-          document.getElementById('introLogoText').innerHTML = logoHtml;
-        }
-      }
-    });
-
-    // Compteur d'audience en temps réel
+    const authStatus = document.getElementById('authStatus');
     const viewerCountElement = document.getElementById('viewerCount');
-    const peakCountElement = document.getElementById('peakCount');
-    const connectionsRef = ref(db, 'channels/dakproelite/active_viewers');
-    const myConnectionRef = push(connectionsRef);
+    let currentUserId = null;
+    let liveStatusRef = null;
 
-    let peakViewers = 0;
-    set(myConnectionRef, true);
-    onDisconnect(myConnectionRef).remove();
+    signInAnonymously(auth).catch((error) => {
+      authStatus.innerText = "Erreur d'authentification Firebase.";
+    });
 
-    onValue(connectionsRef, (snapshot) => {
-      const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
-      viewerCountElement.innerText = count;
-      if (count > peakViewers) {
-        peakViewers = count;
-        peakCountElement.innerText = `Pic d'audience : ${peakViewers}`;
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        authStatus.innerText = "Studio connecté (ID sécurisé)";
+        authStatus.style.color = "#2e7d32";
+
+        loadChannelProfile(currentUserId);
+        
+        liveStatusRef = ref(db, `users/${currentUserId}/is_live`);
+
+        const connectionsRef = ref(db, `users/${currentUserId}/active_viewers`);
+        const myConnectionRef = push(connectionsRef);
+        set(myConnectionRef, true);
+        onDisconnect(myConnectionRef).remove();
+
+        onValue(connectionsRef, (snapshot) => {
+          const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+          viewerCountElement.innerText = count;
+        });
       }
     });
+
+    function loadChannelProfile(userId) {
+      const profileRef = ref(db, `users/${userId}/channel_profile`);
+      onValue(profileRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const profile = snapshot.val();
+          if (profile.channelName) {
+            document.getElementById('headerChannelName').innerText = profile.channelName.toUpperCase() + " - RÉGIE DIRECT";
+            document.getElementById('watermarkBrand').innerHTML = `${profile.channelName}<span>TV</span>`;
+          }
+        }
+      });
+    }
+
+    window.updateLiveStatusInFirebase = function(status, streamUrl = "") {
+      if (!currentUserId || !liveStatusRef) return;
+      set(liveStatusRef, status);
+      if (streamUrl) {
+        set(ref(db, `users/${currentUserId}/live_url`), streamUrl);
+      }
+    };
   </script>
 
   <script>
     let localStream = null;
     let mediaRecorder = null;
     let recordedChunks = [];
+    let recordedBlobUrl = null;
     let isLive = false;
     let isCamMuted = false;
     let isMicMuted = false;
-    let recordedBlobUrl = null;
-    let selectedBgStyle = 1;
+    let useFrontCamera = false;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let selectedBg = 1; // 1: Blanc, 2: Bleu, 3: Jaune, 4: Néon
 
     const sourceVideo = document.getElementById('sourceVideo');
     const outputCanvas = document.getElementById('outputCanvas');
@@ -527,18 +401,15 @@
     const cameraSelect = document.getElementById('cameraSelect');
     const liveBadge = document.getElementById('liveBadge');
     const actionLiveBtn = document.getElementById('actionLiveBtn');
-    const streamStats = document.getElementById('streamStats');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timeCounter = document.getElementById('timeCounter');
     const downloadReplayBtn = document.getElementById('downloadReplayBtn');
-    const introOverlay = document.getElementById('introOverlay');
 
-    function setStudioBackground(bgNum) {
-      selectedBgStyle = bgNum;
-      document.querySelectorAll('.bg-thumb').forEach((el, index) => {
-        if (index + 1 === bgNum) {
-          el.classList.add('selected');
-        } else {
-          el.classList.remove('selected');
-        }
+    function setStudioBg(bgNum) {
+      selectedBg = bgNum;
+      document.querySelectorAll('.bg-btn').forEach((btn, idx) => {
+        if (idx + 1 === bgNum) btn.classList.add('active');
+        else btn.classList.remove('active');
       });
     }
 
@@ -558,8 +429,8 @@
 
         await startCamera();
       } catch (err) {
-        console.error("Erreur périphériques :", err);
-        streamStats.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#ffcc00"></i> Caméra non autorisée.`;
+        console.error("Erreur d'accès aux périphériques :", err);
+        alert("Veuillez autoriser l'accès à la caméra et au micro.");
       }
     }
 
@@ -570,7 +441,12 @@
 
       const deviceId = cameraSelect.value;
       const constraints = {
-        video: { deviceId: deviceId ? { exact: deviceId } : undefined, width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: {
+          deviceId: deviceId ? { exact: deviceId } : undefined,
+          facingMode: useFrontCamera ? 'user' : 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        },
         audio: true
       };
 
@@ -579,13 +455,14 @@
         sourceVideo.srcObject = localStream;
         sourceVideo.muted = true;
         await sourceVideo.play();
-        renderStudioBackground();
+        renderStudioFrame();
       } catch (err) {
-        alert("Impossible d'activer la caméra.");
+        console.error("Erreur flux caméra :", err);
       }
     }
 
-    function renderStudioBackground() {
+    // Moteur Studio HD : Nettoyage d'image & Application des fonds lumineux dynamiques
+    function renderStudioFrame() {
       if (sourceVideo.paused || sourceVideo.ended) return;
 
       outputCanvas.width = sourceVideo.videoWidth || 1280;
@@ -593,38 +470,45 @@
       const w = outputCanvas.width;
       const h = outputCanvas.height;
 
+      // 1. Fond Lumineux Studio
       let grad = ctx.createLinearGradient(0, 0, w, h);
-      if (selectedBgStyle === 1) { grad.addColorStop(0, '#0d1b2a'); grad.addColorStop(1, '#000814'); }
-      else if (selectedBgStyle === 2) { grad.addColorStop(0, '#1f1c2c'); grad.addColorStop(1, '#928dab'); }
-      else if (selectedBgStyle === 3) { grad.addColorStop(0, '#0f2027'); grad.addColorStop(1, '#2c5364'); }
-      else if (selectedBgStyle === 4) { grad.addColorStop(0, '#232526'); grad.addColorStop(1, '#414345'); }
-      else if (selectedBgStyle === 5) { grad.addColorStop(0, '#141e30'); grad.addColorStop(1, '#243b55'); }
-      else if (selectedBgStyle === 6) { grad.addColorStop(0, '#11998e'); grad.addColorStop(1, '#38ef7d'); }
-      else if (selectedBgStyle === 7) { grad.addColorStop(0, '#2c3e50'); grad.addColorStop(1, '#3498db'); }
-      else if (selectedBgStyle === 8) { grad.addColorStop(0, '#4ca1af'); grad.addColorStop(1, '#2c3e50'); }
-      else if (selectedBgStyle === 9) { grad.addColorStop(0, '#3a6073'); grad.addColorStop(1, '#16222a'); }
-      else if (selectedBgStyle === 10) { grad.addColorStop(0, '#2b5876'); grad.addColorStop(1, '#4e4376'); }
-      else if (selectedBgStyle === 11) { grad.addColorStop(0, '#4e54c8'); grad.addColorStop(1, '#8f94fb'); }
-      else if (selectedBgStyle === 12) { grad.addColorStop(0, '#7f7fd5'); grad.addColorStop(1, '#91eae4'); }
-      else if (selectedBgStyle === 13) { grad.addColorStop(0, '#000428'); grad.addColorStop(1, '#004e92'); }
-      else if (selectedBgStyle === 14) { grad.addColorStop(0, '#cb356b'); grad.addColorStop(1, '#bd3f32'); }
-      else { grad.addColorStop(0, '#000000'); grad.addColorStop(1, '#434343'); }
+      if (selectedBg === 1) { // Blanc Lumineux
+        grad.addColorStop(0, '#f8f9fa'); grad.addColorStop(1, '#e9ecef');
+      } else if (selectedBg === 2) { // Bleu Électrique
+        grad.addColorStop(0, '#005c8a'); grad.addColorStop(1, '#001e30');
+      } else if (selectedBg === 3) { // Jaune Studio
+        grad.addColorStop(0, '#ffcc00'); grad.addColorStop(1, '#ff8800');
+      } else { // Cyber Néon
+        grad.addColorStop(0, '#7928ca'); grad.addColorStop(1, '#ff0080');
+      }
 
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-      ctx.beginPath();
-      ctx.arc(w / 2, h / 3, 350, 0, Math.PI * 2);
-      ctx.fill();
-
+      // 2. Rendu de la caméra avec effet miroir si frontale et filtre netteté HD
+      ctx.save();
+      if (useFrontCamera) {
+        ctx.translate(w, 0);
+        ctx.scale(-1, 1);
+      }
+      ctx.filter = 'contrast(1.15) brightness(1.05) saturate(1.1)'; // Nettoyage et amélioration de l'image en direct
       ctx.drawImage(sourceVideo, 0, 0, w, h);
+      ctx.restore();
 
-      requestAnimationFrame(renderStudioBackground);
+      requestAnimationFrame(renderStudioFrame);
+    }
+
+    async function changeCameraDevice() {
+      await startCamera();
+    }
+
+    async function switchCamera() {
+      useFrontCamera = !useFrontCamera;
+      await startCamera();
     }
 
     function toggleCamera() {
-      if(localStream) {
+      if (localStream) {
         const videoTrack = localStream.getVideoTracks()[0];
         if (videoTrack) {
           videoTrack.enabled = !videoTrack.enabled;
@@ -637,7 +521,7 @@
     }
 
     function toggleMic() {
-      if(localStream) {
+      if (localStream) {
         const audioTrack = localStream.getAudioTracks()[0];
         if (audioTrack) {
           audioTrack.enabled = !audioTrack.enabled;
@@ -649,113 +533,91 @@
       }
     }
 
-    async function shareScreen() {
-      try {
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-        sourceVideo.srcObject = screenStream;
-        localStream = screenStream;
-        document.getElementById('toggleScreenBtn').classList.add('active-state');
-      } catch (err) {
-        console.log("Partage annulé.");
-      }
-    }
-
-    function updateTickerText() {
-      const val = document.getElementById('tickerInput').value;
-      document.getElementById('tickerTextDisplay').innerText = val || "Direct TV";
-    }
-
-    // Gestion du direct avec l'animation de Jingle d'antenne (Intro de quelques secondes)
     function toggleLiveStream() {
-      if (!isLive) {
-        startLiveWithIntro();
+      isLive = !isLive;
+      if (isLive) {
+        liveBadge.classList.add('active');
+        liveBadge.innerText = "EN DIRECT";
+        actionLiveBtn.innerHTML = `<i class="fa-solid fa-stop"></i> ARRÊTER LE DIRECT`;
+        actionLiveBtn.classList.remove('btn-danger');
+        actionLiveBtn.classList.add('btn-success');
+        
+        downloadReplayBtn.style.display = "none";
+        timerDisplay.style.display = "flex";
+        startTimer();
+        startRecording();
+
+        if (window.updateLiveStatusInFirebase) {
+          window.updateLiveStatusInFirebase(true);
+        }
       } else {
-        stopLive();
+        liveBadge.classList.remove('active');
+        liveBadge.innerText = "HORS LIGNE";
+        actionLiveBtn.classList.remove('btn-success');
+        actionLiveBtn.classList.add('btn-danger');
+        actionLiveBtn.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> PASSER EN DIRECT`;
+        
+        stopTimer();
+        stopRecording();
+
+        if (window.updateLiveStatusInFirebase) {
+          window.updateLiveStatusInFirebase(false);
+        }
       }
     }
 
-    function startLiveWithIntro() {
-      // 1. Afficher l'animation d'intro / Jingle professionnel
-      introOverlay.classList.add('active');
-      streamStats.innerHTML = `<i class="fa-solid fa-film" style="color:#ffcc00"></i> Diffusion du Jingle d'Antenne...`;
-
-      // 2. Patienter 3.5 secondes (temps de l'animation d'intro) puis basculer en direct
-      setTimeout(() => {
-        introOverlay.classList.remove('active');
-        startLive();
-      }, 3500);
+    function startTimer() {
+      secondsElapsed = 0;
+      timeCounter.innerText = "00:00";
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = Math.floor(secondsElapsed / 60);
+        const secs = secondsElapsed % 60;
+        timeCounter.innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      }, 1000);
     }
 
-    function startLive() {
-      isLive = true;
-      downloadReplayBtn.style.display = "none";
-      liveBadge.classList.add('active');
-      liveBadge.innerText = "EN DIRECT";
-      actionLiveBtn.innerHTML = `<i class="fa-solid fa-stop"></i> ARRÊTER LE DIRECT`;
-      actionLiveBtn.classList.remove('btn-danger');
-      actionLiveBtn.classList.add('btn-success');
-      streamStats.innerHTML = `<i class="fa-solid fa-circle" style="color:red"></i> En Direct HD (Studio Pro)`;
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerDisplay.style.display = "none";
+    }
 
+    function startRecording() {
       recordedChunks = [];
       try {
         const canvasStream = outputCanvas.captureStream(30);
         const audioTrack = localStream.getAudioTracks()[0];
         if (audioTrack) canvasStream.addTrack(audioTrack);
 
-        mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm;codecs=vp9' });
+        mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
         mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-        mediaRecorder.start(1000);
-      } catch (e) {
-        console.log("MediaRecorder non supporté.");
-      }
-    }
-
-    function stopLive() {
-      isLive = false;
-      introOverlay.classList.remove('active');
-      liveBadge.classList.remove('active');
-      liveBadge.innerText = "HORS LIGNE";
-      actionLiveBtn.classList.remove('btn-success');
-      actionLiveBtn.classList.add('btn-danger');
-      actionLiveBtn.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> PASSER EN DIRECT`;
-      streamStats.innerText = "Direct terminé - Redirection vers la pub...";
-
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
         mediaRecorder.onstop = () => {
           const blob = new Blob(recordedChunks, { type: 'video/webm' });
           recordedBlobUrl = URL.createObjectURL(blob);
           downloadReplayBtn.style.display = "flex";
         };
-      }
-
-      setTimeout(() => {
-        playPostLiveProgram();
-      }, 1200);
-    }
-
-    function triggerAdBreak() {
-      introOverlay.classList.remove('active');
-      streamStats.innerHTML = `<i class="fa-solid fa-rectangle-ad" style="color:#ffcc00"></i> Page de publicité en cours...`;
-      playPostLiveProgram();
-    }
-
-    function playPostLiveProgram() {
-      const adUrl = document.getElementById('adVideoUrl').value;
-      if (adUrl) {
-        sourceVideo.srcObject = null;
-        sourceVideo.src = adUrl;
-        sourceVideo.muted = false;
-        sourceVideo.play();
+        mediaRecorder.start(1000);
+      } catch (e) {
+        console.log("Enregistrement canvas non supporté.");
       }
     }
 
-    function downloadReplay() {
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    }
+
+    // Téléchargement direct et enregistrement dans la mémoire du téléphone/ordinateur
+    function downloadReplayVideo() {
       if (recordedBlobUrl) {
         const a = document.createElement('a');
         a.href = recordedBlobUrl;
-        a.download = `DAKPRO_TV_Replay_${Date.now()}.webm`;
+        a.download = `MEPLA_TV_Direct_${Date.now()}.webm`;
         a.click();
+      } else {
+        alert("Aucun enregistrement disponible.");
       }
     }
 

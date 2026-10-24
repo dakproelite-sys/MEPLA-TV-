@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DAKPRO TV - Master 24/7 & Bassin de Diffusion</title>
+  <title>MEPLA TV - Master 24/7 Professionnel</title>
   <!-- FontAwesome Icons & Google Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -93,6 +93,7 @@
       gap: 8px;
     }
 
+    /* Conteneur Vidéo Principal Master */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -104,34 +105,36 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
     
-    video {
+    #masterPlayer {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      border: none;
       display: block;
     }
 
+    /* Logo Watermark dynamique */
     .tv-logo-watermark {
       position: absolute;
       top: 16px;
       left: 16px;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       z-index: 5;
       pointer-events: none;
-      backdrop-filter: blur(4px);
-      max-width: 140px;
+      backdrop-filter: blur(6px);
+      max-width: 160px;
     }
     .tv-logo-watermark img {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       object-fit: cover;
       border-radius: 50%;
+      border: 1px solid #ff0000;
     }
     .tv-logo-watermark span {
       font-weight: 900;
@@ -158,6 +161,38 @@
     }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
+    /* Barre de progression style YouTube sous le lecteur */
+    .youtube-timeline-bar {
+      background: #1a1a24;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #383838;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .timeline-track {
+      width: 100%;
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+    }
+    .timeline-progress {
+      width: 0%;
+      height: 100%;
+      background: #ff0000;
+      border-radius: 3px;
+      transition: width 0.5s linear;
+    }
+    .timeline-info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     label { font-size: 0.8rem; color: #aaa; }
     input, select { background-color: #121212; border: 1px solid #383838; color: white; padding: 8px 10px; border-radius: 6px; outline: none; font-size: 0.85rem; }
@@ -178,6 +213,7 @@
       transition: 0.2s;
     }
     button:hover { background-color: #61b8ff; }
+    button:disabled { background-color: #555; cursor: not-allowed; }
 
     .playlist-container {
       flex: 1;
@@ -196,7 +232,15 @@
       justify-content: space-between;
       align-items: center;
     }
-    .playlist-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+    .playlist-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px; }
+    .playlist-duration { color: #3ea6ff; font-weight: bold; font-size: 0.75rem; }
+
+    #statusMessage {
+      font-size: 0.8rem;
+      color: #3ea6ff;
+      text-align: center;
+      min-height: 18px;
+    }
 
     @media (max-width: 1000px) {
       .main-container { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
@@ -209,76 +253,84 @@
   <header>
     <div class="brand">
       <i class="fa-solid fa-tv"></i>
-      <span id="headerChannelName">DAKPRO TV - MASTER 24/7</span>
+      <span id="headerChannelName">MEPLA TV - MASTER 24/7</span>
     </div>
     <div id="masterStatus" class="status-badge">SYSTÈME EN LIGNE</div>
   </header>
 
   <div class="main-container">
     
-    <!-- Colonne 1 : Profil de la Chaîne -->
+    <!-- Colonne 1 : Profil de la Chaîne (Dynamique User) -->
     <div class="column">
       <h3 class="panel-title"><i class="fa-solid fa-user-gear"></i> Profil de la Chaîne</h3>
       
       <div id="authStatus" style="font-size: 0.8rem; color: #ffcc00; padding: 6px; background: #121212; border-radius: 4px;">
-        Connexion à Firebase...
+        Connexion sécurisée à Firebase...
       </div>
 
       <div class="form-group">
         <label>Nom de la Chaîne</label>
-        <input type="text" id="profileChannelName" placeholder="Ex: DAKPRO TV">
+        <input type="text" id="profileChannelName" placeholder="Ex: MEPLA TV">
       </div>
 
       <div class="form-group">
-        <label>URL du Logo de la Chaîne (Image)</label>
-        <input type="text" id="profileLogoUrl" placeholder="https://exemple.com/logo.png">
+        <label>URL du Logo / Photo de Profil</label>
+        <input type="text" id="profileLogoUrl" placeholder="https://i.postimg.cc/.../logo.png">
       </div>
 
       <div class="form-group">
-        <label>Position du Logo</label>
+        <label>Position du Logo sur l'écran</label>
         <select id="profileLogoPosition">
           <option value="left">Coin Supérieur Gauche</option>
           <option value="right">Coin Supérieur Droit</option>
         </select>
       </div>
 
-      <button onclick="saveChannelProfile()"><i class="fa-solid fa-floppy-disk"></i> Enregistrer le Profil</button>
+      <button id="saveProfileBtn" onclick="saveChannelProfile()" disabled><i class="fa-solid fa-floppy-disk"></i> Enregistrer le Profil</button>
     </div>
 
-    <!-- Colonne 2 : Lecteur Master (Centre) -->
+    <!-- Colonne 2 : Lecteur Master YouTube & Timeline (Centre) -->
     <div class="center-column">
       <div class="video-wrapper">
         <div class="tv-logo-watermark" id="watermarkBrand" style="left: 16px; right: auto;">
           <img id="watermarkImg" src="" style="display:none;" alt="Logo">
-          <span id="watermarkText">DAKPRO TV</span>
+          <span id="watermarkText">MEPLA TV</span>
         </div>
         
         <div class="on-air-overlay" id="onAirBadge"><i class="fa-solid fa-satellite-dish"></i> EN DIRECT</div>
 
-        <video id="masterVideo" controls autoplay playsinline></video>
+        <!-- Lecteur Intelligent YouTube IFrame -->
+        <div id="masterPlayer"></div>
       </div>
 
-      <div style="background: #1a1a24; padding: 14px; border-radius: 8px; border: 1px solid #383838;">
-        <h4 style="font-size: 0.9rem; color: #3ea6ff; margin-bottom: 4px;"><i class="fa-solid fa-circle-play"></i> En diffusion en ce moment :</h4>
-        <p id="currentPlayingTitle" style="font-size: 0.85rem; color: #ccc;">Chargement de la grille 24/7...</p>
+      <!-- Timeline & Infos Façon YouTube -->
+      <div class="youtube-timeline-bar">
+        <div class="timeline-track">
+          <div class="timeline-progress" id="timelineProgress"></div>
+        </div>
+        <div class="timeline-info-row">
+          <span id="currentPlayingTitle"><i class="fa-solid fa-circle-play"></i> Chargement du flux...</span>
+          <span><span id="currentTimeText">0:00</span> / <span id="totalDurationText">0:00</span></span>
+        </div>
       </div>
     </div>
 
-    <!-- Colonne 3 : Grille de Programmes (Droite) -->
+    <!-- Colonne 3 : Grille de Programmes YouTube (Droite) -->
     <div class="column">
-      <h3 class="panel-title"><i class="fa-solid fa-list-check"></i> Ajouter un Clip / Film</h3>
+      <h3 class="panel-title"><i class="fa-solid fa-list-check"></i> Programmer une Vidéo</h3>
       
       <div class="form-group">
-        <label>Titre du Média</label>
-        <input type="text" id="mediaTitle" placeholder="Ex: Clip Vidéo - Artiste X">
+        <label>Titre de l'émission / Clip</label>
+        <input type="text" id="mediaTitle" placeholder="Ex: Journal TV - Édition Spéciale">
       </div>
 
       <div class="form-group">
-        <label>URL Directe (.mp4)</label>
-        <input type="text" id="mediaUrl" placeholder="https://exemple.com/video.mp4">
+        <label>Lien YouTube (.com ou .be)</label>
+        <input type="text" id="mediaUrl" placeholder="https://www.youtube.com/watch?v=...">
       </div>
 
-      <button onclick="addNewMediaToFirebase()"><i class="fa-solid fa-plus"></i> Ajouter à la Grille</button>
+      <button id="addMediaBtn" onclick="addNewMediaToFirebase()" disabled><i class="fa-solid fa-plus"></i> Ajouter à la Grille</button>
+      <div id="statusMessage"></div>
 
       <h3 class="panel-title" style="margin-top: 10px;"><i class="fa-solid fa-calendar-days"></i> Grille Programmée</h3>
       <div class="playlist-container" id="playlistItems"></div>
@@ -286,50 +338,116 @@
 
   </div>
 
-  <!-- Intégration Firebase -->
+  <!-- Intégration de l'API YouTube IFrame -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <!-- Intégration Firebase officiel Mepla TV -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "VOTRE_API_KEY",
-      authDomain: "votre-projet.firebaseapp.com",
-      databaseURL: "https://votre-projet-default-rtdb.firebaseio.com",
-      projectId: "votre-projet",
-      storageBucket: "votre-projet.appspot.com",
-      messagingSenderId: "XXXXXX",
-      appId: "XXXXXX"
+      apiKey: "AIzaSyDE4IZ6OdS4DnIJk61oopuILZc1Fx7wA6g",
+      authDomain: "mepla-tv.firebaseapp.com",
+      databaseURL: "https://mepla-tv-default-rtdb.firebaseio.com",
+      projectId: "mepla-tv",
+      storageBucket: "mepla-tv.firebasestorage.app",
+      messagingSenderId: "1019186580961",
+      appId: "1:1019186580961:web:84af8dc5d45d90376996a0",
+      measurementId: "G-QPJ7ZF8F93"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    const masterVideo = document.getElementById('masterVideo');
     const currentPlayingTitle = document.getElementById('currentPlayingTitle');
     const playlistContainer = document.getElementById('playlistItems');
     const onAirBadge = document.getElementById('onAirBadge');
     const authStatus = document.getElementById('authStatus');
+    const statusMessage = document.getElementById('statusMessage');
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+    const addMediaBtn = document.getElementById('addMediaBtn');
+    const timelineProgress = document.getElementById('timelineProgress');
+    const currentTimeText = document.getElementById('currentTimeText');
+    const totalDurationText = document.getElementById('totalDurationText');
 
     let currentUserId = null;
     let playlist = [];
     let currentIndex = 0;
     let isLiveActive = false;
+    let player = null;
+    let playerReady = false;
+    let progressInterval = null;
+
+    window.onYouTubeIframeAPIReady = function() {
+      player = new YT.Player('masterPlayer', {
+        height: '100%',
+        width: '100%',
+        playerVars: {
+          'autoplay': 1,
+          'controls': 1,
+          'rel': 0,
+          'iv_load_policy': 3
+        },
+        events: {
+          'onReady': (event) => {
+            playerReady = true;
+            if (playlist.length > 0 && !isLiveActive) {
+              playCurrentMedia();
+            }
+          },
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    };
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED && !isLiveActive) {
+        currentIndex = (currentIndex + 1) % playlist.length;
+        playCurrentMedia();
+      }
+    }
+
+    // Suivi de la progression timeline style YouTube
+    function startProgressTracker() {
+      clearInterval(progressInterval);
+      progressInterval = setInterval(() => {
+        if (player && player.getCurrentTime && player.getDuration) {
+          const current = player.getCurrentTime();
+          const duration = player.getDuration();
+          if (duration > 0) {
+            const percent = (current / duration) * 100;
+            timelineProgress.style.width = percent + '%';
+            currentTimeText.innerText = formatDuration(Math.floor(current));
+            totalDurationText.innerText = formatDuration(Math.floor(duration));
+          }
+        }
+      }, 1000);
+    }
 
     signInAnonymously(auth).catch((error) => {
-      authStatus.innerText = "Erreur d'authentification.";
+      authStatus.innerText = "Erreur d'authentification Firebase.";
+      authStatus.style.color = "#ff0000";
     });
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUserId = user.uid;
-        authStatus.innerText = "Connecté (ID sécurisé)";
+        authStatus.innerText = "Connecté (ID: " + currentUserId.substring(0, 6) + "...)";
         authStatus.style.color = "#2e7d32";
+        
+        saveProfileBtn.disabled = false;
+        addMediaBtn.disabled = false;
 
         loadUserProfile(currentUserId);
         loadPlaylist(currentUserId);
         listenLiveStatus(currentUserId);
+      } else {
+        authStatus.innerText = "En attente de connexion...";
+        saveProfileBtn.disabled = true;
+        addMediaBtn.disabled = true;
       }
     });
 
@@ -348,14 +466,17 @@
     }
 
     window.saveChannelProfile = function() {
-      if (!currentUserId) return alert("Non authentifié !");
+      if (!currentUserId) return alert("Patientez...");
       const channelName = document.getElementById('profileChannelName').value.trim();
       const logoUrl = document.getElementById('profileLogoUrl').value.trim();
       const position = document.getElementById('profileLogoPosition').value;
 
+      statusMessage.innerText = "Enregistrement du profil...";
       set(ref(db, `users/${currentUserId}/channel_profile`), { channelName, logoUrl, position })
-        .then(() => alert("Profil enregistré avec succès !"))
-        .catch((e) => alert("Erreur : " + e.message));
+        .then(() => {
+          statusMessage.innerText = "Profil enregistré et appliqué sur la chaîne !";
+          setTimeout(() => { statusMessage.innerText = ""; }, 3000);
+        });
     };
 
     function updateWatermarkUI(name, logoUrl, position) {
@@ -385,7 +506,6 @@
       }
     }
 
-    // Gestion rigoureuse de l'état du Direct vs Grille 24/7
     function listenLiveStatus(userId) {
       const liveStatusRef = ref(db, `users/${userId}/is_live`);
       const liveUrlRef = ref(db, `users/${userId}/live_url`);
@@ -394,19 +514,20 @@
         isLiveActive = snapshot.val();
         if (isLiveActive) {
           onAirBadge.style.display = 'block';
-          currentPlayingTitle.innerText = "🔴 DIFFUSION EN DIRECT";
+          currentPlayingTitle.innerHTML = `<i class="fa-solid fa-satellite-dish" style="color:#ff0000;"></i> 🔴 DIFFUSION EN DIRECT DEPUIS LE STUDIO`;
           
-          // Récupérer l'URL du flux direct si disponible
           onValue(liveUrlRef, (urlSnap) => {
-            if (urlSnap.exists() && urlSnap.val()) {
-              masterVideo.src = urlSnap.val();
-              masterVideo.play().catch(e => console.log("Attente de lecture direct..."));
+            if (urlSnap.exists() && urlSnap.val() && playerReady) {
+              const liveVideoId = extractYouTubeId(urlSnap.val());
+              if (liveVideoId) {
+                player.loadVideoById(liveVideoId);
+                startProgressTracker();
+              }
             }
           }, { onlyOnce: true });
         } else {
           onAirBadge.style.display = 'none';
-          // Reprise immédiate de la grille 24/7 sans espace vide
-          if (playlist.length > 0) {
+          if (playlist.length > 0 && playerReady) {
             playCurrentMedia();
           }
         }
@@ -424,30 +545,27 @@
           Object.keys(data).forEach(key => { playlist.push(data[key]); });
           renderPlaylistUI();
 
-          if (!isLiveActive && masterVideo.paused && playlist.length > 0) {
+          if (!isLiveActive && playerReady && playlist.length > 0 && player.getPlayerState() !== YT.PlayerState.PLAYING) {
             currentIndex = 0;
             playCurrentMedia();
           }
         } else {
-          currentPlayingTitle.innerText = "Aucun média programmé.";
+          currentPlayingTitle.innerText = "Aucune vidéo programmée dans la grille 24/7.";
         }
       });
     }
 
     function playCurrentMedia() {
-      if (isLiveActive || playlist.length === 0) return;
+      if (isLiveActive || playlist.length === 0 || !playerReady) return;
       
       const currentMedia = playlist[currentIndex];
-      masterVideo.src = currentMedia.url;
-      currentPlayingTitle.innerText = currentMedia.title;
-      masterVideo.play().catch(e => console.log("Lecture automatique en attente..."));
-
-      masterVideo.onended = () => {
-        if (!isLiveActive) {
-          currentIndex = (currentIndex + 1) % playlist.length;
-          playCurrentMedia();
-        }
-      };
+      const videoId = extractYouTubeId(currentMedia.url);
+      
+      if (videoId) {
+        currentPlayingTitle.innerHTML = `<i class="fa-solid fa-play" style="color:#3ea6ff;"></i> ${currentMedia.title} <span style="color:#aaa; font-size:0.75rem;">(${currentMedia.durationText || ''})</span>`;
+        player.loadVideoById(videoId);
+        startProgressTracker();
+      }
     }
 
     function renderPlaylistUI() {
@@ -455,23 +573,70 @@
       playlist.forEach((item, index) => {
         const div = document.createElement('div');
         div.className = 'playlist-item';
-        div.innerHTML = `<span>${index + 1}. ${item.title}</span> <i class="fa-solid fa-film" style="color:#3ea6ff;"></i>`;
+        div.innerHTML = `<span>${index + 1}. ${item.title}</span> <span class="playlist-duration"><i class="fa-solid fa-clock"></i> ${item.durationText || '00:00'}</span>`;
         playlistContainer.appendChild(div);
       });
     }
 
+    function extractYouTubeId(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    function formatDuration(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
     window.addNewMediaToFirebase = function() {
-      if (!currentUserId) return alert("Non authentifié !");
+      if (!currentUserId) return alert("Patientez...");
       const title = document.getElementById('mediaTitle').value.trim();
       const url = document.getElementById('mediaUrl').value.trim();
 
-      if (title && url) {
-        set(push(ref(db, `users/${currentUserId}/playlist`)), { title, url });
-        document.getElementById('mediaTitle').value = '';
-        document.getElementById('mediaUrl').value = '';
-      } else {
-        alert("Remplissez le titre et l'URL.");
+      if (!title || !url) {
+        alert("Remplissez le titre et l'URL YouTube.");
+        return;
       }
+
+      const videoId = extractYouTubeId(url);
+      if (!videoId) {
+        alert("Lien YouTube invalide.");
+        return;
+      }
+
+      statusMessage.innerText = "Analyse et calcul automatique de la durée...";
+
+      const tempDiv = document.createElement('div');
+      tempDiv.id = 'temp-yt-' + Date.now();
+      tempDiv.style.display = 'none';
+      document.body.appendChild(tempDiv);
+
+      new YT.Player(tempDiv.id, {
+        height: '1',
+        width: '1',
+        videoId: videoId,
+        events: {
+          'onReady': (event) => {
+            const durationSec = Math.round(event.target.getDuration());
+            const durationText = formatDuration(durationSec);
+
+            set(push(ref(db, `users/${currentUserId}/playlist`)), {
+              title: title,
+              url: url,
+              durationSeconds: durationSec,
+              durationText: durationText
+            }).then(() => {
+              statusMessage.innerText = "Ajouté avec succès ! (" + durationText + ")";
+              document.getElementById('mediaTitle').value = '';
+              document.getElementById('mediaUrl').value = '';
+              setTimeout(() => { statusMessage.innerText = ""; }, 3500);
+              tempDiv.remove();
+            });
+          }
+        }
+      });
     };
   </script>
 </body>
