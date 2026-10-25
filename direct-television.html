@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MEPLA TV - Régie Direct Studio Pro HD</title>
+  <title>MEPLA TV - Studio Master 24/7 & Programmation Pro</title>
   <!-- FontAwesome Icons & Google Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -20,14 +20,13 @@
       color: #ffffff;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
-      overflow-y: auto;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    /* Entête Studio TV */
     header {
       background-color: #1a1a24;
-      padding: 12px 20px;
+      padding: 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -36,176 +35,54 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       font-weight: 900;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       letter-spacing: 1px;
     }
-    .brand i { color: #ff0000; font-size: 1.4rem; }
-    
-    .badge-live {
-      background: #383838;
-      color: #aaa;
-      padding: 6px 12px;
+    .brand i { color: #ff0000; font-size: 1.5rem; }
+    .status-badge {
+      background: #2e7d32;
+      color: #fff;
+      padding: 6px 14px;
       border-radius: 4px;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: bold;
       letter-spacing: 1px;
     }
-    .badge-live.active {
-      background: #ff0000;
-      color: #fff;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-    /* Layout Principal Vertical et Large */
     .main-container {
+      display: grid;
+      grid-template-columns: 320px 1fr 400px;
+      gap: 16px;
+      padding: 16px;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    .column {
+      background-color: #1a1a24;
+      border-radius: 12px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding: 16px;
-      max-width: 900px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    /* Moniteur Vidéo PRO & Canvas Studio derrière la personne */
-    .video-wrapper {
-      position: relative;
-      width: 100%;
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
-      aspect-ratio: 16 / 9;
-      border: 3px solid #333;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    #sourceVideo { display: none; }
-    #outputCanvas {
-      width: 100%;
+      border: 1px solid #383838;
       height: 100%;
-      object-fit: cover;
-      display: block;
+      overflow-y: auto;
     }
 
-    /* Logo de la chaîne en filigrane */
-    .tv-logo-watermark {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-weight: 900;
-      font-size: 0.85rem;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      z-index: 5;
-      backdrop-filter: blur(4px);
-    }
-    .tv-logo-watermark span { color: #ff0000; }
-
-    /* Grand Chronomètre d'Antenne */
-    .timer-overlay {
-      position: absolute;
-      bottom: 14px;
-      right: 14px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid #ff0000;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-weight: 900;
-      font-size: 1.1rem;
-      color: #fff;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      backdrop-filter: blur(4px);
-    }
-    .timer-overlay i { color: #ff0000; animation: blink 1s infinite; }
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-
-    /* Grille de sélection des fonds de studio lumineux */
-    .studio-bg-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .bg-btn {
-      background: #121212;
-      border: 2px solid #383838;
-      color: #fff;
-      padding: 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: bold;
-      cursor: pointer;
-      text-align: center;
-      transition: 0.2s;
-    }
-    .bg-btn:hover { border-color: #3ea6ff; background: #222; }
-    .bg-btn.active { border-color: #3ea6ff; background: rgba(62,166,255,0.3); }
-
-    /* Barre de Contrôle Régie Pro */
-    .controls-bar {
-      background-color: #1a1a24;
-      padding: 16px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      border: 1px solid #383838;
-    }
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    button {
-      background-color: #383838;
-      color: white;
+    .center-column {
+      background: transparent;
       border: none;
-      padding: 12px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      font-size: 0.9rem;
-      flex: 1;
-      justify-content: center;
-      min-width: 140px;
-    }
-    button:hover { background-color: #505050; }
-    button.btn-danger { background-color: #cc0000; flex: 2; font-size: 1rem; }
-    button.btn-danger:hover { background-color: #ff0000; }
-    button.btn-success { background-color: #2e7d32; flex: 2; font-size: 1rem; }
-    button.btn-download { background-color: #3ea6ff; color: #000; flex: 2; }
-    button.active-state { background-color: #3ea6ff; color: #000; }
-
-    /* Panneau Paramètres & Statistiques */
-    .panel {
-      background-color: #1a1a24;
-      border-radius: 12px;
-      padding: 16px;
+      padding: 0;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      border: 1px solid #383838;
+      overflow-y: auto;
     }
+
     .panel-title {
       font-size: 0.95rem;
       border-bottom: 1px solid #383838;
@@ -216,103 +93,340 @@
       gap: 8px;
     }
 
+    /* Conteneur Vidéo Principal Master */
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border: 2px solid #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    
+    #masterPlayer {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Logo Watermark dynamique */
+    .tv-logo-watermark {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 5;
+      pointer-events: none;
+      backdrop-filter: blur(6px);
+      max-width: 180px;
+    }
+    .tv-logo-watermark img {
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 1px solid #ff0000;
+    }
+    .tv-logo-watermark span {
+      font-weight: 900;
+      font-size: 0.85rem;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .on-air-overlay {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(200, 0, 0, 0.9);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      z-index: 5;
+      display: none;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+    /* Barre de progression style YouTube sous le lecteur */
+    .youtube-timeline-bar {
+      background: #1a1a24;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #383838;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .timeline-track {
+      width: 100%;
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+    }
+    .timeline-progress {
+      width: 0%;
+      height: 100%;
+      background: #ff0000;
+      border-radius: 3px;
+      transition: width 0.5s linear;
+    }
+    .timeline-info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     label { font-size: 0.8rem; color: #aaa; }
-    select { background-color: #121212; border: 1px solid #383838; color: white; padding: 10px; border-radius: 6px; outline: none; font-size: 0.9rem; }
+    input, select { background-color: #121212; border: 1px solid #383838; color: white; padding: 8px 10px; border-radius: 6px; outline: none; font-size: 0.85rem; }
+    input:focus, select:focus { border-color: #3ea6ff; }
+    
+    button {
+      background-color: #3ea6ff;
+      color: #000;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    button:hover { background-color: #61b8ff; }
+    button:disabled { background-color: #555; cursor: not-allowed; }
+    button.btn-danger { background-color: #cc0000; color: #fff; }
+    button.btn-danger:hover { background-color: #ff0000; }
+    button.btn-success { background-color: #2e7d32; color: #fff; }
+    button.btn-success:hover { background-color: #388e3c; }
+    button.btn-download { background-color: #ff9800; color: #000; }
 
-    .audience-box {
+    /* Conteneur des formulaires dynamiques multiples */
+    .dynamic-forms-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .program-card-form {
+      background: #121212;
+      border: 1px solid #383838;
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+    .remove-form-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: transparent;
+      color: #ff0000;
+      border: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+
+    /* Tableau synoptique de la Grille des Programmes */
+    .schedule-table-container {
+      flex: 1;
       background: #121212;
       border-radius: 8px;
       border: 1px solid #383838;
-      padding: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      overflow-y: auto;
+      max-height: 220px;
+      padding: 4px;
     }
-    .audience-number { font-size: 1.5rem; font-weight: 900; color: #3ea6ff; }
+    table.schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      text-align: left;
+    }
+    table.schedule-table th, table.schedule-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #222;
+    }
+    table.schedule-table th {
+      background: #1a1a24;
+      color: #3ea6ff;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    table.schedule-table tr.active-row {
+      background: rgba(46, 125, 50, 0.25);
+      border-left: 3px solid #2e7d32;
+    }
+    .table-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .table-actions button {
+      padding: 4px 6px;
+      font-size: 0.7rem;
+    }
+
+    #statusMessage {
+      font-size: 0.8rem;
+      color: #3ea6ff;
+      text-align: center;
+      min-height: 18px;
+    }
+
+    @media (max-width: 1000px) {
+      .main-container { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
+      body { overflow: auto; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Entête Studio -->
   <header>
     <div class="brand">
-      <i class="fa-solid fa-satellite-dish"></i>
-      <span id="headerChannelName">MEPLA TV - RÉGIE DIRECT</span>
+      <i class="fa-solid fa-tv"></i>
+      <span id="headerChannelName">MA CHAÎNE TV - DIRECT TÉLÉVISION</span>
     </div>
-    <div id="liveBadge" class="badge-live">HORS LIGNE</div>
+    <div id="masterStatus" class="status-badge">DIRECT EN LIGNE</div>
   </header>
 
   <div class="main-container">
     
-    <!-- Moniteur Vidéo Grand Écran Central (Canvas Dynamique avec Éclairage Studio) -->
-    <div class="video-wrapper">
-      <div class="tv-logo-watermark" id="watermarkBrand">MEPLA<span>TV</span></div>
-      
-      <!-- Chronomètre du direct en grand -->
-      <div class="timer-overlay" id="timerDisplay" style="display:none;">
-        <i class="fa-solid fa-circle"></i> <span id="timeCounter">00:00</span>
-      </div>
-
-      <video id="sourceVideo" autoplay playsinline muted></video>
-      <canvas id="outputCanvas"></canvas>
-    </div>
-
-    <!-- Sélecteur de Fonds Lumineux Studio -->
-    <div class="panel">
-      <h3 class="panel-title"><i class="fa-solid fa-palette"></i> Éclairage & Fonds Studio Lumineux</h3>
-      <div class="studio-bg-grid">
-        <button class="bg-btn active" onclick="setStudioBg(1)">Blanc Lumineux</button>
-        <button class="bg-btn" onclick="setStudioBg(2)">Bleu Électrique</button>
-        <button class="bg-btn" onclick="setStudioBg(3)">Jaune Studio</button>
-        <button class="bg-btn" onclick="setStudioBg(4)">Cyber Néon</button>
-      </div>
-    </div>
-
-    <!-- Barre de Contrôle Régie Pro -->
-    <div class="controls-bar">
-      <div class="btn-group">
-        <button id="toggleCamBtn" onclick="toggleCamera()"><i class="fa-solid fa-video"></i> Caméra</button>
-        <button id="switchCameraBtn" onclick="switchCamera()"><i class="fa-solid fa-camera-rotate"></i> Pivoter Caméra</button>
-        <button id="toggleMicBtn" onclick="toggleMic()"><i class="fa-solid fa-microphone"></i> Micro</button>
-      </div>
-
-      <div class="btn-group">
-        <button id="actionLiveBtn" class="btn-danger" onclick="toggleLiveStream()">
-          <i class="fa-solid fa-satellite-dish"></i> PASSER EN DIRECT
-        </button>
-        <button id="downloadReplayBtn" class="btn-download" style="display:none;" onclick="downloadReplayVideo()">
-          <i class="fa-solid fa-download"></i> Télécharger le Replay HD
-        </button>
-      </div>
-    </div>
-
-    <!-- Paramètres et Audience -->
-    <div class="panel">
-      <h3 class="panel-title"><i class="fa-solid fa-user-gear"></i> Paramètres du Studio & Audience</h3>
+    <!-- Colonne 1 : Profil de la Chaîne (Synchronisé par utilisateur) -->
+    <div class="column">
+      <h3 class="panel-title"><i class="fa-solid fa-user-gear"></i> Mon Profil de Télévision</h3>
       
       <div id="authStatus" style="font-size: 0.8rem; color: #ffcc00; padding: 6px; background: #121212; border-radius: 4px;">
-        Connexion à Firebase...
+        Connexion sécurisée à Firebase...
       </div>
 
       <div class="form-group">
-        <label>Sélectionner la Caméra</label>
-        <select id="cameraSelect" onchange="changeCameraDevice()"></select>
+        <label>Nom de votre Chaîne (ex: Loïc TV, Robert TV)</label>
+        <input type="text" id="profileChannelName" placeholder="Ex: Loïc TV" oninput="autoSaveDraft()">
       </div>
 
-      <div class="audience-box">
-        <span style="font-size:0.85rem; color:#aaa;"><i class="fa-solid fa-users"></i> Spectateurs en direct sur la chaîne</span>
-        <div class="audience-number" id="viewerCount">0</div>
+      <div class="form-group">
+        <label>URL du Logo / Photo de Profil</label>
+        <input type="text" id="profileLogoUrl" placeholder="https://i.postimg.cc/.../logo.png" oninput="autoSaveDraft()">
+      </div>
+
+      <div class="form-group">
+        <label>Position du Logo sur l'écran</label>
+        <select id="profileLogoPosition" onchange="autoSaveDraft()">
+          <option value="left">Coin Supérieur Gauche</option>
+          <option value="right">Coin Supérieur Droit</option>
+        </select>
+      </div>
+
+      <button id="saveProfileBtn" onclick="saveChannelProfile()" disabled><i class="fa-solid fa-floppy-disk"></i> Enregistrer le Profil</button>
+    </div>
+
+    <!-- Colonne 2 : Lecteur Master YouTube & Timeline (Centre) -->
+    <div class="center-column">
+      <div class="video-wrapper">
+        <div class="tv-logo-watermark" id="watermarkBrand" style="left: 16px; right: auto;">
+          <img id="watermarkImg" src="" style="display:none;" alt="Logo">
+          <span id="watermarkText">MA CHAÎNE TV</span>
+        </div>
+        
+        <div class="on-air-overlay" id="onAirBadge"><i class="fa-solid fa-satellite-dish"></i> EN DIRECT DU STUDIO</div>
+
+        <!-- Lecteur Intelligent YouTube IFrame -->
+        <div id="masterPlayer"></div>
+      </div>
+
+      <!-- Timeline & Infos Façon YouTube -->
+      <div class="youtube-timeline-bar">
+        <div class="timeline-track">
+          <div class="timeline-progress" id="timelineProgress"></div>
+        </div>
+        <div class="timeline-info-row">
+          <span id="currentPlayingTitle"><i class="fa-solid fa-circle-play"></i> Chargement de la grille...</span>
+          <span><span id="currentTimeText">0:00</span> / <span id="totalDurationText">0:00</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne 3 : Multi-Programmation, Formulaires et Tableau Synoptique -->
+    <div class="column">
+      <h3 class="panel-title"><i class="fa-solid fa-calendar-plus"></i> Programmer les Émissions</h3>
+      
+      <!-- Conteneur pour ajouter plusieurs formulaires à la suite (avec sauvegarde locale automatique) -->
+      <div class="dynamic-forms-wrapper" id="dynamicFormsContainer">
+        <div class="program-card-form" data-form-index="0">
+          <button type="button" class="remove-form-btn" onclick="this.parentElement.remove(); autoSaveDraft();"><i class="fa-solid fa-xmark"></i></button>
+          <div class="form-group">
+            <label>Titre de l'émission / Clip</label>
+            <input type="text" class="input-media-title" placeholder="Ex: Journal TV - 20H" oninput="autoSaveDraft()">
+          </div>
+          <div class="form-group">
+            <label>Lien YouTube (URL valide)</label>
+            <input type="text" class="input-media-url" placeholder="https://www.youtube.com/watch?v=..." oninput="autoSaveDraft()">
+          </div>
+          <div class="form-group">
+            <label>Heure de diffusion prévue</label>
+            <input type="time" class="input-media-time" value="08:00" onchange="autoSaveDraft()">
+          </div>
+        </div>
+      </div>
+
+      <button type="button" onclick="addNewProgramForm()" style="background: #22222a; color: #fff; border: 1px dashed #3ea6ff;"><i class="fa-solid fa-plus"></i> Ajouter un autre formulaire</button>
+      
+      <button id="publishAllMediaBtn" class="btn-success" onclick="publishAllProgramsToFirebase()" disabled><i class="fa-solid fa-cloud-arrow-up"></i> Publier dans ma Grille Direct</button>
+      <div id="statusMessage"></div>
+
+      <h3 class="panel-title" style="margin-top: 5px;"><i class="fa-solid fa-table-list"></i> Tableau Synoptique de la Grille</h3>
+      <div class="schedule-table-container">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Heure</th>
+              <th>Émission</th>
+              <th>Durée</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleTableBody">
+            <!-- Rempli dynamiquement -->
+          </tbody>
+        </table>
       </div>
     </div>
 
   </div>
 
-  <!-- Intégration Firebase officiel Mepla TV -->
+  <!-- Intégration de l'API YouTube IFrame -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <!-- Intégration Firebase officiel -->
   <script type="module">
     import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, onValue, push, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, push, set, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDE4IZ6OdS4DnIJk61oopuILZc1Fx7wA6g",
@@ -329,299 +443,451 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
+    const currentPlayingTitle = document.getElementById('currentPlayingTitle');
+    const scheduleTableBody = document.getElementById('scheduleTableBody');
+    const onAirBadge = document.getElementById('onAirBadge');
     const authStatus = document.getElementById('authStatus');
-    const viewerCountElement = document.getElementById('viewerCount');
+    const statusMessage = document.getElementById('statusMessage');
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+    const publishAllMediaBtn = document.getElementById('publishAllMediaBtn');
+    const timelineProgress = document.getElementById('timelineProgress');
+    const currentTimeText = document.getElementById('currentTimeText');
+    const totalDurationText = document.getElementById('totalDurationText');
+    const dynamicFormsContainer = document.getElementById('dynamicFormsContainer');
+
     let currentUserId = null;
-    let liveStatusRef = null;
+    let playlist = [];
+    let currentIndex = 0;
+    let isLiveActive = false;
+    let player = null;
+    let playerReady = false;
+    let progressInterval = null;
+
+    window.onYouTubeIframeAPIReady = function() {
+      player = new YT.Player('masterPlayer', {
+        height: '100%',
+        width: '100%',
+        playerVars: {
+          'autoplay': 1,
+          'controls': 1,
+          'rel': 0,
+          'iv_load_policy': 3
+        },
+        events: {
+          'onReady': (event) => {
+            playerReady = true;
+            if (playlist.length > 0 && !isLiveActive) {
+              playCurrentMedia();
+            }
+          },
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    };
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED && !isLiveActive) {
+        currentIndex = (currentIndex + 1) % playlist.length;
+        playCurrentMedia();
+      }
+    }
+
+    function startProgressTracker() {
+      clearInterval(progressInterval);
+      progressInterval = setInterval(() => {
+        if (player && player.getCurrentTime && player.getDuration) {
+          const current = player.getCurrentTime();
+          const duration = player.getDuration();
+          if (duration > 0) {
+            const percent = (current / duration) * 100;
+            timelineProgress.style.width = percent + '%';
+            currentTimeText.innerText = formatDuration(Math.floor(current));
+            totalDurationText.innerText = formatDuration(Math.floor(duration));
+          }
+        }
+      }, 1000);
+    }
 
     signInAnonymously(auth).catch((error) => {
       authStatus.innerText = "Erreur d'authentification Firebase.";
+      authStatus.style.color = "#ff0000";
     });
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUserId = user.uid;
-        authStatus.innerText = "Studio connecté (ID sécurisé)";
+        authStatus.innerText = "Connecté (ID Chaîne : " + currentUserId.substring(0, 6) + "...)";
         authStatus.style.color = "#2e7d32";
-
-        loadChannelProfile(currentUserId);
         
-        liveStatusRef = ref(db, `users/${currentUserId}/is_live`);
+        saveProfileBtn.disabled = false;
+        publishAllMediaBtn.disabled = false;
 
-        const connectionsRef = ref(db, `users/${currentUserId}/active_viewers`);
-        const myConnectionRef = push(connectionsRef);
-        set(myConnectionRef, true);
-        onDisconnect(myConnectionRef).remove();
-
-        onValue(connectionsRef, (snapshot) => {
-          const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
-          viewerCountElement.innerText = count;
-        });
+        loadUserProfile(currentUserId);
+        loadPlaylist(currentUserId);
+        listenLiveStatus(currentUserId);
+        restoreDraft();
+      } else {
+        authStatus.innerText = "En attente de connexion...";
+        saveProfileBtn.disabled = true;
+        publishAllMediaBtn.disabled = true;
       }
     });
 
-    function loadChannelProfile(userId) {
+    function loadUserProfile(userId) {
       const profileRef = ref(db, `users/${userId}/channel_profile`);
       onValue(profileRef, (snapshot) => {
         if (snapshot.exists()) {
           const profile = snapshot.val();
-          if (profile.channelName) {
-            document.getElementById('headerChannelName').innerText = profile.channelName.toUpperCase() + " - RÉGIE DIRECT";
-            document.getElementById('watermarkBrand').innerHTML = `${profile.channelName}<span>TV</span>`;
+          document.getElementById('profileChannelName').value = profile.channelName || "";
+          document.getElementById('profileLogoUrl').value = profile.logoUrl || "";
+          document.getElementById('profileLogoPosition').value = profile.position || "left";
+
+          updateWatermarkUI(profile.channelName, profile.logoUrl, profile.position);
+        } else {
+          const defaultName = "Loïc TV";
+          set(profileRef, { channelName: defaultName, position: "left" });
+          document.getElementById('profileChannelName').value = defaultName;
+          updateWatermarkUI(defaultName, "", "left");
+        }
+      });
+    }
+
+    window.saveChannelProfile = function() {
+      if (!currentUserId) return;
+      const channelName = document.getElementById('profileChannelName').value.trim();
+      const logoUrl = document.getElementById('profileLogoUrl').value.trim();
+      const position = document.getElementById('profileLogoPosition').value;
+
+      statusMessage.innerText = "Mise à jour du profil de la chaîne...";
+      set(ref(db, `users/${currentUserId}/channel_profile`), { channelName, logoUrl, position })
+        .then(() => {
+          statusMessage.innerText = "Profil enregistré avec succès !";
+          setTimeout(() => { statusMessage.innerText = ""; }, 3000);
+        });
+    };
+
+    function updateWatermarkUI(name, logoUrl, position) {
+      const watermarkBrand = document.getElementById('watermarkBrand');
+      const watermarkImg = document.getElementById('watermarkImg');
+      const watermarkText = document.getElementById('watermarkText');
+      const headerChannelName = document.getElementById('headerChannelName');
+
+      if (name) {
+        watermarkText.innerText = name;
+        headerChannelName.innerText = name.toUpperCase() + " - DIRECT TÉLÉVISION";
+      }
+
+      if (logoUrl) {
+        watermarkImg.src = logoUrl;
+        watermarkImg.style.display = 'block';
+      } else {
+        watermarkImg.style.display = 'none';
+      }
+
+      if (position === 'right') {
+        watermarkBrand.style.left = 'auto';
+        watermarkBrand.style.right = '16px';
+      } else {
+        watermarkBrand.style.right = 'auto';
+        watermarkBrand.style.left = '16px';
+      }
+    }
+
+    function listenLiveStatus(userId) {
+      const liveStatusRef = ref(db, `users/${userId}/is_live`);
+      const liveUrlRef = ref(db, `users/${userId}/live_url`);
+
+      onValue(liveStatusRef, (snapshot) => {
+        isLiveActive = snapshot.val();
+        if (isLiveActive) {
+          onAirBadge.style.display = 'block';
+          currentPlayingTitle.innerHTML = `<i class="fa-solid fa-satellite-dish" style="color:#ff0000;"></i> 🔴 DIFFUSION EN DIRECT DU STUDIO`;
+          
+          onValue(liveUrlRef, (urlSnap) => {
+            if (urlSnap.exists() && urlSnap.val() && playerReady) {
+              const liveVideoId = extractYouTubeId(urlSnap.val());
+              if (liveVideoId) {
+                player.loadVideoById(liveVideoId);
+                startProgressTracker();
+              }
+            }
+          }, { onlyOnce: true });
+        } else {
+          onAirBadge.style.display = 'none';
+          if (playlist.length > 0 && playerReady) {
+            playCurrentMedia();
           }
         }
       });
     }
 
-    window.updateLiveStatusInFirebase = function(status, streamUrl = "") {
-      if (!currentUserId || !liveStatusRef) return;
-      set(liveStatusRef, status);
-      if (streamUrl) {
-        set(ref(db, `users/${currentUserId}/live_url`), streamUrl);
-      }
-    };
-  </script>
+    function loadPlaylist(userId) {
+      const playlistRef = ref(db, `users/${userId}/playlist`);
+      onValue(playlistRef, (snapshot) => {
+        playlist = [];
+        scheduleTableBody.innerHTML = '';
+        
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          Object.keys(data).forEach(key => {
+            playlist.push({ id: key, ...data[key] });
+          });
+          renderScheduleTable();
 
-  <script>
-    let localStream = null;
-    let mediaRecorder = null;
-    let recordedChunks = [];
-    let recordedBlobUrl = null;
-    let isLive = false;
-    let isCamMuted = false;
-    let isMicMuted = false;
-    let useFrontCamera = false;
-    let timerInterval = null;
-    let secondsElapsed = 0;
-    let selectedBg = 1; // 1: Blanc, 2: Bleu, 3: Jaune, 4: Néon
-
-    const sourceVideo = document.getElementById('sourceVideo');
-    const outputCanvas = document.getElementById('outputCanvas');
-    const ctx = outputCanvas.getContext('2d');
-    const cameraSelect = document.getElementById('cameraSelect');
-    const liveBadge = document.getElementById('liveBadge');
-    const actionLiveBtn = document.getElementById('actionLiveBtn');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const timeCounter = document.getElementById('timeCounter');
-    const downloadReplayBtn = document.getElementById('downloadReplayBtn');
-
-    function setStudioBg(bgNum) {
-      selectedBg = bgNum;
-      document.querySelectorAll('.bg-btn').forEach((btn, idx) => {
-        if (idx + 1 === bgNum) btn.classList.add('active');
-        else btn.classList.remove('active');
+          if (!isLiveActive && playerReady && playlist.length > 0 && player.getPlayerState() !== YT.PlayerState.PLAYING) {
+            currentIndex = 0;
+            playCurrentMedia();
+          }
+        } else {
+          currentPlayingTitle.innerText = "Aucune émission programmée dans le direct.";
+        }
       });
     }
 
-    async function initDevices() {
-      try {
-        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        
-        cameraSelect.innerHTML = '';
-        videoDevices.forEach((device, index) => {
-          const option = document.createElement('option');
-          option.value = device.deviceId;
-          option.text = device.label || `Caméra ${index + 1}`;
-          cameraSelect.appendChild(option);
+    function playCurrentMedia() {
+      if (isLiveActive || playlist.length === 0 || !playerReady) return;
+      
+      const currentMedia = playlist[currentIndex];
+      const videoId = extractYouTubeId(currentMedia.url);
+      
+      if (videoId) {
+        currentPlayingTitle.innerHTML = `<i class="fa-solid fa-play" style="color:#3ea6ff;"></i> [${currentMedia.scheduledTime || '00:00'}] ${currentMedia.title} <span style="color:#aaa; font-size:0.75rem;">(${currentMedia.durationText || ''})</span>`;
+        player.loadVideoById(videoId);
+        startProgressTracker();
+        renderScheduleTable();
+      }
+    }
+
+    function renderScheduleTable() {
+      scheduleTableBody.innerHTML = '';
+      playlist.forEach((item, index) => {
+        const isActive = (!isLiveActive && index === currentIndex);
+        const tr = document.createElement('tr');
+        if (isActive) tr.className = 'active-row';
+
+        tr.innerHTML = `
+          <td><strong>${item.scheduledTime || '00:00'}</strong></td>
+          <td style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.title}">${item.title}</td>
+          <td>${item.durationText || '00:00'}</td>
+          <td>
+            <div class="table-actions">
+              <button class="btn-download" onclick="downloadVideoGallery('${item.url}', '${item.title.replace(/'/g, "")}')" title="Télécharger vers la galerie"><i class="fa-solid fa-download"></i></button>
+              <button onclick="editProgramItem('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${item.url}', '${item.scheduledTime || '08:00'}')" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn-danger" onclick="deleteProgramItem('${item.id}')" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        `;
+        scheduleTableBody.appendChild(tr);
+      });
+    }
+
+    window.addNewProgramForm = function() {
+      const card = document.createElement('div');
+      card.className = 'program-card-form';
+      card.innerHTML = `
+        <button type="button" class="remove-form-btn" onclick="this.parentElement.remove(); autoSaveDraft();"><i class="fa-solid fa-xmark"></i></button>
+        <div class="form-group">
+          <label>Titre de l'émission / Clip</label>
+          <input type="text" class="input-media-title" placeholder="Ex: Journal TV" oninput="autoSaveDraft()">
+        </div>
+        <div class="form-group">
+          <label>Lien YouTube</label>
+          <input type="text" class="input-media-url" placeholder="https://www.youtube.com/watch?v=..." oninput="autoSaveDraft()">
+        </div>
+        <div class="form-group">
+          <label>Heure de diffusion prévue</label>
+          <input type="time" class="input-media-time" value="12:00" onchange="autoSaveDraft()">
+        </div>
+      `;
+      dynamicFormsContainer.appendChild(card);
+    };
+
+    window.autoSaveDraft = function() {
+      const forms = dynamicFormsContainer.querySelectorAll('.program-card-form');
+      const formData = [];
+      forms.forEach(form => {
+        formData.push({
+          title: form.querySelector('.input-media-title').value,
+          url: form.querySelector('.input-media-url').value,
+          time: form.querySelector('.input-media-time').value
         });
+      });
+      localStorage.setItem('mepla_direct_drafts', JSON.stringify(formData));
+    };
 
-        await startCamera();
-      } catch (err) {
-        console.error("Erreur d'accès aux périphériques :", err);
-        alert("Veuillez autoriser l'accès à la caméra et au micro.");
-      }
-    }
-
-    async function startCamera() {
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
-
-      const deviceId = cameraSelect.value;
-      const constraints = {
-        video: {
-          deviceId: deviceId ? { exact: deviceId } : undefined,
-          facingMode: useFrontCamera ? 'user' : 'environment',
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        },
-        audio: true
-      };
-
+    function restoreDraft() {
+      const saved = localStorage.getItem('mepla_direct_drafts');
+      if (!saved) return;
       try {
-        localStream = await navigator.mediaDevices.getUserMedia(constraints);
-        sourceVideo.srcObject = localStream;
-        sourceVideo.muted = true;
-        await sourceVideo.play();
-        renderStudioFrame();
-      } catch (err) {
-        console.error("Erreur flux caméra :", err);
-      }
-    }
-
-    // Moteur Studio HD : Nettoyage d'image & Application des fonds lumineux dynamiques
-    function renderStudioFrame() {
-      if (sourceVideo.paused || sourceVideo.ended) return;
-
-      outputCanvas.width = sourceVideo.videoWidth || 1280;
-      outputCanvas.height = sourceVideo.videoHeight || 720;
-      const w = outputCanvas.width;
-      const h = outputCanvas.height;
-
-      // 1. Fond Lumineux Studio
-      let grad = ctx.createLinearGradient(0, 0, w, h);
-      if (selectedBg === 1) { // Blanc Lumineux
-        grad.addColorStop(0, '#f8f9fa'); grad.addColorStop(1, '#e9ecef');
-      } else if (selectedBg === 2) { // Bleu Électrique
-        grad.addColorStop(0, '#005c8a'); grad.addColorStop(1, '#001e30');
-      } else if (selectedBg === 3) { // Jaune Studio
-        grad.addColorStop(0, '#ffcc00'); grad.addColorStop(1, '#ff8800');
-      } else { // Cyber Néon
-        grad.addColorStop(0, '#7928ca'); grad.addColorStop(1, '#ff0080');
-      }
-
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-
-      // 2. Rendu de la caméra avec effet miroir si frontale et filtre netteté HD
-      ctx.save();
-      if (useFrontCamera) {
-        ctx.translate(w, 0);
-        ctx.scale(-1, 1);
-      }
-      ctx.filter = 'contrast(1.15) brightness(1.05) saturate(1.1)'; // Nettoyage et amélioration de l'image en direct
-      ctx.drawImage(sourceVideo, 0, 0, w, h);
-      ctx.restore();
-
-      requestAnimationFrame(renderStudioFrame);
-    }
-
-    async function changeCameraDevice() {
-      await startCamera();
-    }
-
-    async function switchCamera() {
-      useFrontCamera = !useFrontCamera;
-      await startCamera();
-    }
-
-    function toggleCamera() {
-      if (localStream) {
-        const videoTrack = localStream.getVideoTracks()[0];
-        if (videoTrack) {
-          videoTrack.enabled = !videoTrack.enabled;
-          isCamMuted = !videoTrack.enabled;
-          const btn = document.getElementById('toggleCamBtn');
-          btn.classList.toggle('active-state', isCamMuted);
-          btn.innerHTML = isCamMuted ? `<i class="fa-solid fa-video-slash"></i> Caméra Off` : `<i class="fa-solid fa-video"></i> Caméra`;
+        const data = JSON.parse(saved);
+        if (data && data.length > 0) {
+          dynamicFormsContainer.innerHTML = '';
+          data.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'program-card-form';
+            card.innerHTML = `
+              <button type="button" class="remove-form-btn" onclick="this.parentElement.remove(); autoSaveDraft();"><i class="fa-solid fa-xmark"></i></button>
+              <div class="form-group">
+                <label>Titre de l'émission / Clip</label>
+                <input type="text" class="input-media-title" value="${item.title || ''}" placeholder="Ex: Journal TV" oninput="autoSaveDraft()">
+              </div>
+              <div class="form-group">
+                <label>Lien YouTube</label>
+                <input type="text" class="input-media-url" value="${item.url || ''}" placeholder="https://www.youtube.com/watch?v=..." oninput="autoSaveDraft()">
+              </div>
+              <div class="form-group">
+                <label>Heure de diffusion prévue</label>
+                <input type="time" class="input-media-time" value="${item.time || '08:00'}" onchange="autoSaveDraft()">
+              </div>
+            `;
+            dynamicFormsContainer.appendChild(card);
+          });
         }
-      }
+      } catch(e) {}
     }
 
-    function toggleMic() {
-      if (localStream) {
-        const audioTrack = localStream.getAudioTracks()[0];
-        if (audioTrack) {
-          audioTrack.enabled = !audioTrack.enabled;
-          isMicMuted = !audioTrack.enabled;
-          const btn = document.getElementById('toggleMicBtn');
-          btn.classList.toggle('active-state', isMicMuted);
-          btn.innerHTML = isMicMuted ? `<i class="fa-solid fa-microphone-slash"></i> Micro Off` : `<i class="fa-solid fa-microphone"></i> Micro`;
+    window.publishAllProgramsToFirebase = async function() {
+      if (!currentUserId) return alert("Patientez...");
+      const forms = dynamicFormsContainer.querySelectorAll('.program-card-form');
+      if (forms.length === 0) return alert("Ajoutez au moins un formulaire de programmation.");
+
+      statusMessage.innerText = "Validation et calcul des durées YouTube...";
+      
+      for (let form of forms) {
+        const title = form.querySelector('.input-media-title').value.trim();
+        const url = form.querySelector('.input-media-url').value.trim();
+        const scheduledTime = form.querySelector('.input-media-time').value;
+
+        if (!title || !url) continue;
+
+        const videoId = extractYouTubeId(url);
+        if (!videoId) {
+          alert("Lien YouTube invalide détecté : " + url);
+          continue;
         }
+
+        await new Promise((resolve) => {
+          const tempDiv = document.createElement('div');
+          tempDiv.id = 'temp-yt-' + Math.random();
+          tempDiv.style.display = 'none';
+          document.body.appendChild(tempDiv);
+
+          new YT.Player(tempDiv.id, {
+            height: '1', width: '1', videoId: videoId,
+            events: {
+              'onReady': (event) => {
+                const durationSec = Math.round(event.target.getDuration());
+                const durationText = formatDuration(durationSec);
+
+                set(push(ref(db, `users/${currentUserId}/playlist`)), {
+                  title: title,
+                  url: url,
+                  scheduledTime: scheduledTime,
+                  durationSeconds: durationSec,
+                  durationText: durationText
+                }).then(() => {
+                  tempDiv.remove();
+                  resolve();
+                });
+              }
+            }
+          });
+        });
       }
-    }
 
-    function toggleLiveStream() {
-      isLive = !isLive;
-      if (isLive) {
-        liveBadge.classList.add('active');
-        liveBadge.innerText = "EN DIRECT";
-        actionLiveBtn.innerHTML = `<i class="fa-solid fa-stop"></i> ARRÊTER LE DIRECT`;
-        actionLiveBtn.classList.remove('btn-danger');
-        actionLiveBtn.classList.add('btn-success');
-        
-        downloadReplayBtn.style.display = "none";
-        timerDisplay.style.display = "flex";
-        startTimer();
-        startRecording();
+      statusMessage.innerText = "Programmes publiés avec succès dans votre direct !";
+      setTimeout(() => { statusMessage.innerText = ""; }, 3500);
 
-        if (window.updateLiveStatusInFirebase) {
-          window.updateLiveStatusInFirebase(true);
+      localStorage.removeItem('mepla_direct_drafts');
+      dynamicFormsContainer.innerHTML = `
+        <div class="program-card-form" data-form-index="0">
+          <button type="button" class="remove-form-btn" onclick="this.parentElement.remove(); autoSaveDraft();"><i class="fa-solid fa-xmark"></i></button>
+          <div class="form-group">
+            <label>Titre de l'émission / Clip</label>
+            <input type="text" class="input-media-title" placeholder="Ex: Journal TV - 20H" oninput="autoSaveDraft()">
+          </div>
+          <div class="form-group">
+            <label>Lien YouTube</label>
+            <input type="text" class="input-media-url" placeholder="https://www.youtube.com/watch?v=..." oninput="autoSaveDraft()">
+          </div>
+          <div class="form-group">
+            <label>Heure de diffusion prévue</label>
+            <input type="time" class="input-media-time" value="08:00" onchange="autoSaveDraft()">
+          </div>
+        </div>
+      `;
+    };
+
+    window.deleteProgramItem = function(id) {
+      if (!currentUserId || !confirm("Voulez-vous supprimer cette émission de votre direct ?")) return;
+      remove(ref(db, `users/${currentUserId}/playlist/${id}`));
+    };
+
+    window.editProgramItem = function(id, oldTitle, oldUrl, oldTime) {
+      const newTitle = prompt("Modifier le titre de l'émission :", oldTitle);
+      if (newTitle === null) return;
+      const newUrl = prompt("Modifier le lien YouTube :", oldUrl);
+      if (newUrl === null) return;
+      const newTime = prompt("Modifier l'heure (HH:MM) :", oldTime);
+      if (newTime === null) return;
+
+      const videoId = extractYouTubeId(newUrl);
+      if (!videoId) return alert("Lien YouTube invalide.");
+
+      statusMessage.innerText = "Mise à jour en cours...";
+
+      const tempDiv = document.createElement('div');
+      tempDiv.id = 'temp-edit-' + Date.now();
+      tempDiv.style.display = 'none';
+      document.body.appendChild(tempDiv);
+
+      new YT.Player(tempDiv.id, {
+        height: '1', width: '1', videoId: videoId,
+        events: {
+          'onReady': (event) => {
+            const durationSec = Math.round(event.target.getDuration());
+            const durationText = formatDuration(durationSec);
+
+            update(ref(db, `users/${currentUserId}/playlist/${id}`), {
+              title: newTitle,
+              url: newUrl,
+              scheduledTime: newTime,
+              durationSeconds: durationSec,
+              durationText: durationText
+            }).then(() => {
+              statusMessage.innerText = "Émission modifiée avec succès !";
+              setTimeout(() => { statusMessage.innerText = ""; }, 3000);
+              tempDiv.remove();
+            });
+          }
         }
-      } else {
-        liveBadge.classList.remove('active');
-        liveBadge.innerText = "HORS LIGNE";
-        actionLiveBtn.classList.remove('btn-success');
-        actionLiveBtn.classList.add('btn-danger');
-        actionLiveBtn.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> PASSER EN DIRECT`;
-        
-        stopTimer();
-        stopRecording();
+      });
+    };
 
-        if (window.updateLiveStatusInFirebase) {
-          window.updateLiveStatusInFirebase(false);
-        }
-      }
+    window.downloadVideoGallery = function(url, title) {
+      const videoId = extractYouTubeId(url);
+      if (!videoId) return alert("Lien YouTube invalide.");
+      
+      const safeTitle = title.replace(/[^a-zA-Z0-9]/g, '_');
+      const a = document.createElement('a');
+      a.href = `https://www.youtube.com/watch?v=${videoId}`;
+      a.target = '_blank';
+      a.download = `${safeTitle}.mp4`;
+      a.click();
+      alert(`Redirection vers le téléchargement de l'émission : ${title}`);
+    };
+
+    function extractYouTubeId(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
     }
 
-    function startTimer() {
-      secondsElapsed = 0;
-      timeCounter.innerText = "00:00";
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        secondsElapsed++;
-        const mins = Math.floor(secondsElapsed / 60);
-        const secs = secondsElapsed % 60;
-        timeCounter.innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-      }, 1000);
+    function formatDuration(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     }
-
-    function stopTimer() {
-      clearInterval(timerInterval);
-      timerDisplay.style.display = "none";
-    }
-
-    function startRecording() {
-      recordedChunks = [];
-      try {
-        const canvasStream = outputCanvas.captureStream(30);
-        const audioTrack = localStream.getAudioTracks()[0];
-        if (audioTrack) canvasStream.addTrack(audioTrack);
-
-        mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
-        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(recordedChunks, { type: 'video/webm' });
-          recordedBlobUrl = URL.createObjectURL(blob);
-          downloadReplayBtn.style.display = "flex";
-        };
-        mediaRecorder.start(1000);
-      } catch (e) {
-        console.log("Enregistrement canvas non supporté.");
-      }
-    }
-
-    function stopRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-      }
-    }
-
-    // Téléchargement direct et enregistrement dans la mémoire du téléphone/ordinateur
-    function downloadReplayVideo() {
-      if (recordedBlobUrl) {
-        const a = document.createElement('a');
-        a.href = recordedBlobUrl;
-        a.download = `MEPLA_TV_Direct_${Date.now()}.webm`;
-        a.click();
-      } else {
-        alert("Aucun enregistrement disponible.");
-      }
-    }
-
-    window.onload = initDevices;
   </script>
 </body>
 </html>
