@@ -56,7 +56,7 @@
 
     .main-container {
       display: grid;
-      grid-template-columns: 340px 1fr 420px;
+      grid-template-columns: 320px 1fr 420px;
       gap: 16px;
       padding: 16px;
       flex: 1;
@@ -101,7 +101,7 @@
       letter-spacing: 0.5px;
     }
 
-    /* Conteneur Vidéo Principal Master - Style Écran TV Pro de Luxe */
+    /* Conteneur Vidéo Principal Master */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -122,7 +122,7 @@
       display: block;
     }
 
-    /* Logo Watermark dynamique raffiné et réduit */
+    /* Logo Watermark dynamique */
     .tv-logo-watermark {
       position: absolute;
       top: 14px;
@@ -172,7 +172,7 @@
     }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-    /* Barre de progression style YouTube sous le lecteur */
+    /* Timeline & Progression */
     .youtube-timeline-bar {
       background: #14141d;
       padding: 12px 16px;
@@ -235,51 +235,41 @@
     button.btn-success { background-color: #2e7d32; color: #fff; box-shadow: 0 4px 12px rgba(46,125,50,0.4); }
     button.btn-success:hover { background-color: #388e3c; }
     button.btn-download { background-color: #ff9800; color: #000; }
-    button.btn-secondary-action { background: #1c1c2b; color: #fff; border: 1px dashed #3ea6ff; }
-    button.btn-secondary-action:hover { background: #26263b; }
 
-    /* Conteneur des formulaires dynamiques multiples */
-    .dynamic-forms-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-height: 250px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-    .program-card-form {
+    /* Formulaire Unique & Aperçu */
+    .single-form-card {
       background: #0b0b10;
       border: 1px solid #2b2b3d;
       border-radius: 10px;
-      padding: 12px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      position: relative;
+      gap: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
-    .remove-form-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(255,0,0,0.1);
-      color: #ff4444;
-      border: 1px solid rgba(255,0,0,0.3);
-      font-size: 0.85rem;
-      cursor: pointer;
-      padding: 2px 8px;
-      border-radius: 4px;
+    .video-preview-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #2b2b3d;
+      display: none;
     }
-    .remove-form-btn:hover { background: #ff0000; color: #fff; }
+    .video-preview-box iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
 
-    /* Tableau synoptique de la Grille des Programmes */
+    /* Tableau synoptique de la Grille */
     .schedule-table-container {
       flex: 1;
       background: #0b0b10;
       border-radius: 10px;
       border: 1px solid #2b2b3d;
       overflow-y: auto;
-      max-height: 240px;
+      max-height: 280px;
       padding: 6px;
     }
     table.schedule-table {
@@ -348,17 +338,17 @@
 
       <div class="form-group">
         <label>Nom de votre Chaîne</label>
-        <input type="text" id="profileChannelName" placeholder="Ex: Studio TV Pro" oninput="autoSaveDraft()">
+        <input type="text" id="profileChannelName" placeholder="Ex: Studio TV Pro">
       </div>
 
       <div class="form-group">
         <label>URL du Logo / Photo de Profil</label>
-        <input type="text" id="profileLogoUrl" placeholder="https://i.postimg.cc/.../logo.png" oninput="autoSaveDraft()">
+        <input type="text" id="profileLogoUrl" placeholder="https://i.postimg.cc/.../logo.png">
       </div>
 
       <div class="form-group">
         <label>Position du Logo sur l'écran</label>
-        <select id="profileLogoPosition" onchange="autoSaveDraft()">
+        <select id="profileLogoPosition">
           <option value="left">Coin Supérieur Gauche</option>
           <option value="right">Coin Supérieur Droit</option>
         </select>
@@ -381,7 +371,7 @@
         <div id="masterPlayer"></div>
       </div>
 
-      <!-- Timeline & Infos Façon YouTube -->
+      <!-- Timeline & Infos -->
       <div class="youtube-timeline-bar">
         <div class="timeline-track">
           <div class="timeline-progress" id="timelineProgress"></div>
@@ -393,32 +383,40 @@
       </div>
     </div>
 
-    <!-- Colonne 3 : Multi-Programmation, Formulaires et Tableau Synoptique -->
+    <!-- Colonne 3 : Formulaire Unique avec Aperçu & Tableau Synoptique -->
     <div class="column">
-      <h3 class="panel-title"><i class="fa-solid fa-calendar-plus"></i> Programmer les Émissions</h3>
+      <h3 class="panel-title"><i class="fa-solid fa-calendar-plus"></i> Programmer une Émission</h3>
       
-      <!-- Conteneur pour ajouter plusieurs formulaires à la suite -->
-      <div class="dynamic-forms-wrapper" id="dynamicFormsContainer">
-        <div class="program-card-form" data-form-index="0">
-          <button type="button" class="remove-form-btn" onclick="this.parentElement.remove(); autoSaveDraft();"><i class="fa-solid fa-xmark"></i></button>
-          <div class="form-group">
-            <label>Titre de l'émission / Clip</label>
-            <input type="text" class="input-media-title" placeholder="Ex: Journal TV - 20H" oninput="autoSaveDraft()">
-          </div>
-          <div class="form-group">
-            <label>Lien YouTube (URL valide)</label>
-            <input type="text" class="input-media-url" placeholder="https://www.youtube.com/watch?v=..." oninput="autoSaveDraft()">
-          </div>
-          <div class="form-group">
-            <label>Heure de diffusion prévue</label>
-            <input type="time" class="input-media-time" value="08:00" onchange="autoSaveDraft()">
-          </div>
+      <!-- Formulaire Unique avec Aperçu Intégré -->
+      <div class="single-form-card">
+        <div class="form-group">
+          <label>Titre de l'émission</label>
+          <input type="text" id="inputMediaTitle" placeholder="Ex: Journal Télévisé 20H">
         </div>
+
+        <div class="form-group">
+          <label>URL YouTube Unique</label>
+          <input type="text" id="inputMediaUrl" placeholder="https://www.youtube.com/watch?v=..." oninput="updateVideoPreview()">
+        </div>
+
+        <!-- Aperçu en direct de la vidéo saisie -->
+        <div class="video-preview-box" id="videoPreviewBox">
+          <iframe id="previewIframe" src="" allowfullscreen></iframe>
+        </div>
+
+        <div class="form-group">
+          <label>Heure de diffusion (Ex: 20:00)</label>
+          <input type="time" id="inputMediaTime" value="12:00">
+        </div>
+
+        <div class="form-group">
+          <label>Thème / Catégorie</label>
+          <input type="text" id="inputMediaTheme" placeholder="Ex: Information, Talk-show, Culture...">
+        </div>
+
+        <button id="publishMediaBtn" class="btn-success" onclick="publishProgramToFirebase()" disabled><i class="fa-solid fa-cloud-arrow-up"></i> Publier dans la Grille Direct</button>
       </div>
 
-      <button type="button" class="btn-secondary-action" onclick="addNewProgramForm()"><i class="fa-solid fa-plus"></i> Ajouter un autre formulaire</button>
-      
-      <button id="publishAllMediaBtn" class="btn-success" onclick="publishAllProgramsToFirebase()" disabled><i class="fa-solid fa-cloud-arrow-up"></i> Publier dans ma Grille Direct</button>
       <div id="statusMessage"></div>
 
       <h3 class="panel-title" style="margin-top: 5px;"><i class="fa-solid fa-table-list"></i> Tableau Synoptique de la Grille</h3>
@@ -428,6 +426,7 @@
             <tr>
               <th>Heure</th>
               <th>Émission</th>
+              <th>Thème</th>
               <th>Durée</th>
               <th>Actions</th>
             </tr>
@@ -471,11 +470,12 @@
     const authStatus = document.getElementById('authStatus');
     const statusMessage = document.getElementById('statusMessage');
     const saveProfileBtn = document.getElementById('saveProfileBtn');
-    const publishAllMediaBtn = document.getElementById('publishAllMediaBtn');
+    const publishMediaBtn = document.getElementById('publishMediaBtn');
     const timelineProgress = document.getElementById('timelineProgress');
     const currentTimeText = document.getElementById('currentTimeText');
     const totalDurationText = document.getElementById('totalDurationText');
-    const dynamicFormsContainer = document.getElementById('dynamicFormsContainer');
+    const videoPreviewBox = document.getElementById('videoPreviewBox');
+    const previewIframe = document.getElementById('previewIframe');
 
     let currentUserId = null;
     let playlist = [];
@@ -489,12 +489,7 @@
       player = new YT.Player('masterPlayer', {
         height: '100%',
         width: '100%',
-        playerVars: {
-          'autoplay': 1,
-          'controls': 1,
-          'rel': 0,
-          'iv_load_policy': 3
-        },
+        playerVars: { 'autoplay': 1, 'controls': 1, 'rel': 0, 'iv_load_policy': 3 },
         events: {
           'onReady': (event) => {
             playerReady = true;
@@ -542,16 +537,15 @@
         authStatus.style.color = "#4caf50";
         
         saveProfileBtn.disabled = false;
-        publishAllMediaBtn.disabled = false;
+        publishMediaBtn.disabled = false;
 
         loadUserProfile(currentUserId, user);
         loadPlaylist(currentUserId);
         listenLiveStatus(currentUserId);
-        restoreDraft();
       } else {
         authStatus.innerText = "En attente de connexion...";
         saveProfileBtn.disabled = true;
-        publishAllMediaBtn.disabled = true;
+        publishMediaBtn.disabled = true;
       }
     });
 
@@ -583,7 +577,7 @@
       statusMessage.innerText = "Enregistrement du profil...";
       set(ref(db, `studio-television/${currentUserId}/channel_profile`), { channelName, logoUrl, position })
         .then(() => {
-          statusMessage.innerText = "Profil enregistré dans studio-television !";
+          statusMessage.innerText = "Profil enregistré avec succès !";
           setTimeout(() => { statusMessage.innerText = ""; }, 3000);
         });
     };
@@ -661,10 +655,72 @@
             playCurrentMedia();
           }
         } else {
-          currentPlayingTitle.innerText = "Aucune émission programmée dans le direct.";
+          currentPlayingTitle.innerText = "Aucune émission programmée.";
         }
       });
     }
+
+    window.updateVideoPreview = function() {
+      const url = document.getElementById('inputMediaUrl').value.trim();
+      const videoId = extractYouTubeId(url);
+      if (videoId) {
+        previewIframe.src = `https://www.youtube.com/embed/${videoId}`;
+        videoPreviewBox.style.display = 'block';
+      } else {
+        videoPreviewBox.style.display = 'none';
+        previewIframe.src = '';
+      }
+    };
+
+    window.publishProgramToFirebase = function() {
+      if (!currentUserId) return alert("Patientez, connexion en cours...");
+      const title = document.getElementById('inputMediaTitle').value.trim();
+      const url = document.getElementById('inputMediaUrl').value.trim();
+      const time = document.getElementById('inputMediaTime').value;
+      const theme = document.getElementById('inputMediaTheme').value.trim() || "Général";
+
+      if (!title || !url) return alert("Veuillez renseigner le titre et l'URL YouTube.");
+
+      const videoId = extractYouTubeId(url);
+      if (!videoId) return alert("Lien YouTube invalide.");
+
+      statusMessage.innerText = "Publication dans studio-television...";
+
+      const tempDiv = document.createElement('div');
+      tempDiv.id = 'temp-pub-' + Date.now();
+      tempDiv.style.display = 'none';
+      document.body.appendChild(tempDiv);
+
+      new YT.Player(tempDiv.id, {
+        height: '1', width: '1', videoId: videoId,
+        events: {
+          'onReady': (event) => {
+            const durationSec = Math.round(event.target.getDuration());
+            const durationText = formatDuration(durationSec);
+
+            set(push(ref(db, `studio-television/${currentUserId}/playlist`)), {
+              title: title,
+              url: url,
+              scheduledTime: time,
+              theme: theme,
+              durationSeconds: durationSec,
+              durationText: durationText
+            }).then(() => {
+              statusMessage.innerText = "Émission publiée avec succès dans studio-television !";
+              setTimeout(() => { statusMessage.innerText = ""; }, 3000);
+              
+              // Réinitialiser le formulaire
+              document.getElementById('inputMediaTitle').value = '';
+              document.getElementById('inputMediaUrl').value = '';
+              document.getElementById('inputMediaTheme').value = '';
+              videoPreviewBox.style.display = 'none';
+              previewIframe.src = '';
+              tempDiv.remove();
+            });
+          }
+        }
+      });
+    };
 
     function playCurrentMedia() {
       if (isLiveActive || playlist.length === 0 || !playerReady) return;
@@ -673,7 +729,7 @@
       const videoId = extractYouTubeId(currentMedia.url);
       
       if (videoId) {
-        currentPlayingTitle.innerHTML = `<i class="fa-solid fa-play" style="color:#3ea6ff;"></i> [${currentMedia.scheduledTime || '00:00'}] ${currentMedia.title} <span style="color:#888; font-size:0.75rem;">(${currentMedia.durationText || ''})</span>`;
+        currentPlayingTitle.innerHTML = `<i class="fa-solid fa-play" style="color:#3ea6ff;"></i> [${currentMedia.scheduledTime || '00:00'}] ${currentMedia.title} <span style="color:#888; font-size:0.75rem;">(${currentMedia.theme || 'Général'})</span>`;
         player.loadVideoById(videoId);
         startProgressTracker();
         renderScheduleTable();
@@ -689,12 +745,13 @@
 
         tr.innerHTML = `
           <td><strong>${item.scheduledTime || '00:00'}</strong></td>
-          <td style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.title}">${item.title}</td>
+          <td style="max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.title}">${item.title}</td>
+          <td><span style="background:#1c1c2b; padding:2px 6px; border-radius:4px; font-size:0.7rem; color:#3ea6ff;">${item.theme || 'Général'}</span></td>
           <td>${item.durationText || '00:00'}</td>
           <td>
             <div class="table-actions">
               <button class="btn-download" onclick="downloadVideoGallery('${item.url}', '${item.title.replace(/'/g, "")}')" title="Télécharger"><i class="fa-solid fa-download"></i></button>
-              <button onclick="editProgramItem('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${item.url}', '${item.scheduledTime || '08:00'}')" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="editProgramItem('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${item.url}', '${item.scheduledTime || '08:00'}', '${item.theme || 'Général'}')" title="Modifier"><i class="fa-solid fa-pen"></i></button>
               <button class="btn-danger" onclick="deleteProgramItem('${item.id}')" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
@@ -703,160 +760,25 @@
       });
     }
 
-    window.addNewProgramForm = function() {
-      const card = document.createElement('div');
-      card.className = 'program-card-form';
-      card.innerHTML = `
-        <button type="button" class="remove-form-btn" onclick="this.parentElement.remove(); autoSaveDraft();"><i class="fa-solid fa-xmark"></i></button>
-        <div class="form-group">
-          <label>Titre de l'émission / Clip</label>
-          <input type="text" class="input-media-title" placeholder="Ex: Journal TV" oninput="autoSaveDraft()">
-        </div>
-        <div class="form-group">
-          <label>Lien YouTube</label>
-          <input type="text" class="input-media-url" placeholder="https://www.youtube.com/watch?v=..." oninput="autoSaveDraft()">
-        </div>
-        <div class="form-group">
-          <label>Heure de diffusion prévue</label>
-          <input type="time" class="input-media-time" value="12:00" onchange="autoSaveDraft()">
-        </div>
-      `;
-      dynamicFormsContainer.appendChild(card);
-    };
-
-    window.autoSaveDraft = function() {
-      const forms = dynamicFormsContainer.querySelectorAll('.program-card-form');
-      const formData = [];
-      forms.forEach(form => {
-        formData.push({
-          title: form.querySelector('.input-media-title').value,
-          url: form.querySelector('.input-media-url').value,
-          time: form.querySelector('.input-media-time').value
-        });
-      });
-      localStorage.setItem('mepla_studio_drafts', JSON.stringify(formData));
-    };
-
-    function restoreDraft() {
-      const saved = localStorage.getItem('mepla_studio_drafts');
-      if (!saved) return;
-      try {
-        const data = JSON.parse(saved);
-        if (data && data.length > 0) {
-          dynamicFormsContainer.innerHTML = '';
-          data.forEach((item) => {
-            const card = document.createElement('div');
-            card.className = 'program-card-form';
-            card.innerHTML = `
-              <button type="button" class="remove-form-btn" onclick="this.parentElement.remove(); autoSaveDraft();"><i class="fa-solid fa-xmark"></i></button>
-              <div class="form-group">
-                <label>Titre de l'émission / Clip</label>
-                <input type="text" class="input-media-title" value="${item.title || ''}" placeholder="Ex: Journal TV" oninput="autoSaveDraft()">
-              </div>
-              <div class="form-group">
-                <label>Lien YouTube</label>
-                <input type="text" class="input-media-url" value="${item.url || ''}" placeholder="https://www.youtube.com/watch?v=..." oninput="autoSaveDraft()">
-              </div>
-              <div class="form-group">
-                <label>Heure de diffusion prévue</label>
-                <input type="time" class="input-media-time" value="${item.time || '08:00'}" onchange="autoSaveDraft()">
-              </div>
-            `;
-            dynamicFormsContainer.appendChild(card);
-          });
-        }
-      } catch(e) {}
-    }
-
-    window.publishAllProgramsToFirebase = async function() {
-      if (!currentUserId) return alert("Patientez...");
-      const forms = dynamicFormsContainer.querySelectorAll('.program-card-form');
-      if (forms.length === 0) return alert("Ajoutez au moins un formulaire de programmation.");
-
-      statusMessage.innerText = "Validation et calcul des durées YouTube...";
-      
-      for (let form of forms) {
-        const title = form.querySelector('.input-media-title').value.trim();
-        const url = form.querySelector('.input-media-url').value.trim();
-        const scheduledTime = form.querySelector('.input-media-time').value;
-
-        if (!title || !url) continue;
-
-        const videoId = extractYouTubeId(url);
-        if (!videoId) {
-          alert("Lien YouTube invalide détecté : " + url);
-          continue;
-        }
-
-        await new Promise((resolve) => {
-          const tempDiv = document.createElement('div');
-          tempDiv.id = 'temp-yt-' + Math.random();
-          tempDiv.style.display = 'none';
-          document.body.appendChild(tempDiv);
-
-          new YT.Player(tempDiv.id, {
-            height: '1', width: '1', videoId: videoId,
-            events: {
-              'onReady': (event) => {
-                const durationSec = Math.round(event.target.getDuration());
-                const durationText = formatDuration(durationSec);
-
-                set(push(ref(db, `studio-television/${currentUserId}/playlist`)), {
-                  title: title,
-                  url: url,
-                  scheduledTime: scheduledTime,
-                  durationSeconds: durationSec,
-                  durationText: durationText
-                }).then(() => {
-                  tempDiv.remove();
-                  resolve();
-                });
-              }
-            }
-          });
-        });
-      }
-
-      statusMessage.innerText = "Publié avec succès dans studio-television !";
-      setTimeout(() => { statusMessage.innerText = ""; }, 3500);
-
-      localStorage.removeItem('mepla_studio_drafts');
-      dynamicFormsContainer.innerHTML = `
-        <div class="program-card-form" data-form-index="0">
-          <button type="button" class="remove-form-btn" onclick="this.parentElement.remove(); autoSaveDraft();"><i class="fa-solid fa-xmark"></i></button>
-          <div class="form-group">
-            <label>Titre de l'émission / Clip</label>
-            <input type="text" class="input-media-title" placeholder="Ex: Journal TV - 20H" oninput="autoSaveDraft()">
-          </div>
-          <div class="form-group">
-            <label>Lien YouTube</label>
-            <input type="text" class="input-media-url" placeholder="https://www.youtube.com/watch?v=..." oninput="autoSaveDraft()">
-          </div>
-          <div class="form-group">
-            <label>Heure de diffusion prévue</label>
-            <input type="time" class="input-media-time" value="08:00" onchange="autoSaveDraft()">
-          </div>
-        </div>
-      `;
-    };
-
     window.deleteProgramItem = function(id) {
-      if (!currentUserId || !confirm("Voulez-vous supprimer cette émission de votre grille de direct ?")) return;
+      if (!currentUserId || !confirm("Voulez-vous supprimer cette émission ?")) return;
       remove(ref(db, `studio-television/${currentUserId}/playlist/${id}`));
     };
 
-    window.editProgramItem = function(id, oldTitle, oldUrl, oldTime) {
+    window.editProgramItem = function(id, oldTitle, oldUrl, oldTime, oldTheme) {
       const newTitle = prompt("Modifier le titre de l'émission :", oldTitle);
       if (newTitle === null) return;
-      const newUrl = prompt("Modifier le lien YouTube :", oldUrl);
+      const newUrl = prompt("Modifier l'URL YouTube :", oldUrl);
       if (newUrl === null) return;
       const newTime = prompt("Modifier l'heure (HH:MM) :", oldTime);
       if (newTime === null) return;
+      const newTheme = prompt("Modifier le thème :", oldTheme);
+      if (newTheme === null) return;
 
       const videoId = extractYouTubeId(newUrl);
-      if (!videoId) return alert("Lien YouTube invalide.");
+      if (!videoId) return alert("URL YouTube invalide.");
 
-      statusMessage.innerText = "Mise à jour en cours dans studio-television...";
+      statusMessage.innerText = "Mise à jour dans studio-television...";
 
       const tempDiv = document.createElement('div');
       tempDiv.id = 'temp-edit-' + Date.now();
@@ -874,10 +796,11 @@
               title: newTitle,
               url: newUrl,
               scheduledTime: newTime,
+              theme: newTheme,
               durationSeconds: durationSec,
               durationText: durationText
             }).then(() => {
-              statusMessage.innerText = "Émission modifiée et synchronisée avec succès !";
+              statusMessage.innerText = "Émission modifiée et enregistrée avec succès !";
               setTimeout(() => { statusMessage.innerText = ""; }, 3000);
               tempDiv.remove();
             });
@@ -888,7 +811,7 @@
 
     window.downloadVideoGallery = function(url, title) {
       const videoId = extractYouTubeId(url);
-      if (!videoId) return alert("Lien YouTube invalide.");
+      if (!videoId) return alert("URL YouTube invalide.");
       
       const safeTitle = title.replace(/[^a-zA-Z0-9]/g, '_');
       const a = document.createElement('a');
@@ -896,7 +819,7 @@
       a.target = '_blank';
       a.download = `${safeTitle}.mp4`;
       a.click();
-      alert(`Redirection vers le téléchargement de l'émission : ${title}`);
+      alert(`Redirection vers le téléchargement : ${title}`);
     };
 
     function extractYouTubeId(url) {

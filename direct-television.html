@@ -344,7 +344,7 @@
 
   <div class="main-container">
     
-    <!-- Moniteur Vidéo Grand Écran Central (Canvas Dynamique Standard TV 16:9) -->
+    <!-- Moniteur Vidéo Grand Écran Central -->
     <div class="video-wrapper">
       <div class="tv-logo-watermark" id="watermarkBrand">MEPLA<span>TV</span></div>
       
@@ -362,14 +362,13 @@
       <canvas id="outputCanvas"></canvas>
     </div>
 
-    <!-- Sélecteur de Fonds Professionnels Studio TV & Journal (40 Options) -->
+    <!-- Sélecteur de Fonds Professionnels (40 Options) -->
     <div class="panel">
       <div class="picker-header">
         <h3 class="panel-title" style="border:none; padding:0; margin:0;"><i class="fa-solid fa-palette"></i> Sélecteur de Fonds Studio TV & Journal (40 Options)</h3>
         <span id="selectedCounter" style="font-size: 0.75rem; color: #d4af37; font-weight: bold;">Option 1 / 40</span>
       </div>
 
-      <!-- Filtres par catégories TV -->
       <div class="category-tabs">
         <button class="tab-btn active" onclick="filterCategory('all')">Tous (40)</button>
         <button class="tab-btn" onclick="filterCategory('journal')">Journal TV & News</button>
@@ -379,7 +378,6 @@
         <button class="tab-btn" onclick="filterCategory('luxury')">Élite & Or</button>
       </div>
 
-      <!-- Grille des 40 fonds -->
       <div id="bgGrid" class="bg-grid"></div>
     </div>
 
@@ -407,7 +405,7 @@
       </div>
     </div>
 
-    <!-- Paramètres, Nom de la Chaîne & Synchronisation Firebase -->
+    <!-- Paramètres & Firebase -->
     <div class="panel">
       <h3 class="panel-title"><i class="fa-solid fa-user-gear"></i> Paramètres du Studio & Chaîne TV</h3>
       
@@ -437,7 +435,7 @@
 
   </div>
 
-  <!-- Intégration Firebase officiel -->
+  <!-- Intégration Firebase officiel & Base de Données Realtime -->
   <script type="module">
     import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -471,10 +469,11 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUserId = user.uid;
+        window.currentUserIdGlobal = currentUserId;
         authStatus.innerText = "Connecté (Studio ID : " + currentUserId.substring(0, 6) + "...)";
         authStatus.style.color = "#4caf50";
 
-        // Synchronisation automatique avec direct-television et studio-television
+        // Synchronisation du profil de la chaîne
         const profileRef = ref(db, `direct-television/${currentUserId}/channel_profile`);
         onValue(profileRef, (snapshot) => {
           if (snapshot.exists()) {
@@ -485,7 +484,7 @@
               applyChannelIdentity(channelNameGlobal);
             }
           } else {
-            const defaultName = (user.displayName) ? user.displayName + " TV" : "Loïc TV";
+            const defaultName = "Loïc TV";
             set(profileRef, {
               channelName: defaultName,
               createdAt: new Date().toISOString(),
@@ -525,12 +524,11 @@
         updatedAt: new Date().toISOString()
       };
 
-      // Écriture synchronisée dans direct-television et studio-television
       update(ref(db, `direct-television/${currentUserId}/channel_profile`), profileData);
       update(ref(db, `studio-television/${currentUserId}/channel_profile`), profileData).then(() => {
         channelNameGlobal = newName;
         applyChannelIdentity(newName);
-        alert("Nom de la chaîne enregistré avec succès dans la base de données !");
+        alert("Nom de la chaîne enregistré et synchronisé dans la base de données !");
       });
     };
 
@@ -539,10 +537,25 @@
       alert("Nom de la chaîne copié dans le presse-papier !");
     };
 
-    window.updateLiveStatusInFirebase = function(isLiveActive) {
+    // Fonction d'écriture des URL de direct et statut dans Realtime Database
+    window.saveBroadcastToFirebase = function(isLiveActive, videoUrl = null) {
       if (!currentUserId) return;
-      set(ref(db, `direct-television/${currentUserId}/is_live`), isLiveActive);
-      set(ref(db, `studio-television/${currentUserId}/is_live`), isLiveActive);
+      const liveRef = ref(db, `direct-television/${currentUserId}/current_live`);
+      set(liveRef, {
+        is_live: isLiveActive,
+        channelName: channelNameGlobal,
+        timestamp: Date.now(),
+        replayUrl: videoUrl || ""
+      });
+
+      if (!isLiveActive && videoUrl) {
+        const historyRef = push(ref(db, `direct-television/${currentUserId}/broadcasts_history`));
+        set(historyRef, {
+          channelName: channelNameGlobal,
+          timestamp: Date.now(),
+          replayUrl: videoUrl
+        });
+      }
     };
   </script>
 
@@ -562,6 +575,7 @@
     let selfieSegmentation = null;
     let segmentationMaskCanvas = document.createElement('canvas');
     let segmentationCtx = segmentationMaskCanvas.getContext('2d');
+    let lastSegmentationResults = null;
 
     const studioBackgrounds = [
       { id: 1, category: 'journal', name: 'JT Actualités Bleu Pro', type: 'linear', colors: ['#0b192c', '#1e3e62', '#000000'], angle: 135 },
@@ -636,9 +650,11 @@
           locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
         });
         selfieSegmentation.setOptions({ modelSelection: 1, selfieMode: false });
-        selfieSegmentation.onResults(onSegmentationResults);
+        selfieSegmentation.onResults((results) => {
+          lastSegmentationResults = results;
+        });
       } catch (e) {
-        console.warn("MediaPipe non chargé, mode standard actif.");
+        console.warn("MediaPipe non disponible.");
       }
     }
 
@@ -715,7 +731,7 @@
 
         await startCamera();
       } catch (err) {
-        console.error("Erreur d'accès aux périphériques :", err);
+        console.error("Erreur caméras :", err);
       }
     }
 
@@ -749,68 +765,63 @@
     function loopStudioFrame() {
       if (sourceVideo.paused || sourceVideo.ended) return;
 
+      const w = sourceVideo.videoWidth || 1280;
+      const h = sourceVideo.videoHeight || 720;
+      outputCanvas.width = w;
+      outputCanvas.height = h;
+
       if (isMagicBackgroundActive && selfieSegmentation) {
         selfieSegmentation.send({ image: sourceVideo }).then(() => {
+          renderSegmentationFrame(w, h);
           requestAnimationFrame(loopStudioFrame);
         }).catch(() => {
-          renderStandardFrame();
+          renderStandardFrame(w, h);
           requestAnimationFrame(loopStudioFrame);
         });
       } else {
-        renderStandardFrame();
+        renderStandardFrame(w, h);
         requestAnimationFrame(loopStudioFrame);
       }
     }
 
-    function renderStandardFrame() {
-      outputCanvas.width = sourceVideo.videoWidth || 1280;
-      outputCanvas.height = sourceVideo.videoHeight || 720;
-      const w = outputCanvas.width;
-      const h = outputCanvas.height;
-
-      // 1. Dessiner le fond dynamique sélectionné (Garanti de s'afficher instantanément)
+    function renderStandardFrame(w, h) {
       drawStudioBackground(w, h);
-
-      // 2. Dessiner la vidéo de la caméra par-dessus
       ctx.save();
       if (useFrontCamera) {
         ctx.translate(w, 0);
         ctx.scale(-1, 1);
       }
-      ctx.filter = 'contrast(1.1) brightness(1.05) saturate(1.1)';
       ctx.drawImage(sourceVideo, 0, 0, w, h);
       ctx.restore();
     }
 
-    function onSegmentationResults(results) {
-      outputCanvas.width = sourceVideo.videoWidth || 1280;
-      outputCanvas.height = sourceVideo.videoHeight || 720;
-      const w = outputCanvas.width;
-      const h = outputCanvas.height;
+    function renderSegmentationFrame(w, h) {
+      drawStudioBackground(w, h);
+      if (!lastSegmentationResults || !lastSegmentationResults.segmentationMask) {
+        renderStandardFrame(w, h);
+        return;
+      }
 
       segmentationMaskCanvas.width = w;
       segmentationMaskCanvas.height = h;
-
-      drawStudioBackground(w, h);
 
       ctx.save();
       if (useFrontCamera) {
         ctx.translate(w, 0);
         ctx.scale(-1, 1);
       }
-      
+
       segmentationCtx.clearRect(0, 0, w, h);
-      segmentationCtx.drawImage(results.segmentationMask, 0, 0, w, h);
-      
+      segmentationCtx.drawImage(lastSegmentationResults.segmentationMask, 0, 0, w, h);
+
       ctx.save();
       ctx.globalCompositeOperation = 'source-over';
-      ctx.filter = 'contrast(1.1) brightness(1.05) saturate(1.1)';
       ctx.drawImage(sourceVideo, 0, 0, w, h);
 
       ctx.globalCompositeOperation = 'destination-in';
       ctx.drawImage(segmentationMaskCanvas, 0, 0, w, h);
       ctx.restore();
-      
+
       ctx.restore();
     }
 
@@ -841,14 +852,8 @@
       }
     }
 
-    window.changeCameraDevice = async function() {
-      await startCamera();
-    }
-
-    window.switchCamera = async function() {
-      useFrontCamera = !useFrontCamera;
-      await startCamera();
-    }
+    window.changeCameraDevice = async function() { await startCamera(); }
+    window.switchCamera = async function() { useFrontCamera = !useFrontCamera; await startCamera(); }
 
     window.toggleCamera = function() {
       if (localStream) {
@@ -890,8 +895,8 @@
         startTimer();
         startRecording();
 
-        if (window.updateLiveStatusInFirebase) {
-          window.updateLiveStatusInFirebase(true);
+        if (window.saveBroadcastToFirebase) {
+          window.saveBroadcastToFirebase(true);
         }
       } else {
         liveBadge.classList.remove('active');
@@ -902,10 +907,6 @@
         
         stopTimer();
         stopRecording();
-
-        if (window.updateLiveStatusInFirebase) {
-          window.updateLiveStatusInFirebase(false);
-        }
       }
     }
 
@@ -939,10 +940,14 @@
           const blob = new Blob(recordedChunks, { type: 'video/webm' });
           recordedBlobUrl = URL.createObjectURL(blob);
           downloadReplayBtn.style.display = "flex";
+
+          if (window.saveBroadcastToFirebase) {
+            window.saveBroadcastToFirebase(false, recordedBlobUrl);
+          }
         };
         mediaRecorder.start(1000);
       } catch (e) {
-        console.log("Enregistrement canvas non supporté.");
+        console.log("Enregistrement non supporté.");
       }
     }
 
